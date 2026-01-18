@@ -1264,6 +1264,73 @@ export default function App() {
     return { income, expense, profit, label, rangeText };
   }, [transactions, homeKpiPeriod]);
 
+  // Sales Pipeline Stats
+  const pipelineStats = useMemo(() => {
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now);
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Filter estimates from last 30 days for "active" pipeline
+    const recentEstimates = estimates.filter(est => {
+      const estDate = new Date(est.date);
+      return estDate >= thirtyDaysAgo;
+    });
+
+    // All-time stats
+    const allDraft = estimates.filter(e => e.status === 'draft');
+    const allSent = estimates.filter(e => e.status === 'sent');
+    const allAccepted = estimates.filter(e => e.status === 'accepted');
+    const allDeclined = estimates.filter(e => e.status === 'declined');
+
+    // Recent (30 days) stats
+    const recentDraft = recentEstimates.filter(e => e.status === 'draft');
+    const recentSent = recentEstimates.filter(e => e.status === 'sent');
+    const recentAccepted = recentEstimates.filter(e => e.status === 'accepted');
+    const recentDeclined = recentEstimates.filter(e => e.status === 'declined');
+
+    // Calculate amounts
+    const draftAmount = allDraft.reduce((sum, e) => sum + e.amount, 0);
+    const sentAmount = allSent.reduce((sum, e) => sum + e.amount, 0);
+    const acceptedAmount = allAccepted.reduce((sum, e) => sum + e.amount, 0);
+    const declinedAmount = allDeclined.reduce((sum, e) => sum + e.amount, 0);
+
+    // Pipeline value = draft + sent (potential revenue)
+    const pipelineValue = draftAmount + sentAmount;
+
+    // Conversion rate (accepted / (accepted + declined)) - only if there are completed estimates
+    const completedCount = allAccepted.length + allDeclined.length;
+    const conversionRate = completedCount > 0 ? (allAccepted.length / completedCount) * 100 : 0;
+
+    // Recent conversion (last 30 days)
+    const recentCompletedCount = recentAccepted.length + recentDeclined.length;
+    const recentConversionRate = recentCompletedCount > 0 ? (recentAccepted.length / recentCompletedCount) * 100 : 0;
+
+    // Awaiting response = sent estimates
+    const awaitingResponse = allSent.length;
+    const awaitingAmount = sentAmount;
+
+    // Find estimates that need follow-up (sent more than 7 days ago)
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const needsFollowUp = allSent.filter(est => new Date(est.date) < sevenDaysAgo);
+
+    return {
+      draft: { count: allDraft.length, amount: draftAmount },
+      sent: { count: allSent.length, amount: sentAmount },
+      accepted: { count: allAccepted.length, amount: acceptedAmount },
+      declined: { count: allDeclined.length, amount: declinedAmount },
+      pipelineValue,
+      conversionRate,
+      recentConversionRate,
+      awaitingResponse,
+      awaitingAmount,
+      needsFollowUp: needsFollowUp.length,
+      totalEstimates: estimates.length,
+      recentAccepted: recentAccepted.length,
+      recentDeclined: recentDeclined.length,
+    };
+  }, [estimates]);
+
 
   const reportData = useMemo(() => {
     const now = new Date();
@@ -3024,6 +3091,92 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                   <div className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-3">Tap to open invoices</div>
                 </div>
               </div>
+
+            {/* Sales Pipeline Widget */}
+            {(pipelineStats.totalEstimates > 0 || pipelineStats.pipelineValue > 0) && (
+              <div
+                className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 shadow-lg rounded-3xl p-6 relative overflow-hidden cursor-pointer hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                onClick={() => {
+                  setBillingDocType('estimate');
+                  setCurrentPage(Page.Invoices);
+                }}
+              >
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/10 dark:bg-purple-400/10 rounded-full blur-2xl pointer-events-none" />
+                
+                {/* Header */}
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                      <Briefcase size={20} strokeWidth={1.5} />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wide">Sales Pipeline</h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Estimates & Proposals</p>
+                    </div>
+                  </div>
+                  {pipelineStats.conversionRate > 0 && (
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{pipelineStats.conversionRate.toFixed(0)}%</div>
+                      <div className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Win Rate</div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Pipeline Value */}
+                {pipelineStats.pipelineValue > 0 && (
+                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl p-4 mb-5 border border-purple-100 dark:border-purple-800/30">
+                    <div className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-1">Pipeline Value</div>
+                    <div className="text-3xl font-extrabold text-slate-900 dark:text-white">{formatCurrency.format(pipelineStats.pipelineValue)}</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                      {pipelineStats.draft.count} draft{pipelineStats.draft.count !== 1 ? 's' : ''} + {pipelineStats.sent.count} awaiting response
+                    </div>
+                  </div>
+                )}
+
+                {/* Stage Breakdown */}
+                <div className="grid grid-cols-4 gap-2 mb-4">
+                  <div className="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                    <div className="text-lg font-bold text-slate-600 dark:text-slate-300">{pipelineStats.draft.count}</div>
+                    <div className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Draft</div>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+                    <div className="text-lg font-bold text-blue-600 dark:text-blue-400">{pipelineStats.sent.count}</div>
+                    <div className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Sent</div>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
+                    <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{pipelineStats.accepted.count}</div>
+                    <div className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Won</div>
+                  </div>
+                  <div className="text-center p-3 rounded-lg bg-red-50 dark:bg-red-900/20">
+                    <div className="text-lg font-bold text-red-500 dark:text-red-400">{pipelineStats.declined.count}</div>
+                    <div className="text-[10px] font-bold text-red-500 dark:text-red-400 uppercase tracking-wider">Lost</div>
+                  </div>
+                </div>
+
+                {/* Follow-up Alert */}
+                {pipelineStats.needsFollowUp > 0 && (
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/30">
+                    <AlertCircle size={18} className="text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-bold text-amber-800 dark:text-amber-300">
+                        {pipelineStats.needsFollowUp} estimate{pipelineStats.needsFollowUp !== 1 ? 's' : ''} need follow-up
+                      </div>
+                      <div className="text-xs text-amber-600 dark:text-amber-400">Sent more than 7 days ago</div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Won Revenue */}
+                {pipelineStats.accepted.amount > 0 && (
+                  <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Revenue Won (All Time)</div>
+                    <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency.format(pipelineStats.accepted.amount)}</div>
+                  </div>
+                )}
+
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-4 text-center">Tap to view estimates</div>
+              </div>
+            )}
             
             <div>
               <div className="flex items-center justify-between mb-4 pl-2">
