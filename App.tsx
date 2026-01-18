@@ -5847,10 +5847,10 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
               onClick={() => { setBillingDocType('estimate'); setCurrentPage(Page.Invoices); }} 
               className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 'text-white' : 'text-slate-500'}`}
             >
-              <div className={`p-1.5 rounded-lg ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 'bg-purple-600' : ''}`}>
+              <div className={`p-1.5 rounded-lg ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 'bg-slate-800' : ''}`}>
                 <ClipboardList size={20} strokeWidth={(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 2 : 1.5} />
               </div>
-              <span className={`text-[10px] mt-0.5 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 'font-bold text-purple-400' : 'font-medium text-slate-500'}`}>Estimate</span>
+              <span className={`text-[10px] mt-0.5 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 'font-bold text-white' : 'font-medium text-slate-500'}`}>Estimate</span>
             </button>
 
             {/* Center FAB - Ledger with + */}
