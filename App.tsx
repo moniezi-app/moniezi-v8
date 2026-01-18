@@ -2933,6 +2933,8 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                 </div>
                 <div id="visible-estimate-pdf-preview-content" className="p-8 md:p-12 bg-white min-h-[1000px]">
                     {selectedEstimateForDoc.status === 'void' && <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"><div className="transform -rotate-45 text-red-50 text-[150px] font-extrabold opacity-50 border-8 border-red-50 p-10 rounded-3xl">VOID</div></div>}
+                    
+                    {/* Header with Business Info */}
                     <div className={`flex ${settings.showLogoOnInvoice && settings.logoAlignment === 'center' ? 'flex-col items-center text-center' : 'flex-row justify-between items-start'} border-b border-slate-100 pb-8 mb-8 gap-6 z-10 relative`}>
                         <div className={`flex-1 ${settings.showLogoOnInvoice && settings.logoAlignment === 'center' ? 'w-full' : ''}`}>
                             {settings.showLogoOnInvoice && settings.businessLogo && <img src={settings.businessLogo} alt="Logo" className={`h-20 w-auto object-contain mb-4 ${settings.logoAlignment === 'center' ? 'mx-auto' : ''}`} />}
@@ -2950,24 +2952,53 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                 <div className="flex justify-between md:justify-end gap-8"><span className="text-sm font-bold text-slate-400 uppercase tracking-wider">Estimate #</span><span className="text-sm font-bold text-slate-900">{selectedEstimateForDoc.number || selectedEstimateForDoc.id.substring(selectedEstimateForDoc.id.length - 6).toUpperCase()}</span></div>
                                 <div className="flex justify-between md:justify-end gap-8"><span className="text-sm font-bold text-slate-400 uppercase tracking-wider">Date</span><span className="text-sm font-bold text-slate-900">{selectedEstimateForDoc.date}</span></div>
                                 <div className="flex justify-between md:justify-end gap-8"><span className="text-sm font-bold text-slate-400 uppercase tracking-wider">Valid Until</span><span className="text-sm font-bold text-slate-900">{selectedEstimateForDoc.validUntil || ''}</span></div>
+                                {(selectedEstimateForDoc as any).timeline && <div className="flex justify-between md:justify-end gap-8"><span className="text-sm font-bold text-slate-400 uppercase tracking-wider">Timeline</span><span className="text-sm font-bold text-slate-900">{(selectedEstimateForDoc as any).timeline}</span></div>}
                             </div>
                         </div>
                     </div>
-                    <div className="flex gap-10 mb-12 z-10 relative">
+
+                    {/* Project Title */}
+                    {(selectedEstimateForDoc as any).projectTitle && (
+                      <div className="mb-8 z-10 relative">
+                        <div className="bg-slate-50 rounded-lg p-6 border-l-4" style={{ borderColor: settings.brandColor || '#3b82f6' }}>
+                          <h3 className="text-2xl font-bold text-slate-900 mb-1">{(selectedEstimateForDoc as any).projectTitle}</h3>
+                          {selectedEstimateForDoc.description && <p className="text-slate-600">{selectedEstimateForDoc.description}</p>}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Client Info */}
+                    <div className="flex gap-10 mb-8 z-10 relative">
                         <div className="flex-1">
-                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Estimate For</h3>
+                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Prepared For</h3>
                             <div className="text-lg font-bold text-slate-900">{selectedEstimateForDoc.client}</div>
                             {selectedEstimateForDoc.clientCompany && <div className="text-base font-semibold text-slate-700 mt-0.5">{selectedEstimateForDoc.clientCompany}</div>}
-                            <div className="text-sm text-slate-500 mt-1 space-y-0.5">{selectedEstimateForDoc.clientEmail && <div>{selectedEstimateForDoc.clientEmail}</div>}{selectedEstimateForDoc.clientAddress && <div className="whitespace-pre-line">{selectedEstimateForDoc.clientAddress}</div>}</div>
+                            <div className="text-sm text-slate-500 mt-1 space-y-0.5">
+                              {selectedEstimateForDoc.clientEmail && <div>{selectedEstimateForDoc.clientEmail}</div>}
+                              {(selectedEstimateForDoc as any).clientPhone && <div>{(selectedEstimateForDoc as any).clientPhone}</div>}
+                              {selectedEstimateForDoc.clientAddress && <div className="whitespace-pre-line">{selectedEstimateForDoc.clientAddress}</div>}
+                            </div>
                         </div>
                         {(selectedEstimateForDoc.poNumber || settings.businessTaxId) && (
                             <div className="flex-1 text-right">
-                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Details</h3>
-                                {selectedEstimateForDoc.poNumber && <div className="mb-2"><span className="text-xs font-bold text-slate-500 block">Reference</span><span className="text-sm font-bold text-slate-900">{selectedEstimateForDoc.poNumber}</span></div>}
+                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Reference</h3>
+                                {selectedEstimateForDoc.poNumber && <div className="mb-2"><span className="text-xs font-bold text-slate-500 block">Client Ref / PO</span><span className="text-sm font-bold text-slate-900">{selectedEstimateForDoc.poNumber}</span></div>}
                                 {settings.businessTaxId && <div><span className="text-xs font-bold text-slate-500 block">Tax ID / VAT</span><span className="text-sm font-bold text-slate-900">{settings.businessTaxId}</span></div>}
                             </div>
                         )}
                     </div>
+
+                    {/* Scope of Work */}
+                    {(selectedEstimateForDoc as any).scopeOfWork && (
+                      <div className="mb-8 z-10 relative">
+                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Scope of Work</h3>
+                        <div className="bg-slate-50 rounded-lg p-4">
+                          <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{(selectedEstimateForDoc as any).scopeOfWork}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Line Items Table */}
                     <div className="mb-8 z-10 relative">
                         <div className="grid grid-cols-12 gap-4 border-b-2 pb-3 mb-4" style={{ borderColor: settings.brandColor || '#0f172a' }}>
                             <div className="col-span-6 text-xs font-bold text-slate-900 uppercase tracking-wider">Description</div>
@@ -2986,22 +3017,72 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                             ))}
                         </div>
                     </div>
-                    <div className="flex justify-end mt-4 mb-12 z-10 relative">
+
+                    {/* Totals */}
+                    <div className="flex justify-end mt-4 mb-8 z-10 relative">
                         <div className="w-5/12 space-y-3">
                             <div className="flex justify-between text-sm"><span className="font-bold text-slate-500">Subtotal</span><span className="font-bold text-slate-900">{formatCurrency.format(selectedEstimateForDoc.subtotal || selectedEstimateForDoc.amount)}</span></div>
                             {selectedEstimateForDoc.discount ? (<div className="flex justify-between text-sm text-emerald-600"><span className="font-bold">Discount</span><span className="font-bold">-{formatCurrency.format(selectedEstimateForDoc.discount)}</span></div>) : null}
                             {selectedEstimateForDoc.taxRate ? (<div className="flex justify-between text-sm"><span className="font-bold text-slate-500">Tax ({selectedEstimateForDoc.taxRate}%)</span><span className="font-bold text-slate-900">{formatCurrency.format(((selectedEstimateForDoc.subtotal || 0) - (selectedEstimateForDoc.discount || 0)) * (selectedEstimateForDoc.taxRate / 100))}</span></div>) : null}
-                            {selectedEstimateForDoc.shipping ? (<div className="flex justify-between text-sm"><span className="font-bold text-slate-500">Shipping</span><span className="font-bold text-slate-900">{formatCurrency.format(selectedEstimateForDoc.shipping)}</span></div>) : null}
                             <div className="h-px bg-slate-900 my-2"></div>
-                            <div className="flex justify-between items-end"><span className="font-extrabold text-lg text-slate-900 uppercase tracking-wider">Total</span><span className="font-extrabold text-2xl text-slate-900">{formatCurrency.format(selectedEstimateForDoc.amount)}</span></div>
+                            <div className="flex justify-between items-end"><span className="font-extrabold text-lg text-slate-900 uppercase tracking-wider">Estimated Total</span><span className="font-extrabold text-2xl text-slate-900">{formatCurrency.format(selectedEstimateForDoc.amount)}</span></div>
                         </div>
                     </div>
-                    <div className="mt-auto z-10 relative">
-                        <div className="grid grid-cols-2 gap-8 border-t border-slate-100 pt-8">
-                            <div>{selectedEstimateForDoc.notes && (<><h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Notes</h4><p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">{selectedEstimateForDoc.notes}</p></>)}</div>
-                            <div>{(selectedEstimateForDoc.terms || settings.payPrefs.length > 0) && (<><h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Terms</h4>{selectedEstimateForDoc.terms && <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap mb-3">{selectedEstimateForDoc.terms}</p>}{settings.payPrefs.length > 0 && (<div className="text-xs font-bold text-slate-500 bg-slate-50 p-3 rounded inline-block w-full">Accepted Methods: {settings.payPrefs.join(', ')}</div>)}</>)}</div>
+
+                    {/* Exclusions */}
+                    {(selectedEstimateForDoc as any).exclusions && (
+                      <div className="mb-8 z-10 relative">
+                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Not Included in This Estimate</h4>
+                        <div className="bg-amber-50 border border-amber-100 rounded-lg p-4">
+                          <p className="text-sm text-amber-800 leading-relaxed whitespace-pre-wrap">{(selectedEstimateForDoc as any).exclusions}</p>
                         </div>
-                        <div className="mt-12 text-center text-xs text-slate-400 font-bold uppercase tracking-widest">Thank you</div>
+                      </div>
+                    )}
+
+                    {/* Notes, Terms, and Acceptance */}
+                    <div className="mt-auto z-10 relative">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-slate-100 pt-8">
+                            <div>
+                              {selectedEstimateForDoc.notes && (
+                                <>
+                                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Notes</h4>
+                                  <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">{selectedEstimateForDoc.notes}</p>
+                                </>
+                              )}
+                            </div>
+                            <div>
+                              {selectedEstimateForDoc.terms && (
+                                <>
+                                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Terms & Conditions</h4>
+                                  <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap mb-3">{selectedEstimateForDoc.terms}</p>
+                                </>
+                              )}
+                            </div>
+                        </div>
+
+                        {/* How to Accept */}
+                        {(selectedEstimateForDoc as any).acceptanceTerms && (
+                          <div className="mt-8 bg-blue-50 border border-blue-100 rounded-lg p-6 text-center">
+                            <h4 className="text-sm font-bold text-blue-900 uppercase tracking-wider mb-2">How to Accept This Estimate</h4>
+                            <p className="text-blue-700">{(selectedEstimateForDoc as any).acceptanceTerms}</p>
+                          </div>
+                        )}
+
+                        {/* Signature Line (optional for printed versions) */}
+                        <div className="mt-12 pt-8 border-t border-slate-200">
+                          <div className="grid grid-cols-2 gap-12">
+                            <div>
+                              <div className="border-b border-slate-300 pb-8 mb-2"></div>
+                              <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Client Signature</p>
+                            </div>
+                            <div>
+                              <div className="border-b border-slate-300 pb-8 mb-2"></div>
+                              <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Date</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mt-12 text-center text-xs text-slate-400 font-bold uppercase tracking-widest">Thank you for considering our services</div>
                     </div>
                 </div>
             </div>
@@ -5253,6 +5334,59 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                               <input type="text" value={activeItem.clientAddress || ''} onChange={e => setActiveItem(prev => ({ ...prev, clientAddress: e.target.value }))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500" placeholder="Client Address (Optional)" />
                           </div>
                       </div>
+
+                      {/* ESTIMATE-SPECIFIC FIELDS */}
+                      {billingDocType === 'estimate' && (
+                        <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-100 dark:border-purple-800/30">
+                          <h4 className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <FileText size={14} /> Proposal Details
+                          </h4>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="text-[11px] font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Project Title</label>
+                              <input 
+                                type="text" 
+                                value={(activeItem as any).projectTitle || ''} 
+                                onChange={e => setActiveItem(prev => ({ ...prev, projectTitle: e.target.value }))} 
+                                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-3 font-bold text-base outline-none focus:ring-1 focus:ring-purple-500" 
+                                placeholder="e.g., Website Redesign, Marketing Campaign" 
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[11px] font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Scope of Work</label>
+                              <textarea 
+                                value={(activeItem as any).scopeOfWork || ''} 
+                                onChange={e => setActiveItem(prev => ({ ...prev, scopeOfWork: e.target.value }))} 
+                                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-purple-500 min-h-[80px]" 
+                                placeholder="Describe what's included in this proposal..." 
+                              />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Timeline</label>
+                                <input 
+                                  type="text" 
+                                  value={(activeItem as any).timeline || ''} 
+                                  onChange={e => setActiveItem(prev => ({ ...prev, timeline: e.target.value }))} 
+                                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-purple-500" 
+                                  placeholder="e.g., 2-3 weeks" 
+                                />
+                              </div>
+                              <div>
+                                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Reference #</label>
+                                <input 
+                                  type="text" 
+                                  value={(activeItem as any).poNumber || ''} 
+                                  onChange={e => setActiveItem(prev => ({ ...prev, poNumber: e.target.value }))} 
+                                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-purple-500" 
+                                  placeholder="Client ref / PO #" 
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><DateInput label="Date" value={activeItem.date || ''} onChange={v => setActiveItem(prev => ({ ...prev, date: v }))} /><DateInput label={billingDocType === 'estimate' ? "Valid Until" : "Due Date"} value={(billingDocType === 'estimate' ? (activeItem.validUntil as any) : activeItem.due) || ''} onChange={v => setActiveItem(prev => billingDocType === 'estimate' ? ({ ...prev, validUntil: v }) : ({ ...prev, due: v }))} /></div>
                       <div className="bg-slate-50 dark:bg-slate-900 p-1 rounded-lg border border-slate-100 dark:border-slate-800">
                           <div className="flex items-center justify-between p-3 border-b border-slate-200 dark:border-slate-800"><h4 className="text-xs font-bold text-slate-500 dark:text-slate-300 uppercase tracking-wider">Line Items</h4><button onClick={addInvoiceItem} className="text-xs font-bold text-blue-600 flex items-center gap-1 hover:underline"><PlusCircle size={14}/> Add Item</button></div>
@@ -5261,16 +5395,76 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                               <div className="flex justify-between text-xs text-slate-600 dark:text-slate-300"><span>Subtotal</span><span>{formatCurrency.format(activeInvoiceTotals.subtotal)}</span></div>
                               <div className="flex items-center justify-between gap-4"><label className="text-xs text-slate-600 dark:text-slate-300">Discount</label><div className="relative w-24"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 text-xs">$</span><input type="number" value={activeItem.discount || ''} onChange={e => setActiveItem(p => ({...p, discount: Number(e.target.value)}))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded py-1 pl-5 pr-1 text-xs text-right outline-none" placeholder="0" /></div></div>
                               <div className="flex items-center justify-between gap-4"><label className="text-xs text-slate-600 dark:text-slate-300">Tax Rate</label><div className="relative w-24"><input type="number" value={activeItem.taxRate || ''} onChange={e => setActiveItem(p => ({...p, taxRate: Number(e.target.value)}))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded py-1 pl-1 pr-5 text-xs text-right outline-none" placeholder="0" /><span className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 text-xs">%</span></div></div>
-                              <div className="flex items-center justify-between gap-4"><label className="text-xs text-slate-600 dark:text-slate-300">Shipping</label><div className="relative w-24"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 text-xs">$</span><input type="number" value={activeItem.shipping || ''} onChange={e => setActiveItem(p => ({...p, shipping: Number(e.target.value)}))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded py-1 pl-5 pr-1 text-xs text-right outline-none" placeholder="0" /></div></div>
-                              <div className="flex justify-between text-sm font-bold pt-2 border-t border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white"><span>Total Due</span><span>{formatCurrency.format(activeInvoiceTotals.total)}</span></div>
+                              {billingDocType !== 'estimate' && <div className="flex items-center justify-between gap-4"><label className="text-xs text-slate-600 dark:text-slate-300">Shipping</label><div className="relative w-24"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 text-xs">$</span><input type="number" value={activeItem.shipping || ''} onChange={e => setActiveItem(p => ({...p, shipping: Number(e.target.value)}))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded py-1 pl-5 pr-1 text-xs text-right outline-none" placeholder="0" /></div></div>}
+                              <div className="flex justify-between text-sm font-bold pt-2 border-t border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white"><span>{billingDocType === 'estimate' ? 'Estimated Total' : 'Total Due'}</span><span>{formatCurrency.format(activeInvoiceTotals.total)}</span></div>
                           </div>
                       </div>
+
+                      {/* ESTIMATE-SPECIFIC: Exclusions */}
+                      {billingDocType === 'estimate' && (
+                        <div>
+                          <label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Exclusions (Not Included)</label>
+                          <textarea 
+                            value={(activeItem as any).exclusions || ''} 
+                            onChange={e => setActiveItem(prev => ({ ...prev, exclusions: e.target.value }))} 
+                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500 min-h-[60px]" 
+                            placeholder="List items NOT included in this estimate (e.g., hosting, stock photos, third-party fees)..." 
+                          />
+                        </div>
+                      )}
+
                       <div className="space-y-4">
                           <div><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Internal Category</label>{renderCategoryChips(activeItem.category, (cat) => setActiveItem(prev => ({ ...prev, category: cat })))}</div>
-                          <div><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Notes / Memo</label><textarea value={activeItem.notes || ''} onChange={e => setActiveItem(prev => ({ ...prev, notes: e.target.value }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-50 min-h-[60px]" placeholder="Thank you for your business..." /></div>
-                          <div><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Terms</label><textarea value={activeItem.terms || ''} onChange={e => setActiveItem(prev => ({ ...prev, terms: e.target.value }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500 min-h-[60px]" placeholder="Net 30. Late fees apply..." /></div>
+                          <div><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">{billingDocType === 'estimate' ? 'Notes to Client' : 'Notes / Memo'}</label><textarea value={activeItem.notes || ''} onChange={e => setActiveItem(prev => ({ ...prev, notes: e.target.value }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-50 min-h-[60px]" placeholder={billingDocType === 'estimate' ? "Additional information for your client..." : "Thank you for your business..."} /></div>
+                          <div><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">{billingDocType === 'estimate' ? 'Terms & Conditions' : 'Payment Terms'}</label><textarea value={activeItem.terms || ''} onChange={e => setActiveItem(prev => ({ ...prev, terms: e.target.value }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500 min-h-[60px]" placeholder={billingDocType === 'estimate' ? "This estimate is valid for 30 days. 50% deposit required to begin work..." : "Net 30. Late fees apply..."} /></div>
+                          
+                          {/* ESTIMATE-SPECIFIC: Acceptance Terms */}
+                          {billingDocType === 'estimate' && (
+                            <div>
+                              <label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">How to Accept</label>
+                              <input 
+                                type="text" 
+                                value={(activeItem as any).acceptanceTerms || ''} 
+                                onChange={e => setActiveItem(prev => ({ ...prev, acceptanceTerms: e.target.value }))} 
+                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500" 
+                                placeholder="e.g., Reply 'Approved' to this email, Sign below, etc." 
+                              />
+                            </div>
+                          )}
                       </div>
-                      <button onClick={() => (billingDocType === 'estimate' ? saveEstimate(activeItem) : saveInvoice(activeItem))} className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg shadow-blue-500/20 uppercase tracking-widest transition-all active:scale-95">Save {billingDocType === 'estimate' ? 'Estimate' : 'Invoice'}</button>
+
+                      {/* Preview & Save Buttons */}
+                      <div className="flex gap-3">
+                        <button 
+                          onClick={() => {
+                            if (billingDocType === 'estimate') {
+                              // Build preview estimate
+                              const previewEst = { ...activeItem } as any;
+                              if (!previewEst.items || previewEst.items.length === 0) {
+                                previewEst.items = [{ id: 'preview_1', description: previewEst.description || 'Services', quantity: 1, rate: activeInvoiceTotals.total }];
+                              }
+                              previewEst.subtotal = activeInvoiceTotals.subtotal;
+                              previewEst.amount = activeInvoiceTotals.total;
+                              setSelectedEstimateForDoc(previewEst);
+                              setIsEstimatePdfPreviewOpen(true);
+                            } else {
+                              // Invoice preview
+                              const previewInv = { ...activeItem } as any;
+                              if (!previewInv.items || previewInv.items.length === 0) {
+                                previewInv.items = [{ id: 'preview_1', description: previewInv.description || 'Services', quantity: 1, rate: activeInvoiceTotals.total }];
+                              }
+                              previewInv.subtotal = activeInvoiceTotals.subtotal;
+                              previewInv.amount = activeInvoiceTotals.total;
+                              setSelectedInvoiceForDoc(previewInv);
+                              setIsPdfPreviewOpen(true);
+                            }
+                          }} 
+                          className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-lg uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2"
+                        >
+                          <Eye size={18} /> Preview
+                        </button>
+                        <button onClick={() => (billingDocType === 'estimate' ? saveEstimate(activeItem) : saveInvoice(activeItem))} className="flex-1 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg shadow-blue-500/20 uppercase tracking-widest transition-all active:scale-95">Save {billingDocType === 'estimate' ? 'Estimate' : 'Invoice'}</button>
+                      </div>
                    </div>
                 ) : (
                    <div className="space-y-4">
