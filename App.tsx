@@ -5227,14 +5227,70 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
       </main>
 
-      <div className="no-print fixed bottom-3 left-1/2 -translate-x-1/2 w-[94%] max-w-2xl z-[55]">
-        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl text-slate-900 dark:text-white rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-2 flex justify-between items-center relative">
-            <button onClick={() => setCurrentPage(Page.Dashboard)} className={`flex-1 flex flex-col items-center justify-center py-2 rounded-xl transition-all active:scale-95 ${currentPage === Page.Dashboard ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-500 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'}`}><LayoutGrid size={22} strokeWidth={currentPage === Page.Dashboard ? 2.5 : 2} /><span className="text-xs font-bold mt-1">Home</span></button>
-            <button onClick={() => setCurrentPage(Page.Invoices)} className={`flex-1 flex flex-col items-center justify-center py-2 rounded-xl transition-all active:scale-95 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-500 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'}`}><FileText size={22} strokeWidth={(currentPage === Page.Invoices || currentPage === Page.Invoice) ? 2.5 : 2} /><span className="text-xs font-bold mt-1">Invoice</span></button>
-            <div className="mx-2 -mt-8"><button onClick={() => handleOpenFAB((currentPage === Page.Invoices || currentPage === Page.Invoice) ? 'billing' : 'income')} className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-full flex items-center justify-center shadow-xl shadow-blue-600/40 transition-transform active:scale-95 border-[4px] border-slatebg dark:border-slate-950"><Plus size={32} strokeWidth={3} /></button></div>
-            <button onClick={() => setCurrentPage(Page.AllTransactions)} className={`flex-1 flex flex-col items-center justify-center py-2 rounded-xl transition-all active:scale-95 ${(currentPage === Page.AllTransactions || currentPage === Page.Ledger) ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-500 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'}`}><History size={22} strokeWidth={(currentPage === Page.AllTransactions || currentPage === Page.Ledger) ? 2.5 : 2} /><span className="text-xs font-bold mt-1">Ledger</span></button>
-            <button onClick={() => setCurrentPage(Page.Clients)} className={`flex-1 flex flex-col items-center justify-center py-2 rounded-xl transition-all active:scale-95 ${currentPage === Page.Clients ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-500 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'}`}><Users size={22} strokeWidth={currentPage === Page.Clients ? 2.5 : 2} /><span className="text-xs font-bold mt-1">Clients</span></button>
-            <button onClick={() => setCurrentPage(Page.Reports)} className={`flex-1 flex flex-col items-center justify-center py-2 rounded-xl transition-all active:scale-95 ${currentPage === Page.Reports ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-500 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'}`}><BarChart3 size={22} strokeWidth={currentPage === Page.Reports ? 2.5 : 2} /><span className="text-xs font-bold mt-1">Reports</span></button>
+      <div className="no-print fixed bottom-0 left-0 right-0 z-[55] pb-safe">
+        <div className="bg-slate-950/95 backdrop-blur-xl border-t border-slate-800/50 px-2 pt-2 pb-3">
+          <div className="max-w-lg mx-auto flex justify-between items-end relative">
+            {/* Home */}
+            <button 
+              onClick={() => setCurrentPage(Page.Dashboard)} 
+              className={`flex-1 flex flex-col items-center justify-center py-2 transition-all active:scale-95 ${currentPage === Page.Dashboard ? 'text-white' : 'text-slate-500'}`}
+            >
+              <div className={`p-2 rounded-xl ${currentPage === Page.Dashboard ? 'bg-slate-800' : ''}`}>
+                <LayoutGrid size={22} strokeWidth={currentPage === Page.Dashboard ? 2 : 1.5} />
+              </div>
+              <span className={`text-[11px] mt-1 ${currentPage === Page.Dashboard ? 'font-bold text-white' : 'font-medium text-slate-500'}`}>Home</span>
+            </button>
+
+            {/* Invoice */}
+            <button 
+              onClick={() => setCurrentPage(Page.Invoices)} 
+              className={`flex-1 flex flex-col items-center justify-center py-2 transition-all active:scale-95 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) ? 'text-white' : 'text-slate-500'}`}
+            >
+              <div className={`p-2 rounded-xl ${(currentPage === Page.Invoices || currentPage === Page.Invoice) ? 'bg-slate-800' : ''}`}>
+                <FileText size={22} strokeWidth={(currentPage === Page.Invoices || currentPage === Page.Invoice) ? 2 : 1.5} />
+              </div>
+              <span className={`text-[11px] mt-1 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) ? 'font-bold text-white' : 'font-medium text-slate-500'}`}>Invoice</span>
+            </button>
+
+            {/* Center FAB - Ledger with + */}
+            <div className="flex-1 flex flex-col items-center -mt-4">
+              <button 
+                onClick={() => {
+                  if (currentPage === Page.AllTransactions || currentPage === Page.Ledger) {
+                    handleOpenFAB('income');
+                  } else {
+                    setCurrentPage(Page.AllTransactions);
+                  }
+                }} 
+                className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/30 transition-all active:scale-95 ${(currentPage === Page.AllTransactions || currentPage === Page.Ledger) ? 'bg-blue-600' : 'bg-blue-600'}`}
+              >
+                <Plus size={28} strokeWidth={2.5} className="text-white" />
+              </button>
+              <span className={`text-[11px] mt-1.5 ${(currentPage === Page.AllTransactions || currentPage === Page.Ledger) ? 'font-bold text-blue-400' : 'font-medium text-slate-500'}`}>Ledger</span>
+            </div>
+
+            {/* Clients */}
+            <button 
+              onClick={() => setCurrentPage(Page.Clients)} 
+              className={`flex-1 flex flex-col items-center justify-center py-2 transition-all active:scale-95 ${currentPage === Page.Clients ? 'text-white' : 'text-slate-500'}`}
+            >
+              <div className={`p-2 rounded-xl ${currentPage === Page.Clients ? 'bg-slate-800' : ''}`}>
+                <Users size={22} strokeWidth={currentPage === Page.Clients ? 2 : 1.5} />
+              </div>
+              <span className={`text-[11px] mt-1 ${currentPage === Page.Clients ? 'font-bold text-white' : 'font-medium text-slate-500'}`}>Clients</span>
+            </button>
+
+            {/* Reports */}
+            <button 
+              onClick={() => setCurrentPage(Page.Reports)} 
+              className={`flex-1 flex flex-col items-center justify-center py-2 transition-all active:scale-95 ${currentPage === Page.Reports ? 'text-white' : 'text-slate-500'}`}
+            >
+              <div className={`p-2 rounded-xl ${currentPage === Page.Reports ? 'bg-slate-800' : ''}`}>
+                <BarChart3 size={22} strokeWidth={currentPage === Page.Reports ? 2 : 1.5} />
+              </div>
+              <span className={`text-[11px] mt-1 ${currentPage === Page.Reports ? 'font-bold text-white' : 'font-medium text-slate-500'}`}>Reports</span>
+            </button>
+          </div>
         </div>
       </div>
       
