@@ -75,7 +75,8 @@ import {
   Eye,
   ToggleLeft,
   ToggleRight,
-  Copy
+  Copy,
+  ClipboardList
 } from 'lucide-react';
 import { Page, Transaction, Invoice, Estimate, Client, ClientStatus, UserSettings, Notification, FilterPeriod, RecurrenceFrequency, FilingStatus, TaxPayment, TaxEstimationMethod, InvoiceItem, EstimateItem, CustomCategories, Receipt as ReceiptType } from './types';
 import { CATS_IN, CATS_OUT, CATS_BILLING, DEFAULT_PAY_PREFS, DB_KEY, TAX_CONSTANTS, TAX_PLANNER_2026, getFreshDemoData } from './constants';
@@ -979,9 +980,9 @@ export default function App() {
             id: 'cli_demo_1',
             name: 'Kenny Barria',
             company: 'KB Landscaping',
-            email: 'kenny@example.com',
-            phone: '+1 (555) 010-2001',
-            address: '12 Palm St, Miami, FL',
+            email: 'kenny@kblandscaping.com',
+            phone: '(305) 555-0198',
+            address: '12 Palm St, Miami, FL 33101',
             status: 'lead',
             createdAt: toISO(daysAgo(45)),
             updatedAt: toISO(daysAgo(2)),
@@ -990,20 +991,20 @@ export default function App() {
             id: 'cli_demo_2',
             name: 'Sophia Stanley',
             company: 'Stanley Studio',
-            email: 'sophia@example.com',
-            phone: '+1 (555) 010-2002',
-            address: '88 Market Ave, Austin, TX',
+            email: 'sophia@stanleystudio.co',
+            phone: '(512) 555-0234',
+            address: '88 Market Ave, Suite 200, Austin, TX 78701',
             status: 'lead',
             createdAt: toISO(daysAgo(30)),
-            updatedAt: toISO(daysAgo(10)),
+            updatedAt: toISO(daysAgo(3)),
           },
           {
             id: 'cli_demo_3',
             name: 'Jimmy Wilson',
             company: 'Wilson Renovations',
-            email: 'jimmy@example.com',
-            phone: '+1 (555) 010-2003',
-            address: '5 Harbor Rd, San Diego, CA',
+            email: 'jimmy@wilsonreno.com',
+            phone: '(619) 555-0142',
+            address: '5 Harbor Rd, San Diego, CA 92101',
             status: 'client',
             createdAt: toISO(daysAgo(120)),
             updatedAt: toISO(daysAgo(1)),
@@ -1012,117 +1013,207 @@ export default function App() {
             id: 'cli_demo_4',
             name: 'Rich Richards',
             company: 'Richards Consulting',
-            email: 'rich@example.com',
-            phone: '+1 (555) 010-2004',
-            address: '101 King St, New York, NY',
+            email: 'rich@richardsconsulting.com',
+            phone: '(212) 555-0187',
+            address: '101 King St, Floor 15, New York, NY 10005',
             status: 'inactive',
             createdAt: toISO(daysAgo(300)),
-            updatedAt: toISO(daysAgo(90)),
+            updatedAt: toISO(daysAgo(45)),
+          },
+          {
+            id: 'cli_demo_5',
+            name: 'Maria Chen',
+            company: 'Chen Tech Solutions',
+            email: 'maria@chentech.io',
+            phone: '(415) 555-0321',
+            address: '500 Tech Blvd, San Francisco, CA 94107',
+            status: 'lead',
+            createdAt: toISO(daysAgo(5)),
+            updatedAt: toISO(daysAgo(1)),
+            notes: 'Referred by Jimmy Wilson. Interested in e-commerce site.',
           },
         ];
 
         const demoEstimates: Estimate[] = [
           {
             id: 'est_demo_1',
-            number: 'EST-0007',
+            number: 'EST-2501-0001',
             clientId: 'cli_demo_3',
             client: 'Jimmy Wilson',
             clientCompany: 'Wilson Renovations',
-            clientEmail: 'jimmy@example.com',
-            clientAddress: '5 Harbor Rd, San Diego, CA',
+            clientEmail: 'jimmy@wilsonreno.com',
+            clientPhone: '(619) 555-0142',
+            clientAddress: '5 Harbor Rd, San Diego, CA 92101',
+            projectTitle: 'Master Bathroom Renovation',
+            scopeOfWork: 'Complete bathroom repair including:\n• Removal of existing fixtures\n• Installation of new vanity and sink\n• Toilet replacement\n• New faucet installation\n• Basic plumbing inspection',
+            timeline: '3-4 days',
+            exclusions: 'Tile work, electrical modifications, permits',
+            acceptanceTerms: 'Reply "Approved" to this email or sign below',
             category: 'Service',
             description: 'Bathroom repair + fixture replacement',
-            date: toISO(daysAgo(5)),
-            validUntil: toISO(daysFromNow(9)),
+            date: toISO(daysAgo(12)),
+            validUntil: toISO(daysFromNow(2)),
             status: 'accepted',
+            sentAt: toISO(daysAgo(10)),
+            followUpDate: toISO(daysAgo(3)),
+            followUpCount: 1,
+            lastFollowUp: toISO(daysAgo(5)),
             items: [
-              { id: 'e1_i1', description: 'Labor (3 hrs)', quantity: 3, rate: 95 },
-              { id: 'e1_i2', description: 'Fixture & materials', quantity: 1, rate: 180 },
+              { id: 'e1_i1', description: 'Labor (demolition & install)', quantity: 12, rate: 95 },
+              { id: 'e1_i2', description: 'Vanity w/ sink (36")', quantity: 1, rate: 680 },
+              { id: 'e1_i3', description: 'Toilet (Kohler Highline)', quantity: 1, rate: 320 },
+              { id: 'e1_i4', description: 'Faucet & hardware', quantity: 1, rate: 180 },
             ],
-            subtotal: 465,
-            discount: 0,
+            subtotal: 2320,
+            discount: 100,
             taxRate: 8,
             shipping: 0,
-            amount: Math.round((465 + 465 * 0.08) * 100) / 100,
-            notes: 'Thank you! This estimate is valid for 14 days.',
-            terms: '50% deposit to schedule work. Remaining due upon completion.',
-            poNumber: 'PO-1027',
+            amount: Math.round((2220 + 2220 * 0.08) * 100) / 100,
+            notes: 'Thank you for choosing Wilson Renovations! Materials include manufacturer warranty.',
+            terms: '50% deposit required to schedule work. Remaining balance due upon completion. Changes to scope may affect final price.',
+            poNumber: 'WR-2025-1027',
           },
           {
             id: 'est_demo_2',
-            number: 'EST-0008',
+            number: 'EST-2501-0002',
             clientId: 'cli_demo_1',
             client: 'Kenny Barria',
             clientCompany: 'KB Landscaping',
-            clientEmail: 'kenny@example.com',
-            clientAddress: '12 Palm St, Miami, FL',
+            clientEmail: 'kenny@kblandscaping.com',
+            clientPhone: '(305) 555-0198',
+            clientAddress: '12 Palm St, Miami, FL 33101',
+            projectTitle: 'Monthly Lawn Maintenance Package',
+            scopeOfWork: 'Comprehensive lawn care service including:\n• Weekly mowing and edging\n• Hedge trimming (monthly)\n• Weed control and treatment\n• Green waste removal\n• Irrigation system check',
+            timeline: 'Ongoing (monthly billing)',
+            exclusions: 'Tree removal, major landscaping changes, pest control, fertilization',
+            acceptanceTerms: 'Sign and return this estimate to begin service',
             category: 'Service',
             description: 'Monthly lawn maintenance (4 visits)',
-            date: toISO(daysAgo(2)),
-            validUntil: toISO(daysFromNow(12)),
+            date: toISO(daysAgo(8)),
+            validUntil: toISO(daysFromNow(6)),
             status: 'sent',
+            sentAt: toISO(daysAgo(7)),
+            followUpDate: toISO(daysAgo(0)), // Due today!
+            followUpCount: 0,
             items: [
               { id: 'e2_i1', description: 'Lawn mow + edge (per visit)', quantity: 4, rate: 85 },
-              { id: 'e2_i2', description: 'Hedge trim (one time)', quantity: 1, rate: 120 },
+              { id: 'e2_i2', description: 'Hedge trim (monthly)', quantity: 1, rate: 120 },
+              { id: 'e2_i3', description: 'Weed treatment', quantity: 1, rate: 65 },
             ],
-            subtotal: 460,
-            discount: 20,
+            subtotal: 525,
+            discount: 25,
             taxRate: 0,
             shipping: 0,
-            amount: 440,
-            notes: 'Includes green waste removal.',
-            terms: 'Net 7 days after acceptance.',
+            amount: 500,
+            notes: 'First month includes complimentary irrigation check. Service day: Thursdays (weather permitting).',
+            terms: 'Monthly billing on the 1st. Cancel anytime with 7 days notice.',
           },
           {
             id: 'est_demo_3',
-            number: 'EST-0009',
+            number: 'EST-2501-0003',
             clientId: 'cli_demo_2',
             client: 'Sophia Stanley',
             clientCompany: 'Stanley Studio',
-            clientEmail: 'sophia@example.com',
-            clientAddress: '88 Market Ave, Austin, TX',
-            category: 'Service',
+            clientEmail: 'sophia@stanleystudio.co',
+            clientPhone: '(512) 555-0234',
+            clientAddress: '88 Market Ave, Suite 200\nAustin, TX 78701',
+            projectTitle: 'Complete Brand Identity Package',
+            scopeOfWork: 'Full brand identity design including:\n• Discovery session & brand strategy\n• Moodboard and direction presentation\n• 3 unique logo concepts with revisions\n• Color palette and typography selection\n• Brand guidelines document (PDF)\n• Final files in all formats (AI, EPS, PNG, SVG)',
+            timeline: '2-3 weeks',
+            exclusions: 'Website design, marketing collateral, social media templates, photography',
+            acceptanceTerms: 'Pay 50% deposit via invoice link to begin project',
+            category: 'Design',
             description: 'Brand kit design (logo, colors, typography)',
-            date: toISO(daysAgo(15)),
-            validUntil: toISO(daysAgo(1)),
+            date: toISO(daysAgo(3)),
+            validUntil: toISO(daysFromNow(11)),
             status: 'draft',
             items: [
-              { id: 'e3_i1', description: 'Discovery call + moodboard', quantity: 1, rate: 250 },
-              { id: 'e3_i2', description: 'Logo concepts (3)', quantity: 1, rate: 900 },
-              { id: 'e3_i3', description: 'Final files + brand guide', quantity: 1, rate: 650 },
+              { id: 'e3_i1', description: 'Discovery session + strategy', quantity: 1, rate: 350 },
+              { id: 'e3_i2', description: 'Logo concepts (3 directions)', quantity: 1, rate: 1200 },
+              { id: 'e3_i3', description: 'Revisions (up to 3 rounds)', quantity: 1, rate: 400 },
+              { id: 'e3_i4', description: 'Brand guide + final files', quantity: 1, rate: 550 },
             ],
-            subtotal: 1800,
+            subtotal: 2500,
             discount: 0,
             taxRate: 0,
             shipping: 0,
-            amount: 1800,
-            notes: 'Draft estimate (not yet sent).',
-            terms: '50% upfront. Remaining due before final delivery.',
+            amount: 2500,
+            notes: 'Excited to bring your brand vision to life! Timeline begins after deposit is received.',
+            terms: '50% deposit to begin. Final 50% due before delivery of final files. Additional revisions billed at $75/hr.',
           },
           {
             id: 'est_demo_4',
-            number: 'EST-0010',
+            number: 'EST-2501-0004',
             clientId: 'cli_demo_4',
             client: 'Rich Richards',
             clientCompany: 'Richards Consulting',
-            clientEmail: 'rich@example.com',
-            clientAddress: '101 King St, New York, NY',
-            category: 'Service',
+            clientEmail: 'rich@richardsconsulting.com',
+            clientPhone: '(212) 555-0187',
+            clientAddress: '101 King St, Floor 15\nNew York, NY 10005',
+            projectTitle: 'Executive Strategy Workshop',
+            scopeOfWork: 'One-day intensive strategy session including:\n• Pre-workshop stakeholder interviews (3)\n• Full-day facilitated workshop (8 hrs)\n• SWOT and competitive analysis\n• Strategic roadmap development\n• Executive summary report\n• 30-day follow-up call',
+            timeline: '1 day workshop + 2 weeks for deliverables',
+            exclusions: 'Implementation support, ongoing consulting, travel expenses outside NYC',
+            acceptanceTerms: 'Confirm preferred date and pay deposit to secure booking',
+            category: 'Consulting',
             description: 'Quarterly strategy workshop (1 day)',
-            date: toISO(daysAgo(40)),
-            validUntil: toISO(daysAgo(20)),
+            date: toISO(daysAgo(45)),
+            validUntil: toISO(daysAgo(15)),
             status: 'declined',
+            sentAt: toISO(daysAgo(44)),
+            followUpDate: toISO(daysAgo(37)),
+            followUpCount: 2,
+            lastFollowUp: toISO(daysAgo(30)),
             items: [
-              { id: 'e4_i1', description: 'On-site workshop', quantity: 1, rate: 2500 },
-              { id: 'e4_i2', description: 'Follow-up report', quantity: 1, rate: 600 },
+              { id: 'e4_i1', description: 'Pre-workshop prep & interviews', quantity: 1, rate: 800 },
+              { id: 'e4_i2', description: 'Full-day on-site workshop', quantity: 1, rate: 3500 },
+              { id: 'e4_i3', description: 'Strategic report & roadmap', quantity: 1, rate: 1200 },
+              { id: 'e4_i4', description: '30-day follow-up session', quantity: 1, rate: 400 },
             ],
-            subtotal: 3100,
-            discount: 100,
+            subtotal: 5900,
+            discount: 400,
             taxRate: 0,
             shipping: 0,
-            amount: 3000,
-            notes: 'Declined — budget shifted this quarter.',
-            terms: 'Net 14 upon acceptance.',
+            amount: 5500,
+            notes: 'Client declined — budget reallocated to Q2. Open to revisiting next quarter.',
+            terms: '40% deposit to book. Balance due 7 days before workshop date.',
+          },
+          {
+            id: 'est_demo_5',
+            number: 'EST-2501-0005',
+            clientId: 'cli_demo_5',
+            client: 'Maria Chen',
+            clientCompany: 'Chen Tech Solutions',
+            clientEmail: 'maria@chentech.io',
+            clientPhone: '(415) 555-0321',
+            clientAddress: '500 Tech Blvd\nSan Francisco, CA 94107',
+            projectTitle: 'E-commerce Website Development',
+            scopeOfWork: 'Custom e-commerce website build:\n• UI/UX design (mobile-first)\n• Shopify Plus implementation\n• Product catalog setup (up to 100 SKUs)\n• Payment gateway integration\n• Shipping calculator setup\n• Basic SEO optimization\n• Admin training session (2 hrs)',
+            timeline: '6-8 weeks',
+            exclusions: 'Product photography, copywriting, inventory management, ongoing maintenance, marketing',
+            acceptanceTerms: 'Sign contract and pay 30% deposit to begin',
+            category: 'Development',
+            description: 'E-commerce website (Shopify Plus)',
+            date: toISO(daysAgo(2)),
+            validUntil: toISO(daysFromNow(12)),
+            status: 'sent',
+            sentAt: toISO(daysAgo(1)),
+            followUpDate: toISO(daysFromNow(6)),
+            followUpCount: 0,
+            items: [
+              { id: 'e5_i1', description: 'Discovery & planning', quantity: 1, rate: 1500 },
+              { id: 'e5_i2', description: 'UI/UX design', quantity: 1, rate: 3500 },
+              { id: 'e5_i3', description: 'Shopify development', quantity: 1, rate: 6000 },
+              { id: 'e5_i4', description: 'Testing & QA', quantity: 1, rate: 1200 },
+              { id: 'e5_i5', description: 'Launch & training', quantity: 1, rate: 800 },
+            ],
+            subtotal: 13000,
+            discount: 500,
+            taxRate: 8.625,
+            shipping: 0,
+            amount: Math.round((12500 + 12500 * 0.08625) * 100) / 100,
+            notes: 'Includes 30 days of bug fixes post-launch. Hosting not included ($29/mo Shopify fee).',
+            terms: '30% deposit to start. 40% at design approval. Final 30% before launch. Changes outside scope quoted separately.',
           },
         ];
 
@@ -1677,9 +1768,9 @@ export default function App() {
         id: 'cli_demo_1',
         name: 'Kenny Barria',
         company: 'KB Landscaping',
-        email: 'kenny@example.com',
-        phone: '+1 (555) 010-2001',
-        address: '12 Palm St, Miami, FL',
+        email: 'kenny@kblandscaping.com',
+        phone: '(305) 555-0198',
+        address: '12 Palm St, Miami, FL 33101',
         status: 'lead',
         createdAt: toISO(daysAgo(45)),
         updatedAt: toISO(daysAgo(2)),
@@ -1688,20 +1779,20 @@ export default function App() {
         id: 'cli_demo_2',
         name: 'Sophia Stanley',
         company: 'Stanley Studio',
-        email: 'sophia@example.com',
-        phone: '+1 (555) 010-2002',
-        address: '88 Market Ave, Austin, TX',
+        email: 'sophia@stanleystudio.co',
+        phone: '(512) 555-0234',
+        address: '88 Market Ave, Suite 200, Austin, TX 78701',
         status: 'lead',
         createdAt: toISO(daysAgo(30)),
-        updatedAt: toISO(daysAgo(10)),
+        updatedAt: toISO(daysAgo(3)),
       },
       {
         id: 'cli_demo_3',
         name: 'Jimmy Wilson',
         company: 'Wilson Renovations',
-        email: 'jimmy@example.com',
-        phone: '+1 (555) 010-2003',
-        address: '5 Harbor Rd, San Diego, CA',
+        email: 'jimmy@wilsonreno.com',
+        phone: '(619) 555-0142',
+        address: '5 Harbor Rd, San Diego, CA 92101',
         status: 'client',
         createdAt: toISO(daysAgo(120)),
         updatedAt: toISO(daysAgo(1)),
@@ -1710,117 +1801,206 @@ export default function App() {
         id: 'cli_demo_4',
         name: 'Rich Richards',
         company: 'Richards Consulting',
-        email: 'rich@example.com',
-        phone: '+1 (555) 010-2004',
-        address: '101 King St, New York, NY',
+        email: 'rich@richardsconsulting.com',
+        phone: '(212) 555-0187',
+        address: '101 King St, Floor 15, New York, NY 10005',
         status: 'inactive',
         createdAt: toISO(daysAgo(300)),
-        updatedAt: toISO(daysAgo(90)),
+        updatedAt: toISO(daysAgo(45)),
+      },
+      {
+        id: 'cli_demo_5',
+        name: 'Maria Chen',
+        company: 'Chen Tech Solutions',
+        email: 'maria@chentech.io',
+        phone: '(415) 555-0321',
+        address: '500 Tech Blvd, San Francisco, CA 94107',
+        status: 'lead',
+        createdAt: toISO(daysAgo(5)),
+        updatedAt: toISO(daysAgo(1)),
+        notes: 'Referred by Jimmy Wilson. Interested in e-commerce site.',
       },
     ];
 
     const demoEstimates: Estimate[] = [
       {
         id: 'est_demo_1',
-        number: 'EST-0007',
+        number: 'EST-2501-0001',
         clientId: 'cli_demo_3',
         client: 'Jimmy Wilson',
         clientCompany: 'Wilson Renovations',
-        clientEmail: 'jimmy@example.com',
-        clientAddress: '5 Harbor Rd, San Diego, CA',
+        clientEmail: 'jimmy@wilsonreno.com',
+        clientPhone: '(619) 555-0142',
+        clientAddress: '5 Harbor Rd, San Diego, CA 92101',
+        projectTitle: 'Master Bathroom Renovation',
+        scopeOfWork: 'Complete bathroom repair including:\n• Removal of existing fixtures\n• Installation of new vanity and sink\n• Toilet replacement\n• New faucet installation\n• Basic plumbing inspection',
+        timeline: '3-4 days',
+        exclusions: 'Tile work, electrical modifications, permits',
+        acceptanceTerms: 'Reply "Approved" to this email or sign below',
         category: 'Service',
         description: 'Bathroom repair + fixture replacement',
-        date: toISO(daysAgo(5)),
-        validUntil: toISO(daysFromNow(9)),
+        date: toISO(daysAgo(12)),
+        validUntil: toISO(daysFromNow(2)),
         status: 'accepted',
+        sentAt: toISO(daysAgo(10)),
+        followUpDate: toISO(daysAgo(3)),
+        followUpCount: 1,
+        lastFollowUp: toISO(daysAgo(5)),
         items: [
-          { id: 'e1_i1', description: 'Labor (3 hrs)', quantity: 3, rate: 95 },
-          { id: 'e1_i2', description: 'Fixture & materials', quantity: 1, rate: 180 },
+          { id: 'e1_i1', description: 'Labor (demolition & install)', quantity: 12, rate: 95 },
+          { id: 'e1_i2', description: 'Vanity w/ sink (36")', quantity: 1, rate: 680 },
+          { id: 'e1_i3', description: 'Toilet (Kohler Highline)', quantity: 1, rate: 320 },
+          { id: 'e1_i4', description: 'Faucet & hardware', quantity: 1, rate: 180 },
         ],
-        subtotal: 465,
-        discount: 0,
+        subtotal: 2320,
+        discount: 100,
         taxRate: 8,
         shipping: 0,
-        amount: Math.round((465 + 465 * 0.08) * 100) / 100,
-        notes: 'Thank you! This estimate is valid for 14 days.',
-        terms: '50% deposit to schedule work. Remaining due upon completion.',
-        poNumber: 'PO-1027',
+        amount: Math.round((2220 + 2220 * 0.08) * 100) / 100,
+        notes: 'Thank you for choosing Wilson Renovations! Materials include manufacturer warranty.',
+        terms: '50% deposit required to schedule work. Remaining balance due upon completion.',
+        poNumber: 'WR-2025-1027',
       },
       {
         id: 'est_demo_2',
-        number: 'EST-0008',
+        number: 'EST-2501-0002',
         clientId: 'cli_demo_1',
         client: 'Kenny Barria',
         clientCompany: 'KB Landscaping',
-        clientEmail: 'kenny@example.com',
-        clientAddress: '12 Palm St, Miami, FL',
+        clientEmail: 'kenny@kblandscaping.com',
+        clientPhone: '(305) 555-0198',
+        clientAddress: '12 Palm St, Miami, FL 33101',
+        projectTitle: 'Monthly Lawn Maintenance Package',
+        scopeOfWork: 'Comprehensive lawn care service including:\n• Weekly mowing and edging\n• Hedge trimming (monthly)\n• Weed control and treatment\n• Green waste removal',
+        timeline: 'Ongoing (monthly billing)',
+        exclusions: 'Tree removal, major landscaping changes, pest control',
+        acceptanceTerms: 'Sign and return this estimate to begin service',
         category: 'Service',
         description: 'Monthly lawn maintenance (4 visits)',
-        date: toISO(daysAgo(2)),
-        validUntil: toISO(daysFromNow(12)),
+        date: toISO(daysAgo(8)),
+        validUntil: toISO(daysFromNow(6)),
         status: 'sent',
+        sentAt: toISO(daysAgo(7)),
+        followUpDate: toISO(daysAgo(0)),
+        followUpCount: 0,
         items: [
           { id: 'e2_i1', description: 'Lawn mow + edge (per visit)', quantity: 4, rate: 85 },
-          { id: 'e2_i2', description: 'Hedge trim (one time)', quantity: 1, rate: 120 },
+          { id: 'e2_i2', description: 'Hedge trim (monthly)', quantity: 1, rate: 120 },
+          { id: 'e2_i3', description: 'Weed treatment', quantity: 1, rate: 65 },
         ],
-        subtotal: 460,
-        discount: 20,
+        subtotal: 525,
+        discount: 25,
         taxRate: 0,
         shipping: 0,
-        amount: 440,
-        notes: 'Includes green waste removal.',
-        terms: 'Net 7 days after acceptance.',
+        amount: 500,
+        notes: 'First month includes complimentary irrigation check.',
+        terms: 'Monthly billing on the 1st. Cancel anytime with 7 days notice.',
       },
       {
         id: 'est_demo_3',
-        number: 'EST-0009',
+        number: 'EST-2501-0003',
         clientId: 'cli_demo_2',
         client: 'Sophia Stanley',
         clientCompany: 'Stanley Studio',
-        clientEmail: 'sophia@example.com',
-        clientAddress: '88 Market Ave, Austin, TX',
-        category: 'Service',
+        clientEmail: 'sophia@stanleystudio.co',
+        clientPhone: '(512) 555-0234',
+        clientAddress: '88 Market Ave, Suite 200\nAustin, TX 78701',
+        projectTitle: 'Complete Brand Identity Package',
+        scopeOfWork: 'Full brand identity design including:\n• Discovery session & brand strategy\n• Moodboard and direction presentation\n• 3 unique logo concepts with revisions\n• Color palette and typography selection\n• Brand guidelines document (PDF)',
+        timeline: '2-3 weeks',
+        exclusions: 'Website design, marketing collateral, social media templates',
+        acceptanceTerms: 'Pay 50% deposit via invoice link to begin project',
+        category: 'Design',
         description: 'Brand kit design (logo, colors, typography)',
-        date: toISO(daysAgo(15)),
-        validUntil: toISO(daysAgo(1)),
+        date: toISO(daysAgo(3)),
+        validUntil: toISO(daysFromNow(11)),
         status: 'draft',
         items: [
-          { id: 'e3_i1', description: 'Discovery call + moodboard', quantity: 1, rate: 250 },
-          { id: 'e3_i2', description: 'Logo concepts (3)', quantity: 1, rate: 900 },
-          { id: 'e3_i3', description: 'Final files + brand guide', quantity: 1, rate: 650 },
+          { id: 'e3_i1', description: 'Discovery session + strategy', quantity: 1, rate: 350 },
+          { id: 'e3_i2', description: 'Logo concepts (3 directions)', quantity: 1, rate: 1200 },
+          { id: 'e3_i3', description: 'Revisions (up to 3 rounds)', quantity: 1, rate: 400 },
+          { id: 'e3_i4', description: 'Brand guide + final files', quantity: 1, rate: 550 },
         ],
-        subtotal: 1800,
+        subtotal: 2500,
         discount: 0,
         taxRate: 0,
         shipping: 0,
-        amount: 1800,
-        notes: 'Draft estimate (not yet sent).',
-        terms: '50% upfront. Remaining due before final delivery.',
+        amount: 2500,
+        notes: 'Excited to bring your brand vision to life!',
+        terms: '50% deposit to begin. Final 50% due before delivery of final files.',
       },
       {
         id: 'est_demo_4',
-        number: 'EST-0010',
+        number: 'EST-2501-0004',
         clientId: 'cli_demo_4',
         client: 'Rich Richards',
         clientCompany: 'Richards Consulting',
-        clientEmail: 'rich@example.com',
-        clientAddress: '101 King St, New York, NY',
-        category: 'Service',
+        clientEmail: 'rich@richardsconsulting.com',
+        clientPhone: '(212) 555-0187',
+        clientAddress: '101 King St, Floor 15\nNew York, NY 10005',
+        projectTitle: 'Executive Strategy Workshop',
+        scopeOfWork: 'One-day intensive strategy session including:\n• Pre-workshop stakeholder interviews\n• Full-day facilitated workshop\n• Strategic roadmap development\n• Executive summary report',
+        timeline: '1 day workshop + 2 weeks for deliverables',
+        exclusions: 'Implementation support, ongoing consulting, travel expenses',
+        acceptanceTerms: 'Confirm preferred date and pay deposit to secure booking',
+        category: 'Consulting',
         description: 'Quarterly strategy workshop (1 day)',
-        date: toISO(daysAgo(40)),
-        validUntil: toISO(daysAgo(20)),
+        date: toISO(daysAgo(45)),
+        validUntil: toISO(daysAgo(15)),
         status: 'declined',
+        sentAt: toISO(daysAgo(44)),
+        followUpDate: toISO(daysAgo(37)),
+        followUpCount: 2,
+        lastFollowUp: toISO(daysAgo(30)),
         items: [
-          { id: 'e4_i1', description: 'On-site workshop', quantity: 1, rate: 2500 },
-          { id: 'e4_i2', description: 'Follow-up report', quantity: 1, rate: 600 },
+          { id: 'e4_i1', description: 'Pre-workshop prep & interviews', quantity: 1, rate: 800 },
+          { id: 'e4_i2', description: 'Full-day on-site workshop', quantity: 1, rate: 3500 },
+          { id: 'e4_i3', description: 'Strategic report & roadmap', quantity: 1, rate: 1200 },
         ],
-        subtotal: 3100,
-        discount: 100,
+        subtotal: 5500,
+        discount: 0,
         taxRate: 0,
         shipping: 0,
-        amount: 3000,
-        notes: 'Declined — budget shifted this quarter.',
-        terms: 'Net 14 upon acceptance.',
+        amount: 5500,
+        notes: 'Client declined — budget reallocated to Q2.',
+        terms: '40% deposit to book. Balance due 7 days before workshop date.',
+      },
+      {
+        id: 'est_demo_5',
+        number: 'EST-2501-0005',
+        clientId: 'cli_demo_5',
+        client: 'Maria Chen',
+        clientCompany: 'Chen Tech Solutions',
+        clientEmail: 'maria@chentech.io',
+        clientPhone: '(415) 555-0321',
+        clientAddress: '500 Tech Blvd\nSan Francisco, CA 94107',
+        projectTitle: 'E-commerce Website Development',
+        scopeOfWork: 'Custom e-commerce website build:\n• UI/UX design (mobile-first)\n• Shopify Plus implementation\n• Product catalog setup (up to 100 SKUs)\n• Payment gateway integration\n• Admin training session (2 hrs)',
+        timeline: '6-8 weeks',
+        exclusions: 'Product photography, copywriting, inventory management, marketing',
+        acceptanceTerms: 'Sign contract and pay 30% deposit to begin',
+        category: 'Development',
+        description: 'E-commerce website (Shopify Plus)',
+        date: toISO(daysAgo(2)),
+        validUntil: toISO(daysFromNow(12)),
+        status: 'sent',
+        sentAt: toISO(daysAgo(1)),
+        followUpDate: toISO(daysFromNow(6)),
+        followUpCount: 0,
+        items: [
+          { id: 'e5_i1', description: 'Discovery & planning', quantity: 1, rate: 1500 },
+          { id: 'e5_i2', description: 'UI/UX design', quantity: 1, rate: 3500 },
+          { id: 'e5_i3', description: 'Shopify development', quantity: 1, rate: 6000 },
+          { id: 'e5_i4', description: 'Testing & QA', quantity: 1, rate: 1200 },
+          { id: 'e5_i5', description: 'Launch & training', quantity: 1, rate: 800 },
+        ],
+        subtotal: 13000,
+        discount: 500,
+        taxRate: 8.625,
+        shipping: 0,
+        amount: Math.round((12500 + 12500 * 0.08625) * 100) / 100,
+        notes: 'Includes 30 days of bug fixes post-launch. Hosting not included.',
+        terms: '30% deposit to start. 40% at design approval. Final 30% before launch.',
       },
     ];
 
@@ -5228,32 +5408,43 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
       </main>
 
       <div className="no-print fixed bottom-0 left-0 right-0 z-[55] pb-safe">
-        <div className="bg-slate-950/95 backdrop-blur-xl border-t border-slate-800/50 px-2 pt-2 pb-3">
-          <div className="max-w-lg mx-auto flex justify-between items-end relative">
+        <div className="bg-slate-950/95 backdrop-blur-xl border-t border-slate-800/50 px-1 pt-2 pb-3">
+          <div className="max-w-xl mx-auto flex justify-between items-end relative">
             {/* Home */}
             <button 
               onClick={() => setCurrentPage(Page.Dashboard)} 
-              className={`flex-1 flex flex-col items-center justify-center py-2 transition-all active:scale-95 ${currentPage === Page.Dashboard ? 'text-white' : 'text-slate-500'}`}
+              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${currentPage === Page.Dashboard ? 'text-white' : 'text-slate-500'}`}
             >
-              <div className={`p-2 rounded-xl ${currentPage === Page.Dashboard ? 'bg-slate-800' : ''}`}>
-                <LayoutGrid size={22} strokeWidth={currentPage === Page.Dashboard ? 2 : 1.5} />
+              <div className={`p-1.5 rounded-lg ${currentPage === Page.Dashboard ? 'bg-slate-800' : ''}`}>
+                <LayoutGrid size={20} strokeWidth={currentPage === Page.Dashboard ? 2 : 1.5} />
               </div>
-              <span className={`text-[11px] mt-1 ${currentPage === Page.Dashboard ? 'font-bold text-white' : 'font-medium text-slate-500'}`}>Home</span>
+              <span className={`text-[10px] mt-0.5 ${currentPage === Page.Dashboard ? 'font-bold text-white' : 'font-medium text-slate-500'}`}>Home</span>
             </button>
 
             {/* Invoice */}
             <button 
-              onClick={() => setCurrentPage(Page.Invoices)} 
-              className={`flex-1 flex flex-col items-center justify-center py-2 transition-all active:scale-95 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) ? 'text-white' : 'text-slate-500'}`}
+              onClick={() => { setBillingDocType('invoice'); setCurrentPage(Page.Invoices); }} 
+              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'invoice' ? 'text-white' : 'text-slate-500'}`}
             >
-              <div className={`p-2 rounded-xl ${(currentPage === Page.Invoices || currentPage === Page.Invoice) ? 'bg-slate-800' : ''}`}>
-                <FileText size={22} strokeWidth={(currentPage === Page.Invoices || currentPage === Page.Invoice) ? 2 : 1.5} />
+              <div className={`p-1.5 rounded-lg ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'invoice' ? 'bg-slate-800' : ''}`}>
+                <FileText size={20} strokeWidth={(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'invoice' ? 2 : 1.5} />
               </div>
-              <span className={`text-[11px] mt-1 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) ? 'font-bold text-white' : 'font-medium text-slate-500'}`}>Invoice</span>
+              <span className={`text-[10px] mt-0.5 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'invoice' ? 'font-bold text-white' : 'font-medium text-slate-500'}`}>Invoice</span>
+            </button>
+
+            {/* Estimate */}
+            <button 
+              onClick={() => { setBillingDocType('estimate'); setCurrentPage(Page.Invoices); }} 
+              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 'text-white' : 'text-slate-500'}`}
+            >
+              <div className={`p-1.5 rounded-lg ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 'bg-purple-600' : ''}`}>
+                <ClipboardList size={20} strokeWidth={(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 2 : 1.5} />
+              </div>
+              <span className={`text-[10px] mt-0.5 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 'font-bold text-purple-400' : 'font-medium text-slate-500'}`}>Estimate</span>
             </button>
 
             {/* Center FAB - Ledger with + */}
-            <div className="flex-1 flex flex-col items-center -mt-4">
+            <div className="flex-1 flex flex-col items-center -mt-3">
               <button 
                 onClick={() => {
                   if (currentPage === Page.AllTransactions || currentPage === Page.Ledger) {
@@ -5262,33 +5453,33 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                     setCurrentPage(Page.AllTransactions);
                   }
                 }} 
-                className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/30 transition-all active:scale-95 ${(currentPage === Page.AllTransactions || currentPage === Page.Ledger) ? 'bg-blue-600' : 'bg-blue-600'}`}
+                className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/30 transition-all active:scale-95 bg-blue-600"
               >
-                <Plus size={28} strokeWidth={2.5} className="text-white" />
+                <Plus size={24} strokeWidth={2.5} className="text-white" />
               </button>
-              <span className={`text-[11px] mt-1.5 ${(currentPage === Page.AllTransactions || currentPage === Page.Ledger) ? 'font-bold text-blue-400' : 'font-medium text-slate-500'}`}>Ledger</span>
+              <span className={`text-[10px] mt-1 ${(currentPage === Page.AllTransactions || currentPage === Page.Ledger) ? 'font-bold text-blue-400' : 'font-medium text-slate-500'}`}>Ledger</span>
             </div>
 
             {/* Clients */}
             <button 
               onClick={() => setCurrentPage(Page.Clients)} 
-              className={`flex-1 flex flex-col items-center justify-center py-2 transition-all active:scale-95 ${currentPage === Page.Clients ? 'text-white' : 'text-slate-500'}`}
+              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${currentPage === Page.Clients ? 'text-white' : 'text-slate-500'}`}
             >
-              <div className={`p-2 rounded-xl ${currentPage === Page.Clients ? 'bg-slate-800' : ''}`}>
-                <Users size={22} strokeWidth={currentPage === Page.Clients ? 2 : 1.5} />
+              <div className={`p-1.5 rounded-lg ${currentPage === Page.Clients ? 'bg-slate-800' : ''}`}>
+                <Users size={20} strokeWidth={currentPage === Page.Clients ? 2 : 1.5} />
               </div>
-              <span className={`text-[11px] mt-1 ${currentPage === Page.Clients ? 'font-bold text-white' : 'font-medium text-slate-500'}`}>Clients</span>
+              <span className={`text-[10px] mt-0.5 ${currentPage === Page.Clients ? 'font-bold text-white' : 'font-medium text-slate-500'}`}>Clients</span>
             </button>
 
             {/* Reports */}
             <button 
               onClick={() => setCurrentPage(Page.Reports)} 
-              className={`flex-1 flex flex-col items-center justify-center py-2 transition-all active:scale-95 ${currentPage === Page.Reports ? 'text-white' : 'text-slate-500'}`}
+              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${currentPage === Page.Reports ? 'text-white' : 'text-slate-500'}`}
             >
-              <div className={`p-2 rounded-xl ${currentPage === Page.Reports ? 'bg-slate-800' : ''}`}>
-                <BarChart3 size={22} strokeWidth={currentPage === Page.Reports ? 2 : 1.5} />
+              <div className={`p-1.5 rounded-lg ${currentPage === Page.Reports ? 'bg-slate-800' : ''}`}>
+                <BarChart3 size={20} strokeWidth={currentPage === Page.Reports ? 2 : 1.5} />
               </div>
-              <span className={`text-[11px] mt-1 ${currentPage === Page.Reports ? 'font-bold text-white' : 'font-medium text-slate-500'}`}>Reports</span>
+              <span className={`text-[10px] mt-0.5 ${currentPage === Page.Reports ? 'font-bold text-white' : 'font-medium text-slate-500'}`}>Reports</span>
             </button>
           </div>
         </div>
