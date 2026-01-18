@@ -104,6 +104,12 @@ export interface Estimate {
   terms?: string;
   status: EstimateStatus;
 
+  // Follow-up tracking
+  sentAt?: string;           // ISO date when marked as sent
+  followUpDate?: string;     // ISO date for next follow-up
+  followUpCount?: number;    // Number of follow-ups done
+  lastFollowUp?: string;     // ISO date of last follow-up
+
   // Line items
   items?: EstimateItem[];
   subtotal?: number;
