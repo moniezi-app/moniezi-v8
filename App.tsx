@@ -89,6 +89,28 @@ const generateId = (prefix: string) => {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 };
 
+// --- Utility: Invoice/Estimate Number Generator ---
+const generateDocNumber = (prefix: 'INV' | 'EST', existingDocs: { number?: string }[]): string => {
+  const now = new Date();
+  const yearMonth = `${now.getFullYear().toString().slice(-2)}${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+  
+  // Find highest existing number for this prefix and year-month
+  let maxSeq = 0;
+  const pattern = new RegExp(`^${prefix}-${yearMonth}-(\\d+)$`);
+  
+  existingDocs.forEach(doc => {
+    if (doc.number) {
+      const match = doc.number.match(pattern);
+      if (match) {
+        const seq = parseInt(match[1], 10);
+        if (seq > maxSeq) maxSeq = seq;
+      }
+    }
+  });
+  
+  const nextSeq = (maxSeq + 1).toString().padStart(4, '0');
+  return `${prefix}-${yearMonth}-${nextSeq}`;
+};
 
 
 // --- Clients Helpers ---
@@ -1809,14 +1831,15 @@ export default function App() {
       }));
       showToast("Invoice updated", "success");
     } else {
+      const invNumber = generateDocNumber('INV', invoices);
       const newInv: Invoice = {
-        id: generateId('inv'), clientId: data.clientId, client: data.client, clientAddress: data.clientAddress, clientEmail: data.clientEmail, clientCompany: data.clientCompany,
+        id: generateId('inv'), number: invNumber, clientId: data.clientId, client: data.client, clientAddress: data.clientAddress, clientEmail: data.clientEmail, clientCompany: data.clientCompany,
         amount: totalAmount, category: data.category || "Service", description, date: data.date || new Date().toISOString().split('T')[0],
         due: data.due || new Date().toISOString().split('T')[0], status: 'unpaid', notes: data.notes || settings.defaultInvoiceNotes,
         terms: data.terms || settings.defaultInvoiceTerms, payMethod: data.payMethod, recurrence: data.recurrence, items: data.items,
         subtotal, discount: data.discount, shipping: data.shipping, taxRate: data.taxRate, poNumber: data.poNumber
       };
-      setInvoices(prev => [newInv, ...prev]); showToast("Invoice generated", "success");
+      setInvoices(prev => [newInv, ...prev]); showToast(`Invoice ${invNumber} created`, "success");
     }
     setIsDrawerOpen(false);
   };
@@ -1844,8 +1867,10 @@ export default function App() {
       setEstimates(prev => prev.map(e => e.id === activeItem.id ? ({ ...e, ...data, amount: totalAmount, subtotal, description } as Estimate) : e));
       showToast('Estimate updated', 'success');
     } else {
+      const estNumber = generateDocNumber('EST', estimates);
       const newEst: Estimate = {
         id: generateId('est'),
+        number: estNumber,
         clientId: data.clientId,
         client: data.client!,
         clientCompany: data.clientCompany,
@@ -1867,7 +1892,7 @@ export default function App() {
         poNumber: data.poNumber
       };
       setEstimates(prev => [newEst, ...prev]);
-      showToast('Estimate generated', 'success');
+      showToast(`Estimate ${estNumber} created`, 'success');
     }
     setIsDrawerOpen(false);
   };
@@ -3236,8 +3261,9 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                     <div className="flex items-start gap-4 mb-4">
                       <div className={`w-12 h-12 bg-slate-100 dark:bg-blue-500/10 text-slate-600 dark:text-blue-400 rounded-md flex items-center justify-center flex-shrink-0 ${isVoid ? 'bg-slate-200 dark:bg-slate-800 text-slate-400' : ''}`}>{isVoid ? <Ban size={20} strokeWidth={1.5} /> : isRecurring ? <Repeat size={20} strokeWidth={1.5} className="text-blue-500" /> : <FileText size={20} strokeWidth={1.5} />}</div>
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
                           <div className={`font-bold text-slate-900 dark:text-white text-lg ${isVoid ? 'line-through text-slate-400' : ''}`}>{inv.client}</div>
+                          {inv.number && <span className="text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded font-mono font-bold">{inv.number}</span>}
                           {isRecurring && <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">Recurring</span>}
                         </div>
                         <div className="text-sm font-medium text-slate-600 dark:text-slate-300">{inv.description}</div>
@@ -3300,8 +3326,9 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                             <div className="flex items-start gap-4 mb-4">
                               <div className="w-12 h-12 bg-slate-100 dark:bg-blue-500/10 text-slate-600 dark:text-blue-400 rounded-md flex items-center justify-center flex-shrink-0"><FileText size={20} strokeWidth={1.5} /></div>
                               <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2 mb-1">
+                                <div className="flex items-center gap-2 mb-1 flex-wrap">
                                   <div className="font-bold text-slate-900 dark:text-white text-lg">{est.client}</div>
+                                  {est.number && <span className="text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded font-mono font-bold">{est.number}</span>}
                                 </div>
                                 <div className="text-sm font-medium text-slate-600 dark:text-slate-300">{est.description}</div>
                                 <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{est.date}{est.validUntil ? ` • Valid until ${est.validUntil}` : ''}</div>
@@ -4185,6 +4212,184 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
            </div>
         )}
 
+        {/* ==================== CLIENTS PAGE ==================== */}
+        {currentPage === Page.Clients && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 pb-24">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-lg bg-purple-50 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400">
+                  <Users size={24} strokeWidth={1.5} />
+                </div>
+                <h2 className="text-3xl font-bold tracking-tight text-slate-950 dark:text-white font-brand">Clients</h2>
+              </div>
+              <button 
+                onClick={() => { 
+                  setEditingClient({ status: 'lead' }); 
+                  setIsClientModalOpen(true); 
+                }} 
+                className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-500 transition-all active:scale-95"
+              >
+                <Plus size={24} strokeWidth={2.5} />
+              </button>
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="flex bg-slate-100 dark:bg-slate-900 p-1 rounded-lg border border-slate-200 dark:border-slate-800 overflow-x-auto custom-scrollbar">
+              {(['all', 'lead', 'client', 'inactive'] as const).map(f => (
+                <button
+                  key={f}
+                  onClick={() => setClientFilter(f)}
+                  className={`flex-1 min-w-[80px] py-2.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${
+                    clientFilter === f 
+                      ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-white shadow-sm' 
+                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+                >
+                  {f === 'all' ? `All (${clients.length})` : `${f.charAt(0).toUpperCase() + f.slice(1)} (${clients.filter(c => c.status === f).length})`}
+                </button>
+              ))}
+            </div>
+
+            {/* Search Bar */}
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={18} />
+              <input
+                type="text"
+                placeholder="Search clients by name, company, or email..."
+                value={clientSearch}
+                onChange={e => setClientSearch(e.target.value)}
+                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl pl-12 pr-4 py-4 font-medium text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20 shadow-sm"
+              />
+            </div>
+
+            {/* Clients List */}
+            <div className="space-y-3">
+              {(() => {
+                const filtered = clients
+                  .filter(c => clientFilter === 'all' || c.status === clientFilter)
+                  .filter(c => {
+                    if (!clientSearch.trim()) return true;
+                    const search = clientSearch.toLowerCase();
+                    return (
+                      c.name.toLowerCase().includes(search) ||
+                      (c.company || '').toLowerCase().includes(search) ||
+                      (c.email || '').toLowerCase().includes(search)
+                    );
+                  })
+                  .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+
+                if (filtered.length === 0) {
+                  return (
+                    <EmptyState
+                      icon={<Users size={32} />}
+                      title="No Clients Found"
+                      subtitle={clientFilter === 'all' 
+                        ? "Start by adding your first lead or client." 
+                        : `No ${clientFilter}s found. Try adjusting your filters.`}
+                      action={() => { 
+                        setEditingClient({ status: 'lead' }); 
+                        setIsClientModalOpen(true); 
+                      }}
+                      actionLabel="Add Client"
+                    />
+                  );
+                }
+
+                return filtered.map(client => {
+                  const statusColors: Record<ClientStatus, string> = {
+                    lead: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+                    client: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+                    inactive: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                  };
+
+                  // Calculate client lifetime value
+                  const clientRevenue = invoices
+                    .filter(inv => inv.clientId === client.id && inv.status === 'paid')
+                    .reduce((sum, inv) => sum + inv.amount, 0);
+
+                  const clientInvoiceCount = invoices.filter(inv => inv.clientId === client.id).length;
+                  const clientEstimateCount = estimates.filter(est => est.clientId === client.id).length;
+
+                  return (
+                    <div
+                      key={client.id}
+                      onClick={() => {
+                        setEditingClient(client);
+                        setIsClientModalOpen(true);
+                      }}
+                      className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-blue-500/30 hover:shadow-lg transition-all cursor-pointer shadow-sm"
+                    >
+                      {/* Top Row: Icon + Name + Status Badge */}
+                      <div className="flex items-start gap-4 mb-3">
+                        <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center flex-shrink-0">
+                          <User size={20} strokeWidth={2} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-white truncate">
+                              {client.name}
+                            </h3>
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase ${statusColors[client.status]}`}>
+                              {client.status}
+                            </span>
+                          </div>
+                          {client.company && (
+                            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
+                              {client.company}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Contact Info */}
+                      {(client.email || client.phone) && (
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-600 dark:text-slate-400 mb-3">
+                          {client.email && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-slate-400">✉</span>
+                              <span className="truncate">{client.email}</span>
+                            </div>
+                          )}
+                          {client.phone && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-slate-400">☎</span>
+                              {client.phone}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Notes Preview */}
+                      {client.notes && (
+                        <div className="text-sm text-slate-500 dark:text-slate-400 italic line-clamp-2 mb-3">
+                          {client.notes}
+                        </div>
+                      )}
+
+                      {/* Stats Row */}
+                      <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800">
+                        {clientRevenue > 0 && (
+                          <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                            LTV: {formatCurrency.format(clientRevenue)}
+                          </span>
+                        )}
+                        {clientInvoiceCount > 0 && (
+                          <span>{clientInvoiceCount} invoice{clientInvoiceCount !== 1 ? 's' : ''}</span>
+                        )}
+                        {clientEstimateCount > 0 && (
+                          <span>{clientEstimateCount} estimate{clientEstimateCount !== 1 ? 's' : ''}</span>
+                        )}
+                        <span className="ml-auto">Updated: {new Date(client.updatedAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+        )}
+
         {currentPage === Page.Settings && (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 pb-24">
             {/* Settings Header */}
@@ -4706,7 +4911,38 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
               {editingClient.id && (
                 <button
                   onClick={() => {
-                    if (!confirm('Delete this client?')) return;
+                    const clientInvoices = invoices.filter(inv => inv.clientId === editingClient.id);
+                    const clientEstimates = estimates.filter(est => est.clientId === editingClient.id);
+                    
+                    // Build warning message if there are linked documents
+                    let confirmMsg = 'Delete this client?';
+                    if (clientInvoices.length > 0 || clientEstimates.length > 0) {
+                      const parts = [];
+                      if (clientInvoices.length > 0) parts.push(`${clientInvoices.length} invoice${clientInvoices.length !== 1 ? 's' : ''}`);
+                      if (clientEstimates.length > 0) parts.push(`${clientEstimates.length} estimate${clientEstimates.length !== 1 ? 's' : ''}`);
+                      confirmMsg = `This client has ${parts.join(' and ')}. Deleting will unlink these documents (they won't be deleted). Continue?`;
+                    }
+                    
+                    if (!confirm(confirmMsg)) return;
+                    
+                    // Unlink invoices from this client
+                    if (clientInvoices.length > 0) {
+                      setInvoices(prev => prev.map(inv => 
+                        inv.clientId === editingClient.id 
+                          ? { ...inv, clientId: undefined } 
+                          : inv
+                      ));
+                    }
+                    
+                    // Unlink estimates from this client
+                    if (clientEstimates.length > 0) {
+                      setEstimates(prev => prev.map(est => 
+                        est.clientId === editingClient.id 
+                          ? { ...est, clientId: undefined } 
+                          : est
+                      ));
+                    }
+                    
                     setClients(prev => prev.filter(c => c.id !== editingClient.id));
                     setIsClientModalOpen(false);
                     setEditingClient({ status: 'lead' });
