@@ -77,7 +77,7 @@ export interface Invoice {
   poNumber?: string;
 }
 
-// Estimates (Quotes)
+// Estimates (Quotes/Proposals)
 export type EstimateStatus = 'draft' | 'sent' | 'accepted' | 'declined' | 'void';
 
 export type EstimateItem = InvoiceItem;
@@ -89,26 +89,40 @@ export interface Estimate {
   // Link to Client (preferred)
   clientId?: string;
 
-  // Display fields
+  // Client display fields
   client: string;
   clientCompany?: string;
   clientAddress?: string;
   clientEmail?: string;
+  clientPhone?: string;
 
-  amount: number; // Total (calculated)
+  // Proposal details
+  projectTitle?: string;        // "Website Redesign" - main title for the proposal
+  scopeOfWork?: string;         // Detailed description of what's included
+  timeline?: string;            // "2-3 weeks", "Q1 2025", etc.
+  exclusions?: string;          // What's NOT included in this estimate
+
+  // Financial
+  amount: number;               // Total (calculated)
   category: string;
-  description: string;
-  date: string;
-  validUntil: string;
-  notes?: string;
-  terms?: string;
+  description: string;          // Brief description / summary
+  
+  // Dates
+  date: string;                 // Created/issued date
+  validUntil: string;           // Expiry date
+  
+  // Terms & Notes
+  notes?: string;               // Additional notes to client
+  terms?: string;               // Acceptance terms / conditions
+  acceptanceTerms?: string;     // How to accept (e.g., "Sign and return", "Reply to confirm")
+  
   status: EstimateStatus;
 
   // Follow-up tracking
-  sentAt?: string;           // ISO date when marked as sent
-  followUpDate?: string;     // ISO date for next follow-up
-  followUpCount?: number;    // Number of follow-ups done
-  lastFollowUp?: string;     // ISO date of last follow-up
+  sentAt?: string;
+  followUpDate?: string;
+  followUpCount?: number;
+  lastFollowUp?: string;
 
   // Line items
   items?: EstimateItem[];
@@ -116,7 +130,7 @@ export interface Estimate {
   discount?: number;
   taxRate?: number;
   shipping?: number;
-  poNumber?: string;
+  poNumber?: string;            // Reference/PO number from client
 }
 
 export type FilingStatus = 'single' | 'joint' | 'head';
