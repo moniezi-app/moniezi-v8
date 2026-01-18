@@ -594,6 +594,15 @@ export default function App() {
     requestAnimationFrame(toTop);
     setTimeout(toTop, 0);
   }, [currentPage]);
+  
+  // License / Activation State
+  const LICENSE_STORAGE_KEY = 'moniezi_license';
+  const [isLicenseValid, setIsLicenseValid] = useState<boolean | null>(null); // null = checking, false = invalid, true = valid
+  const [licenseKey, setLicenseKey] = useState('');
+  const [licenseError, setLicenseError] = useState('');
+  const [isValidatingLicense, setIsValidatingLicense] = useState(false);
+  const [licenseInfo, setLicenseInfo] = useState<{ email?: string; purchaseDate?: string; } | null>(null);
+
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [estimates, setEstimates] = useState<Estimate[]>([]);
@@ -663,7 +672,7 @@ export default function App() {
   const [duplicationHistory, setDuplicationHistory] = useState<Record<string, {originalId: string, originalDate: string}>>({});
   
   // Settings Tab State
-  const [settingsTab, setSettingsTab] = useState<'backup' | 'branding' | 'tax' | 'data'>('backup');
+  const [settingsTab, setSettingsTab] = useState<'backup' | 'branding' | 'tax' | 'data' | 'license'>('backup');
 
   const insightsBadgeCount = useMemo(() => {
     return getInsightCount({ transactions, invoices, taxPayments, settings });
@@ -829,6 +838,117 @@ export default function App() {
         document.documentElement.classList.add('dark');
     }
   }, []);
+
+  // License validation on app load
+  useEffect(() => {
+    const checkStoredLicense = async () => {
+      const stored = localStorage.getItem(LICENSE_STORAGE_KEY);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          // Verify the stored license is still valid
+          const isValid = await validateLicenseWithServer(parsed.key);
+          if (isValid) {
+            setIsLicenseValid(true);
+            setLicenseInfo({ email: parsed.email, purchaseDate: parsed.purchaseDate });
+          } else {
+            // License no longer valid, clear it
+            localStorage.removeItem(LICENSE_STORAGE_KEY);
+            setIsLicenseValid(false);
+          }
+        } catch {
+          setIsLicenseValid(false);
+        }
+      } else {
+        setIsLicenseValid(false);
+      }
+    };
+    checkStoredLicense();
+  }, []);
+
+  // Validate license with Cloudflare Worker
+  const validateLicenseWithServer = async (key: string): Promise<boolean> => {
+    try {
+      // Replace with your Cloudflare Worker URL
+      const WORKER_URL = 'https://license.yourdomain.workers.dev/validate';
+      
+      const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ license_key: key }),
+      });
+      
+      if (!response.ok) return false;
+      
+      const data = await response.json();
+      return data.valid === true;
+    } catch (error) {
+      console.error('License validation error:', error);
+      // If network error, check if we have a cached valid license
+      const stored = localStorage.getItem(LICENSE_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Allow offline use if license was previously validated
+        return parsed.validated === true;
+      }
+      return false;
+    }
+  };
+
+  // Handle license activation
+  const handleActivateLicense = async () => {
+    if (!licenseKey.trim()) {
+      setLicenseError('Please enter a license key');
+      return;
+    }
+
+    setIsValidatingLicense(true);
+    setLicenseError('');
+
+    try {
+      // Replace with your Cloudflare Worker URL
+      const WORKER_URL = 'https://license.yourdomain.workers.dev/activate';
+      
+      const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ license_key: licenseKey.trim() }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.valid) {
+        // Store license info
+        const licenseData = {
+          key: licenseKey.trim(),
+          email: data.email || '',
+          purchaseDate: data.purchase_date || new Date().toISOString(),
+          validated: true,
+          activatedAt: new Date().toISOString(),
+        };
+        localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(licenseData));
+        
+        setLicenseInfo({ email: data.email, purchaseDate: data.purchase_date });
+        setIsLicenseValid(true);
+      } else {
+        setLicenseError(data.message || 'Invalid license key. Please check and try again.');
+      }
+    } catch (error) {
+      setLicenseError('Unable to validate license. Please check your internet connection and try again.');
+    } finally {
+      setIsValidatingLicense(false);
+    }
+  };
+
+  // Deactivate license (for settings)
+  const handleDeactivateLicense = () => {
+    if (confirm('Are you sure you want to deactivate your license? You will need to re-enter your license key to use the app.')) {
+      localStorage.removeItem(LICENSE_STORAGE_KEY);
+      setIsLicenseValid(false);
+      setLicenseKey('');
+      setLicenseInfo(null);
+    }
+  };
 
   useEffect(() => {
     if (currentPage === Page.Reports && scrollToTaxSnapshot && taxSnapshotRef.current) {
@@ -3347,6 +3467,144 @@ TIMELINE: Assumes 48-72hr feedback turnaround.`,
       return { subtotal, total, tax: taxAmount };
   }, [activeItem]);
 
+  // Show loading state while checking license
+  if (isLicenseValid === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-950">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+            <Wallet size={32} className="text-white" />
+          </div>
+          <div className="flex items-center justify-center gap-3">
+            <Loader2 size={20} className="animate-spin text-blue-500" />
+            <span className="text-slate-400 font-medium">Loading Moniezi...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show license activation screen if not valid
+  if (isLicenseValid === false) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
+        {/* Background decoration */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
+        </div>
+        
+        <div className="relative w-full max-w-md">
+          {/* Logo and Welcome */}
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-2xl shadow-blue-500/30 transform hover:scale-105 transition-transform">
+              <Wallet size={40} className="text-white" />
+            </div>
+            <h1 className="text-3xl font-black text-white mb-2 tracking-tight">Welcome to Moniezi</h1>
+            <p className="text-slate-400">Your all-in-one financial management app</p>
+          </div>
+
+          {/* License Card */}
+          <div className="bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-800 p-8 shadow-2xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                <Key size={20} className="text-emerald-400" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-white">Activate Your License</h2>
+                <p className="text-sm text-slate-500">Enter your Gumroad license key</p>
+              </div>
+            </div>
+
+            {/* License Key Input */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                  License Key
+                </label>
+                <input
+                  type="text"
+                  value={licenseKey}
+                  onChange={(e) => { setLicenseKey(e.target.value); setLicenseError(''); }}
+                  onKeyDown={(e) => e.key === 'Enter' && handleActivateLicense()}
+                  placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX"
+                  className="w-full px-4 py-4 bg-slate-950 border border-slate-700 rounded-xl text-white font-mono text-sm placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                  disabled={isValidatingLicense}
+                  autoFocus
+                />
+              </div>
+
+              {/* Error Message */}
+              {licenseError && (
+                <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                  <AlertCircle size={16} className="text-red-400 flex-shrink-0" />
+                  <p className="text-sm text-red-400">{licenseError}</p>
+                </div>
+              )}
+
+              {/* Activate Button */}
+              <button
+                onClick={handleActivateLicense}
+                disabled={isValidatingLicense || !licenseKey.trim()}
+                className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+              >
+                {isValidatingLicense ? (
+                  <>
+                    <Loader2 size={20} className="animate-spin" />
+                    Validating...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle size={20} />
+                    Activate License
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Divider */}
+            <div className="flex items-center gap-4 my-6">
+              <div className="flex-1 h-px bg-slate-800" />
+              <span className="text-xs text-slate-600 uppercase tracking-wider">Need a license?</span>
+              <div className="flex-1 h-px bg-slate-800" />
+            </div>
+
+            {/* Purchase Link */}
+            <a
+              href="https://yourusername.gumroad.com/l/moniezi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold rounded-xl text-center transition-all"
+            >
+              Purchase on Gumroad →
+            </a>
+          </div>
+
+          {/* Features Preview */}
+          <div className="mt-8 grid grid-cols-3 gap-4">
+            {[
+              { icon: <TrendingUp size={18} />, label: 'Track Income' },
+              { icon: <Receipt size={18} />, label: 'Manage Expenses' },
+              { icon: <FileText size={18} />, label: 'Create Invoices' },
+            ].map((feature, i) => (
+              <div key={i} className="text-center p-4 bg-slate-900/50 rounded-xl border border-slate-800/50">
+                <div className="w-10 h-10 mx-auto mb-2 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400">
+                  {feature.icon}
+                </div>
+                <span className="text-xs text-slate-500 font-medium">{feature.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Footer */}
+          <p className="text-center text-slate-600 text-xs mt-8">
+            By activating, you agree to our Terms of Service
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <style>{`
@@ -5506,7 +5764,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
             
             {/* Tab Navigation */}
             <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-2 shadow-sm">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
                 <button
                   onClick={() => setSettingsTab('backup')}
                   className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-3 md:px-4 py-3 rounded-lg font-bold text-xs md:text-sm uppercase tracking-wide transition-all ${
@@ -5553,6 +5811,18 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                 >
                   <Trash2 size={18} />
                   <span className="text-[10px] md:text-sm mt-0.5 md:mt-0">Data</span>
+                </button>
+
+                <button
+                  onClick={() => setSettingsTab('license')}
+                  className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-3 md:px-4 py-3 rounded-lg font-bold text-xs md:text-sm uppercase tracking-wide transition-all ${
+                    settingsTab === 'license'
+                      ? 'bg-amber-600 text-white shadow-lg shadow-amber-600/30'
+                      : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  <Key size={18} />
+                  <span className="text-[10px] md:text-sm mt-0.5 md:mt-0">License</span>
                 </button>
               </div>
             </div>
@@ -5749,6 +6019,97 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                         <p className="font-semibold mb-1">⚠️ Warning: Destructive Actions</p>
                         <p className="mb-2"><strong>Load Demo Data:</strong> Adds sample transactions, invoices, and tax payments to help you explore the app's features.</p>
                         <p><strong>Reset & Clear All:</strong> Permanently deletes ALL your data including transactions, invoices, tax payments, and custom categories. This action cannot be undone!</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* License Tab */}
+              {settingsTab === 'license' && (
+                <div className="bg-white dark:bg-slate-900 p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-lg animate-in fade-in slide-in-from-bottom-4">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                      <Key size={20} strokeWidth={2} />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">License</h3>
+                  </div>
+                  
+                  {/* License Status Card */}
+                  <div className={`p-6 rounded-xl border-2 mb-6 ${
+                    isLicenseValid 
+                      ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800' 
+                      : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+                  }`}>
+                    <div className="flex items-center gap-4">
+                      <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
+                        isLicenseValid
+                          ? 'bg-emerald-500 text-white'
+                          : 'bg-red-500 text-white'
+                      }`}>
+                        {isLicenseValid ? <CheckCircle size={28} /> : <AlertCircle size={28} />}
+                      </div>
+                      <div>
+                        <h4 className={`text-lg font-bold ${
+                          isLicenseValid
+                            ? 'text-emerald-900 dark:text-emerald-100'
+                            : 'text-red-900 dark:text-red-100'
+                        }`}>
+                          {isLicenseValid ? 'License Active' : 'No License'}
+                        </h4>
+                        <p className={`text-sm ${
+                          isLicenseValid
+                            ? 'text-emerald-700 dark:text-emerald-300'
+                            : 'text-red-700 dark:text-red-300'
+                        }`}>
+                          {isLicenseValid 
+                            ? 'Your Moniezi license is valid and active'
+                            : 'Please activate your license to use Moniezi'
+                          }
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* License Details */}
+                    {isLicenseValid && licenseInfo && (
+                      <div className="mt-4 pt-4 border-t border-emerald-200 dark:border-emerald-800 grid grid-cols-2 gap-4">
+                        {licenseInfo.email && (
+                          <div>
+                            <label className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Email</label>
+                            <p className="text-sm text-emerald-900 dark:text-emerald-100 font-medium">{licenseInfo.email}</p>
+                          </div>
+                        )}
+                        {licenseInfo.purchaseDate && (
+                          <div>
+                            <label className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Purchased</label>
+                            <p className="text-sm text-emerald-900 dark:text-emerald-100 font-medium">
+                              {new Date(licenseInfo.purchaseDate).toLocaleDateString()}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Deactivate License Button */}
+                  {isLicenseValid && (
+                    <button
+                      onClick={handleDeactivateLicense}
+                      className="w-full py-4 bg-slate-100 dark:bg-slate-800 hover:bg-red-100 dark:hover:bg-red-900/30 text-slate-600 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+                    >
+                      <Ban size={18} />
+                      Deactivate License
+                    </button>
+                  )}
+
+                  {/* Info Box */}
+                  <div className="mt-6 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                      <div className="text-sm text-blue-900 dark:text-blue-100">
+                        <p className="font-semibold mb-1">License Information</p>
+                        <p className="mb-2">Your Moniezi license is tied to your Gumroad purchase. If you need to transfer your license to another device, deactivate it here first, then reactivate on your new device.</p>
+                        <p>Need help? Contact support at <a href="mailto:support@moniezi.app" className="underline">support@moniezi.app</a></p>
                       </div>
                     </div>
                   </div>
