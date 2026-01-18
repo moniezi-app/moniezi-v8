@@ -82,6 +82,23 @@ import { Page, Transaction, Invoice, Estimate, Client, ClientStatus, UserSetting
 import { CATS_IN, CATS_OUT, CATS_BILLING, DEFAULT_PAY_PREFS, DB_KEY, TAX_CONSTANTS, TAX_PLANNER_2026, getFreshDemoData } from './constants';
 import InsightsDashboard from './InsightsDashboard';
 import { getInsightCount } from './services/insightsEngine';
+// DEVELOPMENT OVERRIDE - Remove before production
+if (typeof window !== 'undefined' && (
+  window.location.hostname === 'localhost' || 
+  window.location.hostname.includes('github.io') ||
+  window.location.hostname.includes('127.0.0.1') ||
+  window.location.hostname.includes('moniezi-app.github.io')
+)) {
+  const devLicense = {
+    key: 'DEV-LICENSE-KEY-' + Date.now(),
+    email: 'developer@moniezi.app',
+    purchaseDate: new Date().toISOString(),
+    validated: true,
+    activatedAt: new Date().toISOString(),
+  };
+  localStorage.setItem('moniezi_license', JSON.stringify(devLicense));
+  console.log('🔓 Development mode: License check bypassed');
+}
 // --- Utility: UUID Generator ---
 const generateId = (prefix: string) => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
