@@ -5919,6 +5919,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
             drawerMode === 'create_cat' ? 'New Category' :
             drawerMode === 'add' ? (activeTab === 'billing' ? (billingDocType === 'estimate' ? 'New Estimate' : 'New Invoice') : activeTab === 'income' ? 'Add Income' : 'Add Expense') : 
             drawerMode === 'edit_tx' ? 'Edit Transaction' : 
+            drawerMode === 'edit_inv' ? (billingDocType === 'estimate' ? 'Edit Estimate' : 'Edit Invoice') :
             'Edit Invoice'
          }
       >
