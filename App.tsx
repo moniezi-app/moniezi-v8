@@ -1044,11 +1044,44 @@ export default function App() {
             clientEmail: 'jimmy@wilsonreno.com',
             clientPhone: '(619) 555-0142',
             clientAddress: '5 Harbor Rd, San Diego, CA 92101',
-            projectTitle: 'Master Bathroom Renovation',
-            scopeOfWork: 'Complete bathroom repair including:\n• Removal of existing fixtures\n• Installation of new vanity and sink\n• Toilet replacement\n• New faucet installation\n• Basic plumbing inspection',
-            timeline: '3-4 days',
-            exclusions: 'Tile work, electrical modifications, permits',
-            acceptanceTerms: 'Reply "Approved" to this email or sign below',
+            projectTitle: 'Master Bathroom Complete Renovation',
+            scopeOfWork: `PROJECT OVERVIEW
+Full renovation of the master bathroom (approx. 85 sq ft) including all fixtures, plumbing, and finishes.
+
+DEMOLITION & PREP
+• Remove and dispose of existing vanity, toilet, and all fixtures
+• Disconnect and cap existing plumbing lines
+• Protect adjacent flooring and walls during work
+• Daily cleanup and debris removal
+
+PLUMBING WORK
+• Install new water supply lines for vanity and toilet
+• Relocate drain for new vanity position (per approved layout)
+• Install new shut-off valves
+• Pressure test all connections
+• Final plumbing inspection coordination
+
+FIXTURE INSTALLATION
+• 36" floating vanity with undermount sink (client to select from provided options)
+• Kohler Highline comfort height toilet
+• Single-handle widespread faucet in brushed nickel
+• New supply lines and P-trap
+• Wax ring and toilet mounting hardware
+
+FINISHING
+• Caulk all fixtures with mildew-resistant silicone
+• Install new toilet paper holder and towel bar (included)
+• Final walkthrough and demonstration of all fixtures
+• 1-year workmanship warranty on all labor`,
+            timeline: '5-7 business days',
+            exclusions: `• Tile work / flooring (can quote separately)
+• Electrical modifications or new outlets
+• Drywall repair beyond fixture areas
+• Permit fees (if required by city)
+• Painting or wall finishing
+• Medicine cabinet or mirrors
+• Ventilation / exhaust fan work`,
+            acceptanceTerms: 'To accept this estimate, please reply "APPROVED" to this email or sign and return. Work scheduled within 2 weeks of deposit.',
             category: 'Service',
             description: 'Bathroom repair + fixture replacement',
             date: toISO(daysAgo(12)),
@@ -1059,18 +1092,35 @@ export default function App() {
             followUpCount: 1,
             lastFollowUp: toISO(daysAgo(5)),
             items: [
-              { id: 'e1_i1', description: 'Labor (demolition & install)', quantity: 12, rate: 95 },
-              { id: 'e1_i2', description: 'Vanity w/ sink (36")', quantity: 1, rate: 680 },
-              { id: 'e1_i3', description: 'Toilet (Kohler Highline)', quantity: 1, rate: 320 },
-              { id: 'e1_i4', description: 'Faucet & hardware', quantity: 1, rate: 180 },
+              { id: 'e1_i1', description: 'Labor - Demolition (4 hrs @ $95/hr)', quantity: 4, rate: 95 },
+              { id: 'e1_i2', description: 'Labor - Plumbing rough-in (6 hrs @ $95/hr)', quantity: 6, rate: 95 },
+              { id: 'e1_i3', description: 'Labor - Fixture installation (4 hrs @ $95/hr)', quantity: 4, rate: 95 },
+              { id: 'e1_i4', description: '36" Floating Vanity w/ Undermount Sink', quantity: 1, rate: 680 },
+              { id: 'e1_i5', description: 'Kohler Highline Comfort Height Toilet', quantity: 1, rate: 320 },
+              { id: 'e1_i6', description: 'Widespread Faucet (Brushed Nickel)', quantity: 1, rate: 185 },
+              { id: 'e1_i7', description: 'Supply lines, valves, hardware kit', quantity: 1, rate: 95 },
+              { id: 'e1_i8', description: 'Towel bar + TP holder set', quantity: 1, rate: 65 },
             ],
-            subtotal: 2320,
-            discount: 100,
+            subtotal: 2675,
+            discount: 150,
             taxRate: 8,
             shipping: 0,
-            amount: Math.round((2220 + 2220 * 0.08) * 100) / 100,
-            notes: 'Thank you for choosing Wilson Renovations! Materials include manufacturer warranty.',
-            terms: '50% deposit required to schedule work. Remaining balance due upon completion. Changes to scope may affect final price.',
+            amount: Math.round((2525 + 2525 * 0.08) * 100) / 100,
+            notes: `Thank you for choosing Wilson Renovations! 
+
+All materials include manufacturer warranty. Labor covered by our 1-year workmanship guarantee.
+
+Questions? Call Jimmy directly at (619) 555-0142.`,
+            terms: `PAYMENT TERMS
+• 50% deposit required to schedule work and order materials
+• Remaining 50% due upon completion and final walkthrough
+• Accepted payment: Check, Zelle, or Credit Card (+3% fee)
+
+CHANGE ORDERS
+Any work outside this scope will be quoted separately and requires written approval before proceeding.
+
+SCHEDULING
+Work will begin within 2 weeks of deposit receipt, subject to material availability.`,
             poNumber: 'WR-2025-1027',
           },
           {
@@ -1082,31 +1132,75 @@ export default function App() {
             clientEmail: 'kenny@kblandscaping.com',
             clientPhone: '(305) 555-0198',
             clientAddress: '12 Palm St, Miami, FL 33101',
-            projectTitle: 'Monthly Lawn Maintenance Package',
-            scopeOfWork: 'Comprehensive lawn care service including:\n• Weekly mowing and edging\n• Hedge trimming (monthly)\n• Weed control and treatment\n• Green waste removal\n• Irrigation system check',
-            timeline: 'Ongoing (monthly billing)',
-            exclusions: 'Tree removal, major landscaping changes, pest control, fertilization',
-            acceptanceTerms: 'Sign and return this estimate to begin service',
+            projectTitle: 'Premium Monthly Lawn Care Package',
+            scopeOfWork: `WEEKLY SERVICES (Every Thursday, weather permitting)
+• Complete lawn mowing with professional-grade equipment
+• Precise edging along all walkways, driveways, and beds
+• String trimming around trees, fences, and obstacles
+• Blowing of all clippings from hard surfaces
+
+MONTHLY SERVICES
+• Hedge and shrub trimming (up to 6ft height)
+• Bed edging and definition
+• Weed control treatment (pre-emergent + spot treatment)
+• Irrigation system inspection and minor adjustments
+
+INCLUDED WITH EVERY VISIT
+• Green waste removal and disposal
+• Visual inspection for pest/disease issues
+• Photo documentation of completed work (via app)
+• Direct communication with assigned crew lead
+
+SEASONAL EXTRAS (Included quarterly)
+• Deep edge renovation (Spring/Fall)
+• Shrub shaping and detail pruning
+• Mulch redistribution in beds`,
+            timeline: 'Ongoing service - Monthly billing cycle',
+            exclusions: `• Tree trimming above 6ft (requires separate quote)
+• Major landscaping changes or new plantings
+• Pest control treatments (can refer trusted partner)
+• Fertilization program (available as add-on: $45/month)
+• Irrigation repairs beyond minor adjustments
+• Hurricane cleanup or storm damage
+• Sod replacement or lawn renovation`,
+            acceptanceTerms: 'Sign below and return to begin service. First visit scheduled within 5 business days of approval.',
             category: 'Service',
             description: 'Monthly lawn maintenance (4 visits)',
             date: toISO(daysAgo(8)),
             validUntil: toISO(daysFromNow(6)),
             status: 'sent',
             sentAt: toISO(daysAgo(7)),
-            followUpDate: toISO(daysAgo(0)), // Due today!
+            followUpDate: toISO(daysAgo(0)),
             followUpCount: 0,
             items: [
-              { id: 'e2_i1', description: 'Lawn mow + edge (per visit)', quantity: 4, rate: 85 },
-              { id: 'e2_i2', description: 'Hedge trim (monthly)', quantity: 1, rate: 120 },
-              { id: 'e2_i3', description: 'Weed treatment', quantity: 1, rate: 65 },
+              { id: 'e2_i1', description: 'Weekly mowing, edging & blowing (4 visits)', quantity: 4, rate: 85 },
+              { id: 'e2_i2', description: 'Monthly hedge & shrub trimming', quantity: 1, rate: 120 },
+              { id: 'e2_i3', description: 'Weed control treatment', quantity: 1, rate: 65 },
+              { id: 'e2_i4', description: 'Irrigation inspection & adjustment', quantity: 1, rate: 45 },
+              { id: 'e2_i5', description: 'Green waste removal (included)', quantity: 1, rate: 0 },
             ],
-            subtotal: 525,
-            discount: 25,
+            subtotal: 560,
+            discount: 60,
             taxRate: 0,
             shipping: 0,
             amount: 500,
-            notes: 'First month includes complimentary irrigation check. Service day: Thursdays (weather permitting).',
-            terms: 'Monthly billing on the 1st. Cancel anytime with 7 days notice.',
+            notes: `Welcome to KB Landscaping! Your dedicated crew lead is Miguel - he'll text you before each visit.
+
+FIRST MONTH BONUS: Complimentary irrigation system audit (normally $75 value).
+
+Service day: Thursdays between 8am-2pm. We'll notify you if weather delays are needed.`,
+            terms: `BILLING
+• Monthly invoices sent on the 1st
+• Payment due within 7 days
+• Auto-pay available (5% discount)
+
+CANCELLATION
+• Cancel anytime with 7 days written notice
+• No long-term contracts required
+
+SERVICE GUARANTEE
+• Not satisfied? We'll return within 48 hours to make it right
+• Rain delays rescheduled to next available day`,
           },
           {
             id: 'est_demo_3',
@@ -1117,29 +1211,90 @@ export default function App() {
             clientEmail: 'sophia@stanleystudio.co',
             clientPhone: '(512) 555-0234',
             clientAddress: '88 Market Ave, Suite 200\nAustin, TX 78701',
-            projectTitle: 'Complete Brand Identity Package',
-            scopeOfWork: 'Full brand identity design including:\n• Discovery session & brand strategy\n• Moodboard and direction presentation\n• 3 unique logo concepts with revisions\n• Color palette and typography selection\n• Brand guidelines document (PDF)\n• Final files in all formats (AI, EPS, PNG, SVG)',
-            timeline: '2-3 weeks',
-            exclusions: 'Website design, marketing collateral, social media templates, photography',
-            acceptanceTerms: 'Pay 50% deposit via invoice link to begin project',
+            projectTitle: 'Complete Brand Identity System',
+            scopeOfWork: `PHASE 1: DISCOVERY & STRATEGY (Week 1)
+• 90-minute brand discovery session (video call)
+• Competitor analysis (5 key competitors)
+• Target audience definition and persona development
+• Brand positioning statement
+• Creative brief documentation
+
+PHASE 2: VISUAL DIRECTION (Week 1-2)
+• 2 distinct moodboards with color, typography, and imagery direction
+• Presentation of visual directions
+• Feedback session and direction selection
+• Refinement of chosen direction
+
+PHASE 3: LOGO DESIGN (Week 2-3)
+• 3 unique logo concepts based on approved direction
+• Presentation with rationale for each concept
+• 2 rounds of revisions on selected concept
+• Final logo in horizontal, stacked, and icon variations
+• Black, white, and full-color versions
+
+PHASE 4: BRAND SYSTEM (Week 3)
+• Primary and secondary color palette with hex/RGB/CMYK values
+• Typography system (2 fonts: heading + body)
+• Brand pattern or texture element
+• Photography style guidelines
+• Basic iconography style
+
+PHASE 5: DELIVERABLES
+• Brand Guidelines PDF (20-25 pages)
+• Logo files: AI, EPS, SVG, PNG (all variations)
+• Font files or links to purchase/download
+• Color palette file for design software
+• 1-hour handoff call to walk through all assets`,
+            timeline: '3 weeks from deposit to final delivery',
+            exclusions: `• Website design or development
+• Business card or stationery design
+• Social media templates
+• Marketing collateral (brochures, flyers)
+• Photography or video production
+• Copywriting or tagline development
+• Trademark research or registration
+• Print production or management`,
+            acceptanceTerms: 'To begin, pay 50% deposit via the invoice link that will be sent upon approval. Reply "APPROVED" to this email to proceed.',
             category: 'Design',
             description: 'Brand kit design (logo, colors, typography)',
             date: toISO(daysAgo(3)),
             validUntil: toISO(daysFromNow(11)),
             status: 'draft',
             items: [
-              { id: 'e3_i1', description: 'Discovery session + strategy', quantity: 1, rate: 350 },
-              { id: 'e3_i2', description: 'Logo concepts (3 directions)', quantity: 1, rate: 1200 },
-              { id: 'e3_i3', description: 'Revisions (up to 3 rounds)', quantity: 1, rate: 400 },
-              { id: 'e3_i4', description: 'Brand guide + final files', quantity: 1, rate: 550 },
+              { id: 'e3_i1', description: 'Brand Discovery & Strategy Session', quantity: 1, rate: 450 },
+              { id: 'e3_i2', description: 'Visual Direction & Moodboards (2)', quantity: 1, rate: 350 },
+              { id: 'e3_i3', description: 'Logo Design (3 concepts)', quantity: 1, rate: 1200 },
+              { id: 'e3_i4', description: 'Revision Rounds (2 included)', quantity: 2, rate: 150 },
+              { id: 'e3_i5', description: 'Brand System Development', quantity: 1, rate: 400 },
+              { id: 'e3_i6', description: 'Brand Guidelines Document', quantity: 1, rate: 350 },
+              { id: 'e3_i7', description: 'Final File Preparation & Handoff', quantity: 1, rate: 200 },
             ],
-            subtotal: 2500,
-            discount: 0,
+            subtotal: 3250,
+            discount: 250,
             taxRate: 0,
             shipping: 0,
-            amount: 2500,
-            notes: 'Excited to bring your brand vision to life! Timeline begins after deposit is received.',
-            terms: '50% deposit to begin. Final 50% due before delivery of final files. Additional revisions billed at $75/hr.',
+            amount: 3000,
+            notes: `Hi Sophia! I'm so excited to work on Stanley Studio's brand identity. 
+
+Based on our initial conversation, I think we can create something really special that captures your modern, approachable aesthetic while standing out in the Austin market.
+
+I've included a small discount as a thank you for the referral from Jimmy!`,
+            terms: `PAYMENT SCHEDULE
+• 50% deposit to begin ($1,500)
+• 50% final payment before file delivery ($1,500)
+
+REVISIONS
+• 2 revision rounds included in logo phase
+• Additional revisions: $75/hour
+
+TIMELINE
+• 3-week timeline begins after deposit clears
+• Delays in feedback may extend timeline
+• Rush delivery available (+25%)
+
+OWNERSHIP
+• Full rights transfer upon final payment
+• I retain right to display in portfolio`,
           },
           {
             id: 'est_demo_4',
@@ -1150,11 +1305,43 @@ export default function App() {
             clientEmail: 'rich@richardsconsulting.com',
             clientPhone: '(212) 555-0187',
             clientAddress: '101 King St, Floor 15\nNew York, NY 10005',
-            projectTitle: 'Executive Strategy Workshop',
-            scopeOfWork: 'One-day intensive strategy session including:\n• Pre-workshop stakeholder interviews (3)\n• Full-day facilitated workshop (8 hrs)\n• SWOT and competitive analysis\n• Strategic roadmap development\n• Executive summary report\n• 30-day follow-up call',
-            timeline: '1 day workshop + 2 weeks for deliverables',
-            exclusions: 'Implementation support, ongoing consulting, travel expenses outside NYC',
-            acceptanceTerms: 'Confirm preferred date and pay deposit to secure booking',
+            projectTitle: 'Executive Leadership Strategy Workshop',
+            scopeOfWork: `PRE-WORKSHOP PREPARATION (2 weeks before)
+• Stakeholder interviews (3 x 45-min sessions with key executives)
+• Review of existing strategic documents and market data
+• Preparation of custom workshop materials
+• Pre-workshop survey to all participants
+• Logistics coordination with your admin team
+
+WORKSHOP DAY (8 hours on-site)
+Morning Session (9am - 12pm)
+• Opening: Alignment on objectives and ground rules
+• Exercise 1: Vision clarification and future-state mapping
+• Exercise 2: SWOT analysis with structured facilitation
+• Break + networking
+
+Afternoon Session (1pm - 5pm)  
+• Exercise 3: Competitive positioning deep-dive
+• Exercise 4: Strategic priority ranking and resource allocation
+• Exercise 5: 90-day action planning with owners and deadlines
+• Closing: Commitments and next steps
+
+POST-WORKSHOP DELIVERABLES (Within 2 weeks)
+• Executive Summary Report (10-15 pages)
+• Strategic Roadmap visualization (1-page)
+• Prioritized initiative list with success metrics
+• Photo documentation of all workshop outputs
+• 60-minute follow-up call to review and refine`,
+            timeline: '1-day workshop + 2 weeks for deliverables',
+            exclusions: `• Implementation consulting or project management
+• Ongoing advisory or coaching
+• Travel expenses outside NYC metro
+• Participant travel or accommodation
+• Catering or venue (client provides)
+• Change management support
+• Individual executive coaching
+• Market research or data acquisition`,
+            acceptanceTerms: 'Confirm your preferred workshop date and pay the deposit to secure booking. Popular dates book 3-4 weeks out.',
             category: 'Consulting',
             description: 'Quarterly strategy workshop (1 day)',
             date: toISO(daysAgo(45)),
@@ -1165,18 +1352,35 @@ export default function App() {
             followUpCount: 2,
             lastFollowUp: toISO(daysAgo(30)),
             items: [
-              { id: 'e4_i1', description: 'Pre-workshop prep & interviews', quantity: 1, rate: 800 },
-              { id: 'e4_i2', description: 'Full-day on-site workshop', quantity: 1, rate: 3500 },
-              { id: 'e4_i3', description: 'Strategic report & roadmap', quantity: 1, rate: 1200 },
-              { id: 'e4_i4', description: '30-day follow-up session', quantity: 1, rate: 400 },
+              { id: 'e4_i1', description: 'Stakeholder Interviews (3 sessions)', quantity: 3, rate: 350 },
+              { id: 'e4_i2', description: 'Workshop Preparation & Materials', quantity: 1, rate: 800 },
+              { id: 'e4_i3', description: 'Full-Day On-Site Facilitation', quantity: 8, rate: 450 },
+              { id: 'e4_i4', description: 'Executive Summary Report', quantity: 1, rate: 1200 },
+              { id: 'e4_i5', description: 'Strategic Roadmap Document', quantity: 1, rate: 600 },
+              { id: 'e4_i6', description: '60-Day Follow-Up Session', quantity: 1, rate: 450 },
             ],
-            subtotal: 5900,
-            discount: 400,
+            subtotal: 7700,
+            discount: 700,
             taxRate: 0,
             shipping: 0,
-            amount: 5500,
-            notes: 'Client declined — budget reallocated to Q2. Open to revisiting next quarter.',
-            terms: '40% deposit to book. Balance due 7 days before workshop date.',
+            amount: 7000,
+            notes: `Rich - per our conversation, client decided to reallocate Q1 budget to sales initiatives. 
+
+They mentioned interest in revisiting for Q2 planning. I'll follow up in March.
+
+Keeping this estimate on file for reference.`,
+            terms: `BOOKING & PAYMENT
+• 40% deposit to confirm date ($2,800)
+• 60% balance due 7 days before workshop ($4,200)
+• Accepted: Wire, ACH, or check
+
+CANCELLATION
+• 14+ days notice: Full refund minus $500 prep fee
+• 7-13 days notice: 50% refund
+• <7 days notice: No refund (reschedule available)
+
+GUARANTEE
+If you're not satisfied with the workshop, I'll provide an additional half-day session at no charge.`,
           },
           {
             id: 'est_demo_5',
@@ -1187,11 +1391,64 @@ export default function App() {
             clientEmail: 'maria@chentech.io',
             clientPhone: '(415) 555-0321',
             clientAddress: '500 Tech Blvd\nSan Francisco, CA 94107',
-            projectTitle: 'E-commerce Website Development',
-            scopeOfWork: 'Custom e-commerce website build:\n• UI/UX design (mobile-first)\n• Shopify Plus implementation\n• Product catalog setup (up to 100 SKUs)\n• Payment gateway integration\n• Shipping calculator setup\n• Basic SEO optimization\n• Admin training session (2 hrs)',
-            timeline: '6-8 weeks',
-            exclusions: 'Product photography, copywriting, inventory management, ongoing maintenance, marketing',
-            acceptanceTerms: 'Sign contract and pay 30% deposit to begin',
+            projectTitle: 'Custom E-Commerce Platform Development',
+            scopeOfWork: `PHASE 1: DISCOVERY & PLANNING (Week 1-2)
+• Kickoff meeting and requirements gathering
+• User journey mapping and conversion funnel design
+• Technical architecture planning
+• Shopify Plus store structure and navigation
+• Integration requirements documentation
+• Project timeline and milestone definition
+
+PHASE 2: UI/UX DESIGN (Week 3-5)
+• Mobile-first wireframes (Home, PLP, PDP, Cart, Checkout)
+• High-fidelity mockups in Figma (Desktop + Mobile)
+• Interactive prototype for key user flows
+• 2 rounds of design revisions
+• Design system documentation
+• Client approval checkpoint
+
+PHASE 3: DEVELOPMENT (Week 6-10)
+Shopify Plus Implementation:
+• Custom theme development (Dawn-based)
+• Responsive implementation of all approved designs
+• Product catalog setup (up to 100 SKUs)
+• Collection and filtering system
+• Search functionality with autocomplete
+
+Integrations:
+• Payment gateway (Stripe + PayPal)
+• Shipping calculator (ShipStation or similar)
+• Email marketing (Klaviyo)
+• Analytics (GA4 + Meta Pixel)
+• Inventory sync preparation
+
+PHASE 4: TESTING & QA (Week 11)
+• Cross-browser testing (Chrome, Safari, Firefox, Edge)
+• Mobile device testing (iOS + Android)
+• Checkout flow testing with test transactions
+• Performance optimization (target: 90+ Lighthouse)
+• Security review and SSL verification
+• Bug fixes and refinements
+
+PHASE 5: LAUNCH & TRAINING (Week 12)
+• Staging to production migration
+• DNS configuration and go-live
+• Admin training session (2 hours, recorded)
+• Documentation for day-to-day operations
+• 30-day post-launch support period`,
+            timeline: '10-12 weeks from project kickoff',
+            exclusions: `• Product photography or image editing
+• Product descriptions or copywriting
+• Inventory data entry (beyond 100 SKUs)
+• Custom app development
+• ERP or fulfillment system integration
+• Ongoing maintenance after 30-day support
+• Email template design (beyond Klaviyo defaults)
+• Paid advertising setup or management
+• Content migration from existing platform
+• Legal pages content (Privacy Policy, Terms)`,
+            acceptanceTerms: 'To proceed, sign the attached contract and pay the 30% deposit. Project kickoff scheduled within 1 week of deposit.',
             category: 'Development',
             description: 'E-commerce website (Shopify Plus)',
             date: toISO(daysAgo(2)),
@@ -1201,19 +1458,50 @@ export default function App() {
             followUpDate: toISO(daysFromNow(6)),
             followUpCount: 0,
             items: [
-              { id: 'e5_i1', description: 'Discovery & planning', quantity: 1, rate: 1500 },
-              { id: 'e5_i2', description: 'UI/UX design', quantity: 1, rate: 3500 },
-              { id: 'e5_i3', description: 'Shopify development', quantity: 1, rate: 6000 },
-              { id: 'e5_i4', description: 'Testing & QA', quantity: 1, rate: 1200 },
-              { id: 'e5_i5', description: 'Launch & training', quantity: 1, rate: 800 },
+              { id: 'e5_i1', description: 'Discovery & Project Planning', quantity: 1, rate: 2000 },
+              { id: 'e5_i2', description: 'UI/UX Design (Mobile + Desktop)', quantity: 1, rate: 4500 },
+              { id: 'e5_i3', description: 'Shopify Plus Theme Development', quantity: 1, rate: 6500 },
+              { id: 'e5_i4', description: 'Payment & Shipping Integration', quantity: 1, rate: 1500 },
+              { id: 'e5_i5', description: 'Analytics & Marketing Integration', quantity: 1, rate: 1000 },
+              { id: 'e5_i6', description: 'QA Testing & Performance Optimization', quantity: 1, rate: 1500 },
+              { id: 'e5_i7', description: 'Launch, Training & Documentation', quantity: 1, rate: 1200 },
+              { id: 'e5_i8', description: '30-Day Post-Launch Support', quantity: 1, rate: 800 },
             ],
-            subtotal: 13000,
-            discount: 500,
+            subtotal: 19000,
+            discount: 1500,
             taxRate: 8.625,
             shipping: 0,
-            amount: Math.round((12500 + 12500 * 0.08625) * 100) / 100,
-            notes: 'Includes 30 days of bug fixes post-launch. Hosting not included ($29/mo Shopify fee).',
-            terms: '30% deposit to start. 40% at design approval. Final 30% before launch. Changes outside scope quoted separately.',
+            amount: Math.round((17500 + 17500 * 0.08625) * 100) / 100,
+            notes: `Maria - thank you for the detailed conversation last week! I'm confident we can build something great for Chen Tech Solutions.
+
+Jimmy Wilson (who referred you) has been a client for 2 years - happy to connect you if you'd like a reference.
+
+The $1,500 discount reflects our referral appreciation and your commitment to the recommended timeline.
+
+Looking forward to kicking this off!`,
+            terms: `PAYMENT SCHEDULE
+• 30% deposit to begin ($5,250)
+• 40% at design approval ($7,000)
+• 30% before launch ($5,250)
+
+TIMELINE & DELAYS
+• Timeline assumes timely feedback (48-72 hrs)
+• Scope changes may affect timeline and cost
+• Rush delivery available (+20%)
+
+CHANGE REQUESTS
+• Minor adjustments included in revision rounds
+• Significant changes quoted separately
+• All changes require written approval
+
+POST-LAUNCH
+• 30-day support covers bugs only
+• Ongoing maintenance: $150/month or hourly
+• Priority support: $250/month
+
+OWNERSHIP
+• You own all custom code upon final payment
+• Third-party licenses (Shopify, apps) are your responsibility`,
           },
         ];
 
@@ -1832,11 +2120,36 @@ export default function App() {
         clientEmail: 'jimmy@wilsonreno.com',
         clientPhone: '(619) 555-0142',
         clientAddress: '5 Harbor Rd, San Diego, CA 92101',
-        projectTitle: 'Master Bathroom Renovation',
-        scopeOfWork: 'Complete bathroom repair including:\n• Removal of existing fixtures\n• Installation of new vanity and sink\n• Toilet replacement\n• New faucet installation\n• Basic plumbing inspection',
-        timeline: '3-4 days',
-        exclusions: 'Tile work, electrical modifications, permits',
-        acceptanceTerms: 'Reply "Approved" to this email or sign below',
+        projectTitle: 'Master Bathroom Complete Renovation',
+        scopeOfWork: `PROJECT OVERVIEW
+Full renovation of the master bathroom (approx. 85 sq ft) including all fixtures, plumbing, and finishes.
+
+DEMOLITION & PREP
+• Remove and dispose of existing vanity, toilet, and all fixtures
+• Disconnect and cap existing plumbing lines
+• Protect adjacent flooring and walls during work
+
+PLUMBING WORK
+• Install new water supply lines for vanity and toilet
+• Relocate drain for new vanity position
+• Install new shut-off valves and pressure test
+
+FIXTURE INSTALLATION
+• 36" floating vanity with undermount sink
+• Kohler Highline comfort height toilet
+• Single-handle widespread faucet in brushed nickel
+
+FINISHING
+• Caulk all fixtures with mildew-resistant silicone
+• Install new toilet paper holder and towel bar
+• Final walkthrough and 1-year workmanship warranty`,
+        timeline: '5-7 business days',
+        exclusions: `• Tile work / flooring
+• Electrical modifications
+• Drywall repair beyond fixture areas
+• Permit fees
+• Painting or wall finishing`,
+        acceptanceTerms: 'Reply "APPROVED" to this email or sign and return.',
         category: 'Service',
         description: 'Bathroom repair + fixture replacement',
         date: toISO(daysAgo(12)),
@@ -1847,18 +2160,22 @@ export default function App() {
         followUpCount: 1,
         lastFollowUp: toISO(daysAgo(5)),
         items: [
-          { id: 'e1_i1', description: 'Labor (demolition & install)', quantity: 12, rate: 95 },
-          { id: 'e1_i2', description: 'Vanity w/ sink (36")', quantity: 1, rate: 680 },
-          { id: 'e1_i3', description: 'Toilet (Kohler Highline)', quantity: 1, rate: 320 },
-          { id: 'e1_i4', description: 'Faucet & hardware', quantity: 1, rate: 180 },
+          { id: 'e1_i1', description: 'Labor - Demolition (4 hrs @ $95/hr)', quantity: 4, rate: 95 },
+          { id: 'e1_i2', description: 'Labor - Plumbing rough-in (6 hrs)', quantity: 6, rate: 95 },
+          { id: 'e1_i3', description: 'Labor - Fixture installation (4 hrs)', quantity: 4, rate: 95 },
+          { id: 'e1_i4', description: '36" Floating Vanity w/ Undermount Sink', quantity: 1, rate: 680 },
+          { id: 'e1_i5', description: 'Kohler Highline Comfort Height Toilet', quantity: 1, rate: 320 },
+          { id: 'e1_i6', description: 'Widespread Faucet (Brushed Nickel)', quantity: 1, rate: 185 },
+          { id: 'e1_i7', description: 'Supply lines, valves, hardware kit', quantity: 1, rate: 95 },
         ],
-        subtotal: 2320,
-        discount: 100,
+        subtotal: 2610,
+        discount: 150,
         taxRate: 8,
         shipping: 0,
-        amount: Math.round((2220 + 2220 * 0.08) * 100) / 100,
-        notes: 'Thank you for choosing Wilson Renovations! Materials include manufacturer warranty.',
-        terms: '50% deposit required to schedule work. Remaining balance due upon completion.',
+        amount: Math.round((2460 + 2460 * 0.08) * 100) / 100,
+        notes: 'Thank you for choosing Wilson Renovations! All materials include manufacturer warranty.',
+        terms: `PAYMENT: 50% deposit to schedule, 50% upon completion.
+CHANGES: Work outside scope quoted separately.`,
         poNumber: 'WR-2025-1027',
       },
       {
@@ -1870,11 +2187,29 @@ export default function App() {
         clientEmail: 'kenny@kblandscaping.com',
         clientPhone: '(305) 555-0198',
         clientAddress: '12 Palm St, Miami, FL 33101',
-        projectTitle: 'Monthly Lawn Maintenance Package',
-        scopeOfWork: 'Comprehensive lawn care service including:\n• Weekly mowing and edging\n• Hedge trimming (monthly)\n• Weed control and treatment\n• Green waste removal',
-        timeline: 'Ongoing (monthly billing)',
-        exclusions: 'Tree removal, major landscaping changes, pest control',
-        acceptanceTerms: 'Sign and return this estimate to begin service',
+        projectTitle: 'Premium Monthly Lawn Care Package',
+        scopeOfWork: `WEEKLY SERVICES (Every Thursday)
+• Complete lawn mowing with professional equipment
+• Precise edging along walkways and driveways
+• String trimming around trees and fences
+• Blowing of all clippings from hard surfaces
+
+MONTHLY SERVICES
+• Hedge and shrub trimming (up to 6ft)
+• Bed edging and definition
+• Weed control treatment
+
+INCLUDED WITH EVERY VISIT
+• Green waste removal and disposal
+• Visual inspection for pest/disease
+• Photo documentation via app`,
+        timeline: 'Ongoing service - Monthly billing',
+        exclusions: `• Tree trimming above 6ft
+• Major landscaping changes
+• Pest control treatments
+• Fertilization (add-on available)
+• Irrigation repairs`,
+        acceptanceTerms: 'Sign below to begin service within 5 business days.',
         category: 'Service',
         description: 'Monthly lawn maintenance (4 visits)',
         date: toISO(daysAgo(8)),
@@ -1884,17 +2219,19 @@ export default function App() {
         followUpDate: toISO(daysAgo(0)),
         followUpCount: 0,
         items: [
-          { id: 'e2_i1', description: 'Lawn mow + edge (per visit)', quantity: 4, rate: 85 },
-          { id: 'e2_i2', description: 'Hedge trim (monthly)', quantity: 1, rate: 120 },
-          { id: 'e2_i3', description: 'Weed treatment', quantity: 1, rate: 65 },
+          { id: 'e2_i1', description: 'Weekly mowing, edging & blowing (4 visits)', quantity: 4, rate: 85 },
+          { id: 'e2_i2', description: 'Monthly hedge & shrub trimming', quantity: 1, rate: 120 },
+          { id: 'e2_i3', description: 'Weed control treatment', quantity: 1, rate: 65 },
+          { id: 'e2_i4', description: 'Irrigation inspection', quantity: 1, rate: 45 },
         ],
-        subtotal: 525,
-        discount: 25,
+        subtotal: 570,
+        discount: 70,
         taxRate: 0,
         shipping: 0,
         amount: 500,
-        notes: 'First month includes complimentary irrigation check.',
-        terms: 'Monthly billing on the 1st. Cancel anytime with 7 days notice.',
+        notes: 'FIRST MONTH BONUS: Complimentary irrigation audit ($75 value). Service day: Thursdays.',
+        terms: `BILLING: Monthly on the 1st, due within 7 days.
+CANCEL: Anytime with 7 days notice.`,
       },
       {
         id: 'est_demo_3',
@@ -1905,29 +2242,54 @@ export default function App() {
         clientEmail: 'sophia@stanleystudio.co',
         clientPhone: '(512) 555-0234',
         clientAddress: '88 Market Ave, Suite 200\nAustin, TX 78701',
-        projectTitle: 'Complete Brand Identity Package',
-        scopeOfWork: 'Full brand identity design including:\n• Discovery session & brand strategy\n• Moodboard and direction presentation\n• 3 unique logo concepts with revisions\n• Color palette and typography selection\n• Brand guidelines document (PDF)',
-        timeline: '2-3 weeks',
-        exclusions: 'Website design, marketing collateral, social media templates',
-        acceptanceTerms: 'Pay 50% deposit via invoice link to begin project',
+        projectTitle: 'Complete Brand Identity System',
+        scopeOfWork: `PHASE 1: DISCOVERY (Week 1)
+• 90-minute brand discovery session
+• Competitor analysis (5 competitors)
+• Target audience and persona development
+• Creative brief documentation
+
+PHASE 2: VISUAL DIRECTION (Week 1-2)
+• 2 distinct moodboards
+• Feedback session and direction selection
+
+PHASE 3: LOGO DESIGN (Week 2-3)
+• 3 unique logo concepts
+• 2 rounds of revisions
+• Final logo in all variations
+
+PHASE 4: BRAND SYSTEM (Week 3)
+• Color palette with hex/RGB/CMYK
+• Typography system (2 fonts)
+• Brand guidelines PDF (20+ pages)
+• All final files (AI, EPS, SVG, PNG)`,
+        timeline: '3 weeks from deposit to delivery',
+        exclusions: `• Website design
+• Business cards / stationery
+• Social media templates
+• Photography / video
+• Copywriting`,
+        acceptanceTerms: 'Reply "APPROVED" then pay 50% deposit to begin.',
         category: 'Design',
         description: 'Brand kit design (logo, colors, typography)',
         date: toISO(daysAgo(3)),
         validUntil: toISO(daysFromNow(11)),
         status: 'draft',
         items: [
-          { id: 'e3_i1', description: 'Discovery session + strategy', quantity: 1, rate: 350 },
-          { id: 'e3_i2', description: 'Logo concepts (3 directions)', quantity: 1, rate: 1200 },
-          { id: 'e3_i3', description: 'Revisions (up to 3 rounds)', quantity: 1, rate: 400 },
-          { id: 'e3_i4', description: 'Brand guide + final files', quantity: 1, rate: 550 },
+          { id: 'e3_i1', description: 'Brand Discovery & Strategy', quantity: 1, rate: 450 },
+          { id: 'e3_i2', description: 'Visual Direction & Moodboards', quantity: 1, rate: 350 },
+          { id: 'e3_i3', description: 'Logo Design (3 concepts)', quantity: 1, rate: 1200 },
+          { id: 'e3_i4', description: 'Revision Rounds (2 included)', quantity: 2, rate: 150 },
+          { id: 'e3_i5', description: 'Brand System & Guidelines', quantity: 1, rate: 600 },
         ],
-        subtotal: 2500,
+        subtotal: 2900,
         discount: 0,
         taxRate: 0,
         shipping: 0,
-        amount: 2500,
-        notes: 'Excited to bring your brand vision to life!',
-        terms: '50% deposit to begin. Final 50% due before delivery of final files.',
+        amount: 2900,
+        notes: 'Excited to work on Stanley Studio\'s brand! Jimmy Wilson referral discount applied.',
+        terms: `PAYMENT: 50% deposit, 50% before delivery.
+REVISIONS: 2 rounds included, additional at $75/hr.`,
       },
       {
         id: 'est_demo_4',
@@ -1938,11 +2300,28 @@ export default function App() {
         clientEmail: 'rich@richardsconsulting.com',
         clientPhone: '(212) 555-0187',
         clientAddress: '101 King St, Floor 15\nNew York, NY 10005',
-        projectTitle: 'Executive Strategy Workshop',
-        scopeOfWork: 'One-day intensive strategy session including:\n• Pre-workshop stakeholder interviews\n• Full-day facilitated workshop\n• Strategic roadmap development\n• Executive summary report',
-        timeline: '1 day workshop + 2 weeks for deliverables',
-        exclusions: 'Implementation support, ongoing consulting, travel expenses',
-        acceptanceTerms: 'Confirm preferred date and pay deposit to secure booking',
+        projectTitle: 'Executive Leadership Strategy Workshop',
+        scopeOfWork: `PRE-WORKSHOP (2 weeks before)
+• Stakeholder interviews (3 x 45-min)
+• Review strategic documents
+• Custom workshop materials
+• Pre-workshop survey
+
+WORKSHOP DAY (8 hours)
+Morning: Vision & SWOT analysis
+Afternoon: Competitive positioning & 90-day planning
+
+DELIVERABLES (Within 2 weeks)
+• Executive Summary Report (10-15 pages)
+• Strategic Roadmap (1-page visual)
+• Prioritized initiatives with metrics
+• 60-minute follow-up call`,
+        timeline: '1-day workshop + 2 weeks deliverables',
+        exclusions: `• Implementation consulting
+• Ongoing advisory
+• Travel outside NYC metro
+• Catering / venue`,
+        acceptanceTerms: 'Confirm date and pay deposit to book.',
         category: 'Consulting',
         description: 'Quarterly strategy workshop (1 day)',
         date: toISO(daysAgo(45)),
@@ -1953,17 +2332,20 @@ export default function App() {
         followUpCount: 2,
         lastFollowUp: toISO(daysAgo(30)),
         items: [
-          { id: 'e4_i1', description: 'Pre-workshop prep & interviews', quantity: 1, rate: 800 },
-          { id: 'e4_i2', description: 'Full-day on-site workshop', quantity: 1, rate: 3500 },
-          { id: 'e4_i3', description: 'Strategic report & roadmap', quantity: 1, rate: 1200 },
+          { id: 'e4_i1', description: 'Stakeholder Interviews (3)', quantity: 3, rate: 350 },
+          { id: 'e4_i2', description: 'Workshop Prep & Materials', quantity: 1, rate: 800 },
+          { id: 'e4_i3', description: 'Full-Day Facilitation (8 hrs)', quantity: 8, rate: 400 },
+          { id: 'e4_i4', description: 'Report & Roadmap', quantity: 1, rate: 1500 },
+          { id: 'e4_i5', description: 'Follow-Up Session', quantity: 1, rate: 450 },
         ],
-        subtotal: 5500,
-        discount: 0,
+        subtotal: 7000,
+        discount: 500,
         taxRate: 0,
         shipping: 0,
-        amount: 5500,
-        notes: 'Client declined — budget reallocated to Q2.',
-        terms: '40% deposit to book. Balance due 7 days before workshop date.',
+        amount: 6500,
+        notes: 'Client declined - budget reallocated. Will follow up Q2.',
+        terms: `PAYMENT: 40% deposit, 60% before workshop.
+CANCEL: 14+ days = full refund minus $500.`,
       },
       {
         id: 'est_demo_5',
@@ -1974,11 +2356,37 @@ export default function App() {
         clientEmail: 'maria@chentech.io',
         clientPhone: '(415) 555-0321',
         clientAddress: '500 Tech Blvd\nSan Francisco, CA 94107',
-        projectTitle: 'E-commerce Website Development',
-        scopeOfWork: 'Custom e-commerce website build:\n• UI/UX design (mobile-first)\n• Shopify Plus implementation\n• Product catalog setup (up to 100 SKUs)\n• Payment gateway integration\n• Admin training session (2 hrs)',
-        timeline: '6-8 weeks',
-        exclusions: 'Product photography, copywriting, inventory management, marketing',
-        acceptanceTerms: 'Sign contract and pay 30% deposit to begin',
+        projectTitle: 'Custom E-Commerce Platform',
+        scopeOfWork: `PHASE 1: DISCOVERY (Week 1-2)
+• Requirements gathering & kickoff
+• User journey mapping
+• Technical architecture planning
+
+PHASE 2: DESIGN (Week 3-5)
+• Mobile-first wireframes
+• High-fidelity mockups (Figma)
+• Interactive prototype
+• 2 rounds of revisions
+
+PHASE 3: DEVELOPMENT (Week 6-10)
+• Custom Shopify Plus theme
+• Product catalog (100 SKUs)
+• Payment integration (Stripe + PayPal)
+• Shipping calculator
+• Analytics setup (GA4 + Meta)
+
+PHASE 4: LAUNCH (Week 11-12)
+• QA testing (cross-browser + mobile)
+• Performance optimization
+• Admin training (2 hrs, recorded)
+• 30-day post-launch support`,
+        timeline: '10-12 weeks from kickoff',
+        exclusions: `• Product photography
+• Copywriting
+• Custom app development
+• Ongoing maintenance (after 30 days)
+• Marketing / ads setup`,
+        acceptanceTerms: 'Sign contract and pay 30% deposit to begin.',
         category: 'Development',
         description: 'E-commerce website (Shopify Plus)',
         date: toISO(daysAgo(2)),
@@ -1988,19 +2396,21 @@ export default function App() {
         followUpDate: toISO(daysFromNow(6)),
         followUpCount: 0,
         items: [
-          { id: 'e5_i1', description: 'Discovery & planning', quantity: 1, rate: 1500 },
-          { id: 'e5_i2', description: 'UI/UX design', quantity: 1, rate: 3500 },
-          { id: 'e5_i3', description: 'Shopify development', quantity: 1, rate: 6000 },
-          { id: 'e5_i4', description: 'Testing & QA', quantity: 1, rate: 1200 },
-          { id: 'e5_i5', description: 'Launch & training', quantity: 1, rate: 800 },
+          { id: 'e5_i1', description: 'Discovery & Planning', quantity: 1, rate: 2000 },
+          { id: 'e5_i2', description: 'UI/UX Design', quantity: 1, rate: 4500 },
+          { id: 'e5_i3', description: 'Shopify Development', quantity: 1, rate: 6500 },
+          { id: 'e5_i4', description: 'Integrations (Payment, Shipping, Analytics)', quantity: 1, rate: 2500 },
+          { id: 'e5_i5', description: 'QA & Performance', quantity: 1, rate: 1500 },
+          { id: 'e5_i6', description: 'Launch, Training & Support', quantity: 1, rate: 2000 },
         ],
-        subtotal: 13000,
-        discount: 500,
+        subtotal: 19000,
+        discount: 1500,
         taxRate: 8.625,
         shipping: 0,
-        amount: Math.round((12500 + 12500 * 0.08625) * 100) / 100,
-        notes: 'Includes 30 days of bug fixes post-launch. Hosting not included.',
-        terms: '30% deposit to start. 40% at design approval. Final 30% before launch.',
+        amount: Math.round((17500 + 17500 * 0.08625) * 100) / 100,
+        notes: 'Jimmy Wilson referral - $1,500 discount applied. Excited to build this!',
+        terms: `PAYMENT: 30% start, 40% at design approval, 30% before launch.
+TIMELINE: Assumes 48-72hr feedback turnaround.`,
       },
     ];
 
