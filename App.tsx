@@ -1897,6 +1897,37 @@ export default function App() {
     setIsDrawerOpen(false);
   };
 
+  // Quick status update for estimates with automatic client promotion
+  const updateEstimateStatus = (est: Estimate, newStatus: 'draft' | 'sent' | 'accepted' | 'declined') => {
+    if (!est?.id) return;
+    
+    setEstimates(prev => prev.map(e => 
+      e.id === est.id ? { ...e, status: newStatus } : e
+    ));
+    
+    // Auto-promote client from "lead" to "client" when estimate is accepted
+    if (newStatus === 'accepted' && est.clientId) {
+      const client = clients.find(c => c.id === est.clientId);
+      if (client && client.status === 'lead') {
+        setClients(prev => prev.map(c => 
+          c.id === est.clientId 
+            ? { ...c, status: 'client', updatedAt: new Date().toISOString() } 
+            : c
+        ));
+        showToast(`🎉 ${est.client} is now a customer!`, 'success');
+      } else {
+        showToast(`Estimate marked as accepted`, 'success');
+      }
+    } else if (newStatus === 'declined') {
+      // Optionally mark client as inactive if they decline
+      showToast('Estimate marked as declined', 'info');
+    } else if (newStatus === 'sent') {
+      showToast('Estimate marked as sent', 'success');
+    } else {
+      showToast(`Estimate status updated`, 'success');
+    }
+  };
+
   const deleteEstimate = (est: Partial<Estimate>) => {
     if (!est.id) return;
     if (confirm('Delete this estimate?')) {
@@ -1945,9 +1976,13 @@ export default function App() {
     due.setDate(due.getDate() + 14);
     const dueStr = due.toISOString().split('T')[0];
 
+    // Generate invoice number
+    const invNumber = generateDocNumber('INV', invoices);
+
     // Build invoice from estimate
     const newInv: Invoice = {
       id: generateId('inv'),
+      number: invNumber,
       clientId: est.clientId,
       client: est.client,
       clientCompany: est.clientCompany,
@@ -1975,8 +2010,19 @@ export default function App() {
     // 2) Mark estimate as accepted (so it reflects a closed deal)
     setEstimates(prev => prev.map(e => e.id === est.id ? ({ ...e, status: 'accepted' } as Estimate) : e));
 
-    // 3) Ensure client is promoted to "client" status
-    if (newInv.client?.trim()) {
+    // 3) Ensure client is promoted to "client" status and show celebration
+    let clientPromoted = false;
+    if (newInv.clientId) {
+      const client = clients.find(c => c.id === newInv.clientId);
+      if (client && client.status === 'lead') {
+        setClients(prev => prev.map(c => 
+          c.id === newInv.clientId 
+            ? { ...c, status: 'client', updatedAt: new Date().toISOString() } 
+            : c
+        ));
+        clientPromoted = true;
+      }
+    } else if (newInv.client?.trim()) {
       upsertClientFromDoc(newInv as any, 'client');
     }
 
@@ -1987,7 +2033,12 @@ export default function App() {
     setActiveItem(newInv);
     setDrawerMode('edit_inv');
     setIsDrawerOpen(true);
-    showToast('Estimate converted to invoice', 'success');
+    
+    if (clientPromoted) {
+      showToast(`🎉 Deal won! ${invNumber} created & ${est.client} is now a customer!`, 'success');
+    } else {
+      showToast(`Invoice ${invNumber} created from estimate`, 'success');
+    }
   };
 
   const handlePrintEstimate = (est: Partial<Estimate>) => {
@@ -3319,12 +3370,16 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       .sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                       .map(est => {
                         const isExpired = est.validUntil ? new Date(est.validUntil) < new Date() : false;
-                        const statusLabel = est.status === 'accepted' ? 'Accepted' : est.status === 'declined' ? 'Declined' : est.status === 'sent' ? 'Sent' : 'Draft';
-                        const statusClass = est.status === 'accepted' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300' : est.status === 'declined' ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300' : est.status === 'sent' ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+                        const statusLabel = est.status === 'accepted' ? 'Accepted' : est.status === 'declined' ? 'Declined' : est.status === 'sent' ? 'Sent' : est.status === 'void' ? 'Void' : 'Draft';
+                        const statusClass = est.status === 'accepted' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300' : est.status === 'declined' ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300' : est.status === 'sent' ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : est.status === 'void' ? 'bg-slate-200 text-slate-500 dark:bg-slate-800 dark:text-slate-500' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+                        const isVoid = est.status === 'void';
+                        
                         return (
-                          <div key={est.id} className={`bg-white dark:bg-slate-900 p-6 rounded-lg border border-slate-200 dark:border-slate-800 group hover:border-blue-500/30 hover:shadow-lg transition-all shadow-md cursor-pointer ${isExpired && est.status !== 'accepted' ? 'border-l-4 border-l-amber-500' : ''}`} onClick={() => handleEditItem({ dataType: 'estimate', original: est })}>
+                          <div key={est.id} className={`bg-white dark:bg-slate-900 p-6 rounded-lg border border-slate-200 dark:border-slate-800 group hover:border-blue-500/30 hover:shadow-lg transition-all shadow-md cursor-pointer ${isExpired && est.status !== 'accepted' && !isVoid ? 'border-l-4 border-l-amber-500' : ''} ${est.status === 'accepted' ? 'border-l-4 border-l-emerald-500' : ''} ${isVoid ? 'opacity-60' : ''}`} onClick={() => handleEditItem({ dataType: 'estimate', original: est })}>
                             <div className="flex items-start gap-4 mb-4">
-                              <div className="w-12 h-12 bg-slate-100 dark:bg-blue-500/10 text-slate-600 dark:text-blue-400 rounded-md flex items-center justify-center flex-shrink-0"><FileText size={20} strokeWidth={1.5} /></div>
+                              <div className={`w-12 h-12 rounded-md flex items-center justify-center flex-shrink-0 ${est.status === 'accepted' ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : est.status === 'sent' ? 'bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
+                                {est.status === 'accepted' ? <CheckCircle size={20} strokeWidth={1.5} /> : <FileText size={20} strokeWidth={1.5} />}
+                              </div>
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                                   <div className="font-bold text-slate-900 dark:text-white text-lg">{est.client}</div>
@@ -3335,27 +3390,63 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                               </div>
                             </div>
 
-                            <div className="flex items-end justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                            {/* Quick Status Actions - Context-Sensitive */}
+                            {!isVoid && (
+                              <div className="flex flex-wrap gap-2 mb-4 pb-4 border-b border-slate-100 dark:border-slate-800">
+                                {est.status === 'draft' && (
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); updateEstimateStatus(est, 'sent'); }}
+                                    className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-blue-600 text-white hover:bg-blue-700 transition-all active:scale-95 flex items-center gap-1.5"
+                                  >
+                                    <Share2 size={14} /> Mark Sent
+                                  </button>
+                                )}
+                                {est.status === 'sent' && (
+                                  <>
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); updateEstimateStatus(est, 'accepted'); }}
+                                      className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-emerald-600 text-white hover:bg-emerald-700 transition-all active:scale-95 flex items-center gap-1.5"
+                                    >
+                                      <CheckCircle size={14} /> Won / Accepted
+                                    </button>
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); updateEstimateStatus(est, 'declined'); }}
+                                      className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-red-100 text-red-700 hover:bg-red-600 hover:text-white dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-600 dark:hover:text-white transition-all active:scale-95 flex items-center gap-1.5"
+                                    >
+                                      <X size={14} /> Lost / Declined
+                                    </button>
+                                  </>
+                                )}
+                                {est.status === 'accepted' && (
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); convertEstimateToInvoice(est); }}
+                                    className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-emerald-600 to-blue-600 text-white hover:from-emerald-700 hover:to-blue-700 transition-all active:scale-95 flex items-center gap-1.5 shadow-lg shadow-emerald-500/20"
+                                  >
+                                    <ArrowRight size={14} /> Create Invoice
+                                  </button>
+                                )}
+                                {est.status === 'declined' && (
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); duplicateEstimate(est); }}
+                                    className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-all active:scale-95 flex items-center gap-1.5"
+                                  >
+                                    <Copy size={14} /> Revise & Resend
+                                  </button>
+                                )}
+                              </div>
+                            )}
+
+                            <div className="flex items-end justify-between">
                               <div>
                                 <label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1 uppercase tracking-wide">Total</label>
                                 <div className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white mb-2">{formatCurrency.format(est.amount)}</div>
                                 <div className="flex flex-col gap-1">
                                   <div className={`flex-shrink-0 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 w-fit ${statusClass}`}>{statusLabel}</div>
-                                  {isExpired && est.status !== 'accepted' && <div className="text-xs font-medium text-amber-600 dark:text-amber-400">Expired</div>}
+                                  {isExpired && est.status !== 'accepted' && !isVoid && <div className="text-xs font-medium text-amber-600 dark:text-amber-400">Expired</div>}
                                 </div>
                               </div>
                               <div className="flex gap-2">
                                 <button onClick={(e) => { e.stopPropagation(); handlePrintEstimate(est); }} title="Export PDF" className="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-blue-600 hover:text-white transition-all active:scale-95"><Download size={20} strokeWidth={1.5} /></button>
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); convertEstimateToInvoice(est); }}
-                                  title="Convert to Invoice"
-                                  disabled={est.status === 'void'}
-                                  className={`p-2.5 rounded-lg transition-all active:scale-95 ${est.status === 'void'
-                                    ? 'bg-slate-50 dark:bg-slate-900 text-slate-300 cursor-not-allowed'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-600 hover:text-white'}`}
-                                >
-                                  <ArrowRight size={20} strokeWidth={1.5} />
-                                </button>
                                 <button onClick={(e) => { e.stopPropagation(); setBillingDocType('estimate'); setActiveItem(est); setDrawerMode('edit_inv'); setIsDrawerOpen(true); }} title="Edit Estimate" className="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-900 hover:text-white dark:hover:bg-slate-700 transition-all active:scale-95"><Edit3 size={20} strokeWidth={1.5} /></button>
                                 <button onClick={(e) => { e.stopPropagation(); deleteEstimate(est); }} title="Delete Estimate" className="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-red-600 hover:text-white transition-all active:scale-95"><Trash2 size={20} strokeWidth={1.5} /></button>
                               </div>
