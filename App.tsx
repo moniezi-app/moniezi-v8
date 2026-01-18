@@ -1267,6 +1267,7 @@ export default function App() {
   // Sales Pipeline Stats
   const pipelineStats = useMemo(() => {
     const now = new Date();
+    const today = now.toISOString().split('T')[0];
     const thirtyDaysAgo = new Date(now);
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -1309,10 +1310,43 @@ export default function App() {
     const awaitingResponse = allSent.length;
     const awaitingAmount = sentAmount;
 
-    // Find estimates that need follow-up (sent more than 7 days ago)
-    const sevenDaysAgo = new Date(now);
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const needsFollowUp = allSent.filter(est => new Date(est.date) < sevenDaysAgo);
+    // Follow-up tracking - estimates with follow-up dates that are due or overdue
+    const overdueFollowUps = allSent.filter(est => {
+      if (est.followUpDate) {
+        return est.followUpDate <= today;
+      }
+      // Legacy: if no followUpDate but sent more than 7 days ago
+      if (est.sentAt) {
+        const sentDate = new Date(est.sentAt);
+        const sevenDaysLater = new Date(sentDate);
+        sevenDaysLater.setDate(sevenDaysLater.getDate() + 7);
+        return sevenDaysLater <= now;
+      }
+      // Fallback: use estimate date
+      const estDate = new Date(est.date);
+      const sevenDaysLater = new Date(estDate);
+      sevenDaysLater.setDate(sevenDaysLater.getDate() + 7);
+      return sevenDaysLater <= now;
+    });
+
+    // Upcoming follow-ups (in next 3 days)
+    const threeDaysFromNow = new Date(now);
+    threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+    const threeDaysISO = threeDaysFromNow.toISOString().split('T')[0];
+    
+    const upcomingFollowUps = allSent.filter(est => {
+      if (est.followUpDate) {
+        return est.followUpDate > today && est.followUpDate <= threeDaysISO;
+      }
+      return false;
+    });
+
+    // Sort overdue by urgency (oldest first)
+    const sortedOverdue = [...overdueFollowUps].sort((a, b) => {
+      const dateA = a.followUpDate || a.sentAt || a.date;
+      const dateB = b.followUpDate || b.sentAt || b.date;
+      return new Date(dateA).getTime() - new Date(dateB).getTime();
+    });
 
     return {
       draft: { count: allDraft.length, amount: draftAmount },
@@ -1324,7 +1358,9 @@ export default function App() {
       recentConversionRate,
       awaitingResponse,
       awaitingAmount,
-      needsFollowUp: needsFollowUp.length,
+      needsFollowUp: overdueFollowUps.length,
+      overdueFollowUps: sortedOverdue,
+      upcomingFollowUps,
       totalEstimates: estimates.length,
       recentAccepted: recentAccepted.length,
       recentDeclined: recentDeclined.length,
@@ -1964,13 +2000,32 @@ export default function App() {
     setIsDrawerOpen(false);
   };
 
-  // Quick status update for estimates with automatic client promotion
+  // Quick status update for estimates with automatic client promotion and follow-up tracking
   const updateEstimateStatus = (est: Estimate, newStatus: 'draft' | 'sent' | 'accepted' | 'declined') => {
     if (!est?.id) return;
     
-    setEstimates(prev => prev.map(e => 
-      e.id === est.id ? { ...e, status: newStatus } : e
-    ));
+    const now = new Date();
+    const nowISO = now.toISOString();
+    
+    // Calculate follow-up date (7 days from now when marking as sent)
+    const followUpDate = new Date(now);
+    followUpDate.setDate(followUpDate.getDate() + 7);
+    const followUpDateISO = followUpDate.toISOString().split('T')[0];
+    
+    setEstimates(prev => prev.map(e => {
+      if (e.id !== est.id) return e;
+      
+      const updates: Partial<Estimate> = { status: newStatus };
+      
+      if (newStatus === 'sent' && e.status !== 'sent') {
+        // First time marking as sent - set sentAt and initial follow-up
+        updates.sentAt = nowISO;
+        updates.followUpDate = followUpDateISO;
+        updates.followUpCount = 0;
+      }
+      
+      return { ...e, ...updates };
+    }));
     
     // Auto-promote client from "lead" to "client" when estimate is accepted
     if (newStatus === 'accepted' && est.clientId) {
@@ -1978,7 +2033,7 @@ export default function App() {
       if (client && client.status === 'lead') {
         setClients(prev => prev.map(c => 
           c.id === est.clientId 
-            ? { ...c, status: 'client', updatedAt: new Date().toISOString() } 
+            ? { ...c, status: 'client', updatedAt: nowISO } 
             : c
         ));
         showToast(`🎉 ${est.client} is now a customer!`, 'success');
@@ -1986,13 +2041,48 @@ export default function App() {
         showToast(`Estimate marked as accepted`, 'success');
       }
     } else if (newStatus === 'declined') {
-      // Optionally mark client as inactive if they decline
       showToast('Estimate marked as declined', 'info');
     } else if (newStatus === 'sent') {
-      showToast('Estimate marked as sent', 'success');
+      showToast(`Estimate sent! Follow-up reminder set for ${followUpDateISO}`, 'success');
     } else {
       showToast(`Estimate status updated`, 'success');
     }
+  };
+
+  // Record a follow-up on an estimate
+  const recordFollowUp = (est: Estimate, nextFollowUpDays: number = 7) => {
+    if (!est?.id) return;
+    
+    const now = new Date();
+    const nextFollowUp = new Date(now);
+    nextFollowUp.setDate(nextFollowUp.getDate() + nextFollowUpDays);
+    
+    setEstimates(prev => prev.map(e => {
+      if (e.id !== est.id) return e;
+      return {
+        ...e,
+        lastFollowUp: now.toISOString(),
+        followUpDate: nextFollowUp.toISOString().split('T')[0],
+        followUpCount: (e.followUpCount || 0) + 1
+      };
+    }));
+    
+    showToast(`Follow-up recorded! Next reminder: ${nextFollowUp.toLocaleDateString()}`, 'success');
+  };
+
+  // Snooze follow-up reminder
+  const snoozeFollowUp = (est: Estimate, days: number) => {
+    if (!est?.id) return;
+    
+    const newDate = new Date();
+    newDate.setDate(newDate.getDate() + days);
+    
+    setEstimates(prev => prev.map(e => {
+      if (e.id !== est.id) return e;
+      return { ...e, followUpDate: newDate.toISOString().split('T')[0] };
+    }));
+    
+    showToast(`Follow-up snoozed for ${days} days`, 'info');
   };
 
   const deleteEstimate = (est: Partial<Estimate>) => {
@@ -3153,15 +3243,64 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                   </div>
                 </div>
 
-                {/* Follow-up Alert */}
+                {/* Follow-up Alerts - Detailed */}
                 {pipelineStats.needsFollowUp > 0 && (
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/30">
-                    <AlertCircle size={18} className="text-amber-600 dark:text-amber-400 flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-bold text-amber-800 dark:text-amber-300">
-                        {pipelineStats.needsFollowUp} estimate{pipelineStats.needsFollowUp !== 1 ? 's' : ''} need follow-up
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-xs font-bold text-orange-700 dark:text-orange-400 uppercase tracking-wider">
+                      <Clock3 size={14} />
+                      Follow-ups Due ({pipelineStats.needsFollowUp})
+                    </div>
+                    {pipelineStats.overdueFollowUps.slice(0, 3).map((est: Estimate) => (
+                      <div 
+                        key={est.id} 
+                        className="flex items-center justify-between p-3 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 cursor-pointer hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-all"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setBillingDocType('estimate');
+                          setCurrentPage(Page.Invoices);
+                        }}
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm font-bold text-orange-900 dark:text-orange-200 truncate">{est.client}</div>
+                          <div className="text-xs text-orange-700 dark:text-orange-400">
+                            {formatCurrency.format(est.amount)} • Due {est.followUpDate || 'now'}
+                          </div>
+                        </div>
+                        <div className="flex gap-1 ml-2">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); recordFollowUp(est, 7); }}
+                            className="px-2 py-1 rounded text-[10px] font-bold bg-white dark:bg-slate-800 text-orange-700 dark:text-orange-400 hover:bg-orange-200 dark:hover:bg-slate-700 transition-all"
+                            title="Record follow-up, set next in 7 days"
+                          >
+                            Done
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); snoozeFollowUp(est, 3); }}
+                            className="px-2 py-1 rounded text-[10px] font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+                            title="Snooze 3 days"
+                          >
+                            +3d
+                          </button>
+                        </div>
                       </div>
-                      <div className="text-xs text-amber-600 dark:text-amber-400">Sent more than 7 days ago</div>
+                    ))}
+                    {pipelineStats.needsFollowUp > 3 && (
+                      <div className="text-xs text-center text-orange-600 dark:text-orange-400 font-medium">
+                        +{pipelineStats.needsFollowUp - 3} more needing attention
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Upcoming Follow-ups */}
+                {pipelineStats.upcomingFollowUps.length > 0 && pipelineStats.needsFollowUp === 0 && (
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 mb-4">
+                    <Calendar size={18} className="text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-bold text-blue-800 dark:text-blue-300">
+                        {pipelineStats.upcomingFollowUps.length} follow-up{pipelineStats.upcomingFollowUps.length !== 1 ? 's' : ''} coming up
+                      </div>
+                      <div className="text-xs text-blue-600 dark:text-blue-400">In the next 3 days</div>
                     </div>
                   </div>
                 )}
@@ -3527,8 +3666,19 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                         const statusClass = est.status === 'accepted' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300' : est.status === 'declined' ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300' : est.status === 'sent' ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : est.status === 'void' ? 'bg-slate-200 text-slate-500 dark:bg-slate-800 dark:text-slate-500' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
                         const isVoid = est.status === 'void';
                         
+                        // Follow-up status calculation
+                        const today = new Date().toISOString().split('T')[0];
+                        const isFollowUpOverdue = est.status === 'sent' && est.followUpDate && est.followUpDate <= today;
+                        const isFollowUpSoon = est.status === 'sent' && est.followUpDate && !isFollowUpOverdue && (() => {
+                          const followUp = new Date(est.followUpDate);
+                          const threeDays = new Date();
+                          threeDays.setDate(threeDays.getDate() + 3);
+                          return followUp <= threeDays;
+                        })();
+                        const daysSinceSent = est.sentAt ? Math.floor((new Date().getTime() - new Date(est.sentAt).getTime()) / (1000 * 60 * 60 * 24)) : null;
+                        
                         return (
-                          <div key={est.id} className={`bg-white dark:bg-slate-900 p-6 rounded-lg border border-slate-200 dark:border-slate-800 group hover:border-blue-500/30 hover:shadow-lg transition-all shadow-md cursor-pointer ${isExpired && est.status !== 'accepted' && !isVoid ? 'border-l-4 border-l-amber-500' : ''} ${est.status === 'accepted' ? 'border-l-4 border-l-emerald-500' : ''} ${isVoid ? 'opacity-60' : ''}`} onClick={() => handleEditItem({ dataType: 'estimate', original: est })}>
+                          <div key={est.id} className={`bg-white dark:bg-slate-900 p-6 rounded-lg border border-slate-200 dark:border-slate-800 group hover:border-blue-500/30 hover:shadow-lg transition-all shadow-md cursor-pointer ${isExpired && est.status !== 'accepted' && !isVoid ? 'border-l-4 border-l-amber-500' : ''} ${est.status === 'accepted' ? 'border-l-4 border-l-emerald-500' : ''} ${isFollowUpOverdue ? 'border-l-4 border-l-orange-500' : ''} ${isVoid ? 'opacity-60' : ''}`} onClick={() => handleEditItem({ dataType: 'estimate', original: est })}>
                             <div className="flex items-start gap-4 mb-4">
                               <div className={`w-12 h-12 rounded-md flex items-center justify-center flex-shrink-0 ${est.status === 'accepted' ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : est.status === 'sent' ? 'bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
                                 {est.status === 'accepted' ? <CheckCircle size={20} strokeWidth={1.5} /> : <FileText size={20} strokeWidth={1.5} />}
@@ -3537,11 +3687,42 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                                   <div className="font-bold text-slate-900 dark:text-white text-lg">{est.client}</div>
                                   {est.number && <span className="text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded font-mono font-bold">{est.number}</span>}
+                                  {isFollowUpOverdue && <span className="text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 px-2 py-0.5 rounded font-bold flex items-center gap-1"><Clock3 size={12} /> Follow-up due</span>}
                                 </div>
                                 <div className="text-sm font-medium text-slate-600 dark:text-slate-300">{est.description}</div>
-                                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{est.date}{est.validUntil ? ` • Valid until ${est.validUntil}` : ''}</div>
+                                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                  {est.date}{est.validUntil ? ` • Valid until ${est.validUntil}` : ''}
+                                  {est.status === 'sent' && daysSinceSent !== null && <span className="ml-2 text-blue-600 dark:text-blue-400">• Sent {daysSinceSent}d ago</span>}
+                                  {est.followUpCount && est.followUpCount > 0 && <span className="ml-2 text-purple-600 dark:text-purple-400">• {est.followUpCount} follow-up{est.followUpCount > 1 ? 's' : ''}</span>}
+                                </div>
                               </div>
                             </div>
+
+                            {/* Follow-up Alert Banner for Sent Estimates */}
+                            {est.status === 'sent' && (isFollowUpOverdue || isFollowUpSoon) && (
+                              <div className={`flex items-center justify-between gap-3 p-3 rounded-lg mb-4 ${isFollowUpOverdue ? 'bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30' : 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30'}`}>
+                                <div className="flex items-center gap-2">
+                                  <Clock3 size={16} className={isFollowUpOverdue ? 'text-orange-600 dark:text-orange-400' : 'text-blue-600 dark:text-blue-400'} />
+                                  <span className={`text-sm font-bold ${isFollowUpOverdue ? 'text-orange-800 dark:text-orange-300' : 'text-blue-800 dark:text-blue-300'}`}>
+                                    {isFollowUpOverdue ? `Follow-up was due ${est.followUpDate}` : `Follow-up: ${est.followUpDate}`}
+                                  </span>
+                                </div>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); recordFollowUp(est, 7); }}
+                                    className="px-2 py-1 rounded text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+                                  >
+                                    Done +7d
+                                  </button>
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); snoozeFollowUp(est, 3); }}
+                                    className="px-2 py-1 rounded text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+                                  >
+                                    +3d
+                                  </button>
+                                </div>
+                              </div>
+                            )}
 
                             {/* Quick Status Actions - Context-Sensitive */}
                             {!isVoid && (
@@ -3568,6 +3749,14 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                     >
                                       <X size={14} /> Lost / Declined
                                     </button>
+                                    {!isFollowUpOverdue && !isFollowUpSoon && (
+                                      <button
+                                        onClick={(e) => { e.stopPropagation(); recordFollowUp(est, 7); }}
+                                        className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-purple-100 text-purple-700 hover:bg-purple-600 hover:text-white dark:bg-purple-900/30 dark:text-purple-400 dark:hover:bg-purple-600 dark:hover:text-white transition-all active:scale-95 flex items-center gap-1.5"
+                                      >
+                                        <Clock3 size={14} /> Log Follow-up
+                                      </button>
+                                    )}
                                   </>
                                 )}
                                 {est.status === 'accepted' && (
