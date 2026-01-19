@@ -603,6 +603,28 @@ export default function App() {
   const [isValidatingLicense, setIsValidatingLicense] = useState(false);
   const [licenseInfo, setLicenseInfo] = useState<{ email?: string; purchaseDate?: string; } | null>(null);
 
+  // Hidden dev mode toggle - Press Ctrl+Shift+D to bypass license screen
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'D') {
+        e.preventDefault();
+        const devLicense = {
+          key: 'HIDDEN-DEV-' + Date.now(),
+          email: 'dev@moniezi.app',
+          purchaseDate: new Date().toISOString(),
+          validated: true,
+          activatedAt: new Date().toISOString(),
+        };
+        localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(devLicense));
+        setIsLicenseValid(true);
+        setLicenseInfo({ email: 'dev@moniezi.app', purchaseDate: new Date().toISOString() });
+        console.log('🔓 Dev mode activated!');
+      }
+    };
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
+
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [estimates, setEstimates] = useState<Estimate[]>([]);
@@ -866,82 +888,39 @@ export default function App() {
     checkStoredLicense();
   }, []);
 
-  // Validate license with Cloudflare Worker (optional). If you have not set a Worker yet,
-  // Moniezi falls back to LOCAL validation so the activation screen still works.
+  // Validate license with Cloudflare Worker
   const validateLicenseWithServer = async (key: string): Promise<boolean> => {
-    const trimmed = (key || '').trim();
-
-    const isPlausibleKey = (k: string) => {
-      const kk = (k || '').trim();
-      // Accept most Gumroad-style keys (letters/numbers/dashes), but avoid obviously fake dev keys.
-      if (kk.length < 16 || kk.length > 80) return false;
-      if (kk.toUpperCase().includes('DEV-LICENSE')) return false;
-      return true;
-    };
-
-    // Replace these with your real Cloudflare Worker URLs when you are ready.
-    const WORKER_URL = 'https://license.yourdomain.workers.dev/validate';
-    const isPlaceholderWorker = WORKER_URL.includes('yourdomain.workers.dev');
-
-    // LOCAL MODE (no Worker configured yet)
-    if (isPlaceholderWorker) {
-      const stored = localStorage.getItem(LICENSE_STORAGE_KEY);
-      if (!stored) return false;
-      try {
-        const parsed = JSON.parse(stored);
-        return parsed.validated === true && parsed.key === trimmed && isPlausibleKey(trimmed);
-      } catch {
-        return false;
-      }
-    }
-
-    // WORKER MODE
     try {
+      // Replace with your Cloudflare Worker URL
+      const WORKER_URL = 'https://license.yourdomain.workers.dev/validate';
+      
       const response = await fetch(WORKER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ license_key: trimmed }),
+        body: JSON.stringify({ license_key: key }),
       });
-
+      
       if (!response.ok) return false;
-
+      
       const data = await response.json();
       return data.valid === true;
     } catch (error) {
       console.error('License validation error:', error);
-      // If network error, allow offline use ONLY if a license was previously validated.
+      // If network error, check if we have a cached valid license
       const stored = localStorage.getItem(LICENSE_STORAGE_KEY);
       if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          return parsed.validated === true && parsed.key === trimmed && isPlausibleKey(trimmed);
-        } catch {
-          return false;
-        }
+        const parsed = JSON.parse(stored);
+        // Allow offline use if license was previously validated
+        return parsed.validated === true;
       }
       return false;
     }
   };
 
   // Handle license activation
-
   const handleActivateLicense = async () => {
-    const trimmed = (licenseKey || '').trim();
-
-    if (!trimmed) {
+    if (!licenseKey.trim()) {
       setLicenseError('Please enter a license key');
-      return;
-    }
-
-    const isPlausibleKey = (k: string) => {
-      const kk = (k || '').trim();
-      if (kk.length < 16 || kk.length > 80) return false;
-      if (kk.toUpperCase().includes('DEV-LICENSE')) return false;
-      return true;
-    };
-
-    if (!isPlausibleKey(trimmed)) {
-      setLicenseError('That license key format looks incorrect. Please paste the full Gumroad license key and try again.');
       return;
     }
 
@@ -949,51 +928,28 @@ export default function App() {
     setLicenseError('');
 
     try {
-      // Replace with your Cloudflare Worker URL when ready
+      // Replace with your Cloudflare Worker URL
       const WORKER_URL = 'https://license.yourdomain.workers.dev/activate';
-      const isPlaceholderWorker = WORKER_URL.includes('yourdomain.workers.dev');
-
-      // LOCAL MODE (no Worker configured yet): accept the key and store it on this device.
-      if (isPlaceholderWorker) {
-        const licenseData = {
-          key: trimmed,
-          email: '',
-          purchaseDate: new Date().toISOString(),
-          validated: true,
-          activatedAt: new Date().toISOString(),
-          mode: 'local',
-        };
-        localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(licenseData));
-        setLicenseInfo({ email: '', purchaseDate: licenseData.purchaseDate });
-        setIsLicenseValid(true);
-        return;
-      }
-
-      // WORKER MODE
+      
       const response = await fetch(WORKER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ license_key: trimmed }),
+        body: JSON.stringify({ license_key: licenseKey.trim() }),
       });
 
-      let data: any = {};
-      try {
-        data = await response.json();
-      } catch {
-        data = {};
-      }
+      const data = await response.json();
 
       if (response.ok && data.valid) {
+        // Store license info
         const licenseData = {
-          key: trimmed,
+          key: licenseKey.trim(),
           email: data.email || '',
           purchaseDate: data.purchase_date || new Date().toISOString(),
           validated: true,
           activatedAt: new Date().toISOString(),
-          mode: 'worker',
         };
         localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(licenseData));
-
+        
         setLicenseInfo({ email: data.email, purchaseDate: data.purchase_date });
         setIsLicenseValid(true);
       } else {
