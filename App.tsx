@@ -603,7 +603,36 @@ export default function App() {
   const [isValidatingLicense, setIsValidatingLicense] = useState(false);
   const [licenseInfo, setLicenseInfo] = useState<{ email?: string; purchaseDate?: string; } | null>(null);
 
-  // Hidden dev mode toggle - Press Ctrl+Shift+D to bypass license screen
+  // Hidden dev mode toggle - Press Ctrl+Shift+D OR tap logo 5 times on mobile
+  const [devTapCount, setDevTapCount] = useState(0);
+  const devTapTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const handleDevTap = () => {
+    setDevTapCount(prev => {
+      const newCount = prev + 1;
+      // Reset after 2 seconds of no taps
+      if (devTapTimer.current) clearTimeout(devTapTimer.current);
+      devTapTimer.current = setTimeout(() => setDevTapCount(0), 2000);
+      
+      if (newCount >= 5) {
+        // Activate dev mode
+        const devLicense = {
+          key: 'HIDDEN-DEV-' + Date.now(),
+          email: 'dev@moniezi.app',
+          purchaseDate: new Date().toISOString(),
+          validated: true,
+          activatedAt: new Date().toISOString(),
+        };
+        localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(devLicense));
+        setIsLicenseValid(true);
+        setLicenseInfo({ email: 'dev@moniezi.app', purchaseDate: new Date().toISOString() });
+        console.log('🔓 Dev mode activated!');
+        return 0;
+      }
+      return newCount;
+    });
+  };
+
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'D') {
@@ -3501,7 +3530,10 @@ TIMELINE: Assumes 48-72hr feedback turnaround.`,
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-950">
         <div className="text-center">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 transform-gpu">
+          <div 
+            onClick={handleDevTap}
+            className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 transform-gpu cursor-pointer select-none"
+          >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
               width="40" 
@@ -3512,7 +3544,7 @@ TIMELINE: Assumes 48-72hr feedback turnaround.`,
               strokeWidth="1.5" 
               strokeLinecap="round" 
               strokeLinejoin="round" 
-              className="text-white"
+              className="text-white pointer-events-none"
               style={{ shapeRendering: 'geometricPrecision' }}
             >
               <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
@@ -3541,7 +3573,10 @@ TIMELINE: Assumes 48-72hr feedback turnaround.`,
         <div className="relative w-full max-w-md">
           {/* Logo and Welcome */}
           <div className="text-center mb-8">
-            <div className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-2xl shadow-blue-500/30 transform-gpu hover:scale-105 transition-transform">
+            <div 
+              onClick={handleDevTap}
+              className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-2xl shadow-blue-500/30 transform-gpu hover:scale-105 transition-transform cursor-pointer select-none"
+            >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
                 width="48" 
@@ -3552,7 +3587,7 @@ TIMELINE: Assumes 48-72hr feedback turnaround.`,
                 strokeWidth="1.5" 
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
-                className="text-white"
+                className="text-white pointer-events-none"
                 style={{ shapeRendering: 'geometricPrecision' }}
               >
                 <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
