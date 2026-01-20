@@ -4312,7 +4312,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                     {pipelineStats.overdueFollowUps.slice(0, 3).map((est: Estimate) => (
                       <div 
                         key={est.id} 
-                        className="flex items-center justify-between gap-2 p-3 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 cursor-pointer hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-all"
+                        className="flex items-center justify-between gap-3 p-3 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 cursor-pointer hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-all"
                         onClick={(e) => {
                           e.stopPropagation();
                           setBillingDocType('estimate');
@@ -4320,22 +4320,25 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                         }}
                       >
                         <div className="min-w-0 flex-1">
-                          <div className="text-[13px] font-bold text-orange-900 dark:text-orange-200 truncate" style={{ whiteSpace: 'nowrap' }}>{est.client}</div>
-                          <div className="text-[11px] text-orange-700 dark:text-orange-400" style={{ whiteSpace: 'nowrap' }}>
-                            {formatCurrency.format(est.amount)} • Due {est.followUpDate || 'now'}
+                          <div className="text-sm font-bold text-orange-900 dark:text-orange-200">{est.client}</div>
+                          <div className="text-xs text-orange-700 dark:text-orange-400 leading-relaxed">
+                            <span>{formatCurrency.format(est.amount)}</span>
+                            <span> • Due</span>
+                            <br />
+                            <span>{est.followUpDate || 'now'}</span>
                           </div>
                         </div>
-                        <div className="flex gap-1.5 flex-shrink-0">
+                        <div className="flex gap-2 flex-shrink-0">
                           <button
                             onClick={(e) => { e.stopPropagation(); recordFollowUp(est, 7); }}
-                            className="px-2.5 py-1.5 rounded text-[10px] font-bold bg-white dark:bg-slate-800 text-orange-700 dark:text-orange-400 hover:bg-orange-200 dark:hover:bg-slate-700 transition-all border border-orange-200/50 dark:border-orange-800/50"
+                            className="px-3 py-2 rounded-md text-xs font-bold bg-white dark:bg-slate-800 text-orange-700 dark:text-orange-400 hover:bg-orange-200 dark:hover:bg-slate-700 transition-all border border-orange-200/50 dark:border-orange-800/50"
                             title="Record follow-up, set next in 7 days"
                           >
                             Done
                           </button>
                           <button
                             onClick={(e) => { e.stopPropagation(); snoozeFollowUp(est, 3); }}
-                            className="px-2.5 py-1.5 rounded text-[10px] font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all border border-slate-200/50 dark:border-slate-700/50"
+                            className="px-3 py-2 rounded-md text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all border border-slate-200/50 dark:border-slate-700/50"
                             title="Snooze 3 days"
                           >
                             +3d
