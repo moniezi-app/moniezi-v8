@@ -114,11 +114,6 @@
               sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
               brand: ["Space Grotesk", "sans-serif"],
             },
-            fontSize: {
-              // Readability upgrade: Bump xs to ~13.6px and sm to ~15.2px for better legibility on mobile
-              xs: ["0.85rem", { lineHeight: "1.25rem" }],
-              sm: ["0.95rem", { lineHeight: "1.4rem" }],
-            },
             colors: {
               // Light-mode background (stronger light blue)
               slatebg: "#dbe7ff",
@@ -141,6 +136,16 @@
       body {
         font-family: "Inter", system-ui, -apple-system, sans-serif;
         -webkit-tap-highlight-color: transparent;
+        /* Cross-browser font rendering consistency */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+      }
+
+      /* Normalize font rendering across browsers */
+      * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
       @media print {
@@ -233,6 +238,21 @@
       /* Preserve white text on dark backgrounds - these must NOT be overridden */
       .text-white {
         color: #ffffff !important;
+      }
+
+      /* Firefox flexbox text wrapping fix */
+      @-moz-document url-prefix() {
+        .whitespace-nowrap {
+          white-space: nowrap !important;
+        }
+        .flex-shrink-0 {
+          flex-shrink: 0 !important;
+        }
+      }
+
+      /* Cross-browser flex item sizing consistency */
+      .flex > * {
+        min-width: 0;
       }
     </style>
 
