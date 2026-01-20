@@ -278,22 +278,22 @@ const Logo: React.FC<{ size?: 'sm' | 'lg', onClick?: () => void, forceDarkText?:
   return (
     <div 
       onClick={onClick}
-      className={`flex items-center gap-3 cursor-pointer group select-none transition-transform active:scale-95`}
+      className={`flex items-center gap-2 sm:gap-3 cursor-pointer group select-none transition-transform active:scale-95 flex-shrink-0`}
     >
       <div 
-        className={`${isLarge ? 'w-12 h-12 rounded-2xl' : 'w-10 h-10 rounded-xl'} bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all duration-500`}
+        className={`${isLarge ? 'w-12 h-12 rounded-2xl' : 'w-9 h-9 sm:w-10 sm:h-10 rounded-xl'} bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all duration-500 flex-shrink-0`}
       >
         <div className="relative w-full h-full flex items-center justify-center">
             <div className="w-1/2 h-1/2 border-l-[3px] border-r-[3px] border-t-[3px] border-white opacity-90 rounded-t-sm" />
             <div className="absolute w-1.5 h-1.5 bg-white rounded-full bottom-2.5 left-1/2 -translate-x-1/2 shadow-sm" />
         </div>
       </div>
-      <div className="flex flex-col leading-none">
-        <div className={`font-brand uppercase tracking-[0.22em] ${isLarge ? 'text-2xl' : 'text-lg'} ${forceDarkText ? 'text-slate-950' : 'text-slate-950 dark:text-white'}`}>
+      <div className="flex flex-col leading-none min-w-0">
+        <div className={`font-brand uppercase tracking-[0.18em] sm:tracking-[0.22em] ${isLarge ? 'text-2xl' : 'text-base sm:text-lg'} ${forceDarkText ? 'text-slate-950' : 'text-slate-950 dark:text-white'}`} style={{ whiteSpace: 'nowrap' }}>
           <span className="font-bold">Moni</span>
           <span className={`font-bold ${forceDarkText ? 'text-blue-700' : 'bg-gradient-to-r bg-clip-text text-transparent from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400'}`}>ezi</span>
         </div>
-        <div className={`text-[10px] sm:text-xs font-bold uppercase tracking-[0.22em] text-slate-500 dark:text-slate-300 mt-1 pl-0.5 whitespace-nowrap`}>
+        <div className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.18em] sm:tracking-[0.22em] text-slate-500 dark:text-slate-300 mt-0.5 sm:mt-1 pl-0.5`} style={{ whiteSpace: 'nowrap' }}>
           Pro Finance
         </div>
        
@@ -4123,23 +4123,23 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
         </div>
       )}
 
-      <header className={`no-print flex items-center justify-between px-6 md:px-8 py-8 sticky top-0 bg-slatebg/90 dark:bg-slate-950/90 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300`}>
+      <header className={`no-print flex items-center justify-between px-4 sm:px-6 md:px-8 py-6 sm:py-8 sticky top-0 bg-slatebg/90 dark:bg-slate-950/90 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300`}>
         <Logo onClick={() => setCurrentPage(Page.Dashboard)} />
-        <div className="flex gap-2">
-           <button onClick={toggleTheme} className="w-12 h-12 flex items-center justify-center bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-all shadow-md">{theme === 'dark' ? <Sun size={20} strokeWidth={1.2} /> : <Moon size={20} strokeWidth={1.2} />}</button>
+        <div className="flex gap-1.5 sm:gap-2 flex-shrink-0">
+           <button onClick={toggleTheme} className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-all shadow-md">{theme === 'dark' ? <Sun size={18} className="sm:w-5 sm:h-5" strokeWidth={1.2} /> : <Moon size={18} className="sm:w-5 sm:h-5" strokeWidth={1.2} />}</button>
            <button
              onClick={() => setShowInsights(true)}
-             className="relative w-12 h-12 flex items-center justify-center bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-purple-600 transition-all shadow-md"
+             className="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-purple-600 transition-all shadow-md"
              title="Insights"
            >
-             <BrainCircuit size={20} strokeWidth={1.2} />
+             <BrainCircuit size={18} className="sm:w-5 sm:h-5" strokeWidth={1.2} />
              {insightsBadgeCount > 0 && (
-               <span className="absolute -top-1 -right-1 w-5 h-5 bg-purple-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+               <span className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-purple-600 text-white text-[10px] sm:text-xs font-bold rounded-full flex items-center justify-center">
                  {Math.min(9, insightsBadgeCount)}
                </span>
              )}
            </button>
-           <button onClick={() => setCurrentPage(Page.Settings)} className="w-12 h-12 flex items-center justify-center bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-950 transition-all shadow-md"><Settings size={20} strokeWidth={1.2} /></button>
+           <button onClick={() => setCurrentPage(Page.Settings)} className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-950 transition-all shadow-md"><Settings size={18} className="sm:w-5 sm:h-5" strokeWidth={1.2} /></button>
         </div>
       </header>
 
@@ -4448,14 +4448,14 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
         {(currentPage === Page.Income || currentPage === Page.Expenses || (currentPage === Page.AllTransactions || currentPage === Page.Ledger)) && (
            <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
              <div className="flex items-center justify-between mb-2 pl-2">
-                 <div className="flex items-center gap-3">
-                     <div className="flex items-center gap-3">
-                       <div className={`p-2.5 rounded-lg ${currentPage === Page.Income ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400' : currentPage === Page.Expenses ? 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-500' : 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400'}`}>{currentPage === Page.Income ? <TrendingUp size={24} strokeWidth={1.5}/> : currentPage === Page.Expenses ? <TrendingDown size={24} strokeWidth={1.5}/> : <History size={24} strokeWidth={1.5} />}</div>
-                       <h2 className="text-3xl font-bold tracking-tight text-slate-950 dark:text-white font-brand">{currentPage === Page.Income ? 'Income' : currentPage === Page.Expenses ? 'Expenses' : 'Ledger'}</h2>
+                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                     <div className="flex items-center gap-2 sm:gap-3">
+                       <div className={`p-2 sm:p-2.5 rounded-lg flex-shrink-0 ${currentPage === Page.Income ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400' : currentPage === Page.Expenses ? 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-500' : 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400'}`}>{currentPage === Page.Income ? <TrendingUp size={20} className="sm:w-6 sm:h-6" strokeWidth={1.5}/> : currentPage === Page.Expenses ? <TrendingDown size={20} className="sm:w-6 sm:h-6" strokeWidth={1.5}/> : <History size={20} className="sm:w-6 sm:h-6" strokeWidth={1.5} />}</div>
+                       <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-950 dark:text-white font-brand">{currentPage === Page.Income ? 'Income' : currentPage === Page.Expenses ? 'Expenses' : 'Ledger'}</h2>
                      </div>
                  </div>
                  {(currentPage === Page.Income || currentPage === Page.Expenses || (currentPage === Page.AllTransactions || currentPage === Page.Ledger)) && (
-                    <button onClick={() => handleOpenFAB(getHeaderFabType())} className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-500 transition-all"><Plus size={24} strokeWidth={2.5} /></button>
+                    <button onClick={() => handleOpenFAB(getHeaderFabType())} className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-500 transition-all flex-shrink-0"><Plus size={20} className="sm:w-6 sm:h-6" strokeWidth={2.5} /></button>
                  )}
              </div>
 
@@ -4601,20 +4601,20 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
         {((currentPage === Page.Invoices || currentPage === Page.Invoice) || currentPage === Page.Invoice) && (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
-                  <FileText size={24} strokeWidth={1.5} />
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <div className="p-2 sm:p-2.5 rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 flex-shrink-0">
+                  <FileText size={20} className="sm:w-6 sm:h-6" strokeWidth={1.5} />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <h2 className="text-3xl font-bold tracking-tight text-slate-950 dark:text-white font-brand">{billingDocType === 'estimate' ? 'Estimates' : 'Invoices'}</h2>
+                <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
+                  <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-950 dark:text-white font-brand">{billingDocType === 'estimate' ? 'Estimates' : 'Invoices'}</h2>
                   <div className="inline-flex w-fit bg-slate-200 dark:bg-slate-900 p-1 rounded-lg">
-                    <button onClick={() => { setBillingDocType('invoice'); setInvoiceQuickFilter('all'); }} className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${billingDocType === 'invoice' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-600 dark:text-slate-300'}`}>Invoices</button>
-                    <button onClick={() => { setBillingDocType('estimate'); setEstimateQuickFilter('all'); }} className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${billingDocType === 'estimate' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-600 dark:text-slate-300'}`}>Estimates</button>
+                    <button onClick={() => { setBillingDocType('invoice'); setInvoiceQuickFilter('all'); }} className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${billingDocType === 'invoice' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-600 dark:text-slate-300'}`}>Invoices</button>
+                    <button onClick={() => { setBillingDocType('estimate'); setEstimateQuickFilter('all'); }} className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${billingDocType === 'estimate' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-600 dark:text-slate-300'}`}>Estimates</button>
                   </div>
                 </div>
               </div>
-              <button onClick={() => handleOpenFAB('billing', billingDocType === 'estimate' ? 'estimate' : 'invoice')} className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-500 transition-all"><Plus size={24} strokeWidth={2.5} /></button>
+              <button onClick={() => handleOpenFAB('billing', billingDocType === 'estimate' ? 'estimate' : 'invoice')} className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-500 transition-all flex-shrink-0"><Plus size={20} className="sm:w-6 sm:h-6" strokeWidth={2.5} /></button>
             </div>
             <PeriodSelector period={filterPeriod} setPeriod={setFilterPeriod} refDate={referenceDate} setRefDate={setReferenceDate} />
 
@@ -4875,11 +4875,11 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
         {currentPage === Page.Reports && (
            <div className="space-y-8 animate-in fade-in slide-in-from-right-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
-                  <BarChart3 size={24} strokeWidth={1.5} />
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-2 sm:p-2.5 rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 flex-shrink-0">
+                  <BarChart3 size={20} className="sm:w-6 sm:h-6" strokeWidth={1.5} />
                 </div>
-                <h2 className="text-3xl font-bold tracking-tight text-slate-950 dark:text-white font-brand">Reports</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-950 dark:text-white font-brand">Reports</h2>
               </div>
               
               {/* Enhanced Profit & Loss Statement */}
@@ -5719,21 +5719,21 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
         {currentPage === Page.Clients && (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 pb-24">
             {/* Header */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-purple-50 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400">
-                  <Users size={24} strokeWidth={1.5} />
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <div className="p-2 sm:p-2.5 rounded-lg bg-purple-50 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400 flex-shrink-0">
+                  <Users size={20} className="sm:w-6 sm:h-6" strokeWidth={1.5} />
                 </div>
-                <h2 className="text-3xl font-bold tracking-tight text-slate-950 dark:text-white font-brand">Clients</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-950 dark:text-white font-brand">Clients</h2>
               </div>
               <button 
                 onClick={() => { 
                   setEditingClient({ status: 'lead' }); 
                   setIsClientModalOpen(true); 
                 }} 
-                className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-500 transition-all active:scale-95"
+                className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-500 transition-all active:scale-95 flex-shrink-0"
               >
-                <Plus size={24} strokeWidth={2.5} />
+                <Plus size={20} className="sm:w-6 sm:h-6" strokeWidth={2.5} />
               </button>
             </div>
 
@@ -5896,11 +5896,11 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
         {currentPage === Page.Settings && (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 pb-24">
             {/* Settings Header */}
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-lg bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                <Settings size={24} strokeWidth={1.5} />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-2 sm:p-2.5 rounded-lg bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 flex-shrink-0">
+                <Settings size={20} className="sm:w-6 sm:h-6" strokeWidth={1.5} />
               </div>
-              <h2 className="text-3xl font-bold tracking-tight text-slate-950 dark:text-white font-brand">Settings</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-950 dark:text-white font-brand">Settings</h2>
             </div>
             
             {/* Tab Navigation */}
