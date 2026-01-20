@@ -4763,7 +4763,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                 <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                                   {est.date}{est.validUntil ? ` • Valid until ${est.validUntil}` : ''}
                                   {est.status === 'sent' && daysSinceSent !== null && <span className="ml-2 text-blue-600 dark:text-blue-400">• Sent {daysSinceSent}d ago</span>}
-                                  {est.followUpCount && est.followUpCount > 0 && <span className="ml-2 text-purple-600 dark:text-purple-400">• {est.followUpCount} follow-up{est.followUpCount > 1 ? 's' : ''}</span>}
+                                  {est.followUpCount !== undefined && est.followUpCount > 0 && <span className="ml-2 text-purple-600 dark:text-purple-400">• {est.followUpCount} follow-up{est.followUpCount > 1 ? 's' : ''}</span>}
                                 </div>
                               </div>
                             </div>
