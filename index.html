@@ -133,6 +133,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
+      /* Force consistent base font size across all browsers */
+      html {
+        font-size: 16px;
+        -webkit-text-size-adjust: 100%;
+        -moz-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+
       body {
         font-family: "Inter", system-ui, -apple-system, sans-serif;
         -webkit-tap-highlight-color: transparent;
@@ -140,12 +148,38 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;
+        font-size: 1rem;
+        line-height: 1.5;
       }
 
       /* Normalize font rendering across browsers */
       * {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Firefox-specific: prevent font inflation on mobile */
+      @-moz-document url-prefix() {
+        html {
+          -moz-text-size-adjust: none;
+        }
+        body {
+          font-size: 16px;
+        }
+        /* Ensure rem units are consistent */
+        .text-xs { font-size: 0.75rem !important; }
+        .text-sm { font-size: 0.875rem !important; }
+        .text-base { font-size: 1rem !important; }
+        .text-lg { font-size: 1.125rem !important; }
+        .text-xl { font-size: 1.25rem !important; }
+        .text-2xl { font-size: 1.5rem !important; }
+        .text-3xl { font-size: 1.875rem !important; }
+        .text-4xl { font-size: 2.25rem !important; }
+        .text-5xl { font-size: 3rem !important; }
+        /* Fix custom font sizes */
+        .text-\[10px\] { font-size: 10px !important; }
+        .text-\[11px\] { font-size: 11px !important; }
+        .text-\[13px\] { font-size: 13px !important; }
       }
 
       @media print {
