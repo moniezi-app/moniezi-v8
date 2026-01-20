@@ -4121,23 +4121,24 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
         {(currentPage === Page.Dashboard) && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="bg-white dark:bg-gradient-to-br dark:from-blue-800 dark:to-indigo-950 p-8 rounded-xl shadow-xl dark:shadow-none border border-slate-200 dark:border-white/10 relative overflow-hidden group">
+            <div className="bg-white dark:bg-gradient-to-br dark:from-blue-800 dark:to-indigo-950 p-6 sm:p-8 rounded-xl shadow-xl dark:shadow-none border border-slate-200 dark:border-white/10 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-80 h-80 bg-slate-100/50 dark:bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 group-hover:bg-slate-200/50 transition-colors duration-700 pointer-events-none" />
 
-              <div className="flex items-start justify-between gap-4 mb-3">
-                <div className="min-w-0">
-                  <label className="text-xs font-bold text-slate-500 dark:text-blue-200 mb-1 block tracking-widest uppercase font-brand">
-                    Net Profit <span className="opacity-80">({homeTotals.label})</span>
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
+                <div style={{ flexShrink: 0 }}>
+                  <label className="text-xs font-bold text-slate-500 dark:text-blue-200 mb-1 block tracking-widest uppercase font-brand" style={{ whiteSpace: 'nowrap' }}>
+                    Net Profit ({homeTotals.label})
                   </label>
-                  <div className="text-[11px] font-bold text-slate-500 dark:text-blue-200/80 tracking-wide">{homeTotals.rangeText}</div>
+                  <div className="text-[11px] font-bold text-slate-500 dark:text-blue-200/80 tracking-wide" style={{ whiteSpace: 'nowrap' }}>{homeTotals.rangeText}</div>
                 </div>
 
-                <div className="flex bg-slate-100/70 dark:bg-white/10 p-1 rounded-xl border border-slate-200/70 dark:border-white/10 shadow-sm">
+                <div className="flex bg-slate-100/70 dark:bg-white/10 p-1 rounded-xl border border-slate-200/70 dark:border-white/10 shadow-sm" style={{ flexShrink: 0 }}>
                   {(['ytd', 'mtd', '30d', 'all'] as HomeKpiPeriod[]).map(p => (
                     <button
                       key={p}
                       onClick={() => setHomeKpiPeriod(p)}
                       className={`px-2.5 sm:px-3 py-1.5 text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider rounded-lg transition-all ${homeKpiPeriod === p ? 'bg-white dark:bg-slate-950/70 text-blue-600 dark:text-white shadow' : 'text-slate-500 dark:text-blue-100/80 hover:text-slate-900 dark:hover:text-white'}`}
+                      style={{ whiteSpace: 'nowrap' }}
                     >
                       {p === 'ytd' ? 'YTD' : p === 'mtd' ? 'MTD' : p === '30d' ? '30D' : 'ALL'}
                     </button>
@@ -4145,16 +4146,16 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                 </div>
               </div>
 
-              <div className="text-4xl font-extrabold tracking-tighter mb-8 text-slate-950 dark:text-white font-brand">{formatCurrency.format(homeTotals.profit)}</div>
+              <div className="text-4xl font-extrabold tracking-tighter mb-6 text-slate-950 dark:text-white font-brand">{formatCurrency.format(homeTotals.profit)}</div>
 
-              <div className="flex items-center justify-center gap-4">
-                <div className="bg-slate-50 dark:bg-white/10 backdrop-blur-md px-5 py-3.5 rounded-lg border border-slate-200 dark:border-white/5 min-w-[160px]">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-slate-50 dark:bg-white/10 backdrop-blur-md px-4 py-3 rounded-lg border border-slate-200 dark:border-white/5">
                   <div className="flex items-center justify-center gap-2 mb-1 text-emerald-600 dark:text-emerald-300"><TrendingUp size={16} strokeWidth={2.5} /><span className="text-xs font-bold uppercase tracking-wide">In</span></div>
-                  <div className="text-xl font-bold text-slate-900 dark:text-white text-center">{formatCurrency.format(homeTotals.income)}</div>
+                  <div className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white text-center" style={{ whiteSpace: 'nowrap' }}>{formatCurrency.format(homeTotals.income)}</div>
                 </div>
-                <div className="bg-slate-50 dark:bg-white/10 backdrop-blur-md px-5 py-3.5 rounded-lg border border-slate-200 dark:border-white/5 min-w-[160px]">
+                <div className="bg-slate-50 dark:bg-white/10 backdrop-blur-md px-4 py-3 rounded-lg border border-slate-200 dark:border-white/5">
                   <div className="flex items-center justify-center gap-2 mb-1 text-red-600 dark:text-red-300"><TrendingDown size={16} strokeWidth={2.5} /><span className="text-xs font-bold uppercase tracking-wide">Out</span></div>
-                  <div className="text-xl font-bold text-slate-900 dark:text-white text-center">{formatCurrency.format(homeTotals.expense)}</div>
+                  <div className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white text-center" style={{ whiteSpace: 'nowrap' }}>{formatCurrency.format(homeTotals.expense)}</div>
                 </div>
               </div>
             </div>
