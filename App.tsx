@@ -3241,13 +3241,41 @@ TIMELINE: Assumes 48-72hr feedback turnaround.`,
                    setTimeout(resolve, 2000);
                  });
              }));
+             
+             // Calculate the actual content height for pageless PDF
+             const contentWidth = element.scrollWidth;
+             const contentHeight = element.scrollHeight;
+             // Convert pixels to mm (assuming 96 DPI: 1 inch = 25.4mm, 96px = 25.4mm, so 1px = 0.264583mm)
+             // But html2canvas uses scale:2, so we need to account for that
+             const pxToMm = 0.264583;
+             const pageWidthMm = 210; // A4 width
+             const marginMm = 10;
+             const contentWidthMm = pageWidthMm - (marginMm * 2); // 190mm usable width
+             // Calculate scale factor based on content width fitting into page width
+             const scaleFactor = contentWidthMm / (contentWidth * pxToMm);
+             // Calculate page height based on scaled content height + margins
+             const pageHeightMm = Math.ceil((contentHeight * pxToMm * scaleFactor) + (marginMm * 2) + 10); // +10 for safety
+             
              const opt = { 
-              margin: [10, 10, 10, 10], 
+              margin: [marginMm, marginMm, marginMm, marginMm], 
               filename: `Estimate_${selectedEstimateForDoc.client.replace(/[^a-z0-9]/gi, '_')}_${selectedEstimateForDoc.date}.pdf`, 
               image: { type: 'jpeg', quality: 0.98 }, 
-              html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0 }, 
-              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-              pagebreak: { mode: ['avoid-all', 'css', 'legacy'], before: '.page-break-before', after: '.page-break-after', avoid: '.page-break-avoid' }
+              html2canvas: { 
+                scale: 2, 
+                useCORS: true, 
+                backgroundColor: '#ffffff', 
+                scrollY: 0,
+                scrollX: 0,
+                windowWidth: contentWidth,
+                windowHeight: contentHeight
+              }, 
+              jsPDF: { 
+                unit: 'mm', 
+                format: [pageWidthMm, Math.max(297, pageHeightMm)], // A4 width, dynamic height (min A4 height)
+                orientation: 'portrait',
+                compress: true
+              },
+              pagebreak: { mode: 'avoid-all', avoid: ['tr', 'td', '.page-break-avoid'] }
             };
              await (window as any).html2pdf().set(opt).from(element).save();
              if (isMounted) { showToast('PDF Downloaded', 'success'); setTimeout(() => setIsEstimatePdfPreviewOpen(false), 1000); }
