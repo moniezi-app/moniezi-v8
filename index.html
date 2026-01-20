@@ -193,31 +193,48 @@
 
       /* ---------------------------------------------------------
          Light-mode readability boost (ONLY affects light mode)
-         Goal: reduce “faded” text on light-blue background.
+         Goal: reduce faded text on light-blue background.
          --------------------------------------------------------- */
 
-      /* Darken the most common muted text classes in light mode */
+      /* Darken the most common muted text classes in light mode - stronger contrast */
+      html:not(.dark) .text-slate-300 {
+        color: #475569 !important; /* slate-600 */
+      }
       html:not(.dark) .text-slate-400 {
-        color: #334155 !important;
+        color: #334155 !important; /* slate-700 */
       }
       html:not(.dark) .text-slate-500 {
-        color: #1f2937 !important;
+        color: #1e293b !important; /* slate-800 */
       }
       html:not(.dark) .text-slate-600 {
-        color: #0f172a !important;
+        color: #0f172a !important; /* slate-900 */
       }
 
-      /* Optional: slightly stronger borders in light mode so cards pop */
+      /* Stronger borders in light mode so cards pop */
       html:not(.dark) .border-slate-200 {
-        border-color: #cbd5e1 !important;
+        border-color: #94a3b8 !important; /* slate-400 */
+      }
+      html:not(.dark) .border-slate-100 {
+        border-color: #cbd5e1 !important; /* slate-300 */
       }
 
-      /* Optional weight boost (subtle): makes normal text a touch “sharper” */
+      /* Weight boost: makes text sharper and more readable */
       html:not(.dark) .font-normal {
         font-weight: 500 !important;
       }
       html:not(.dark) .font-medium {
         font-weight: 600 !important;
+      }
+      html:not(.dark) .font-semibold {
+        font-weight: 700 !important;
+      }
+
+      /* Ensure labels and captions are visible */
+      html:not(.dark) .text-xs {
+        color: #1e293b;
+      }
+      html:not(.dark) .uppercase {
+        font-weight: 700;
       }
     </style>
 
