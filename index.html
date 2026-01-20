@@ -197,16 +197,17 @@
          --------------------------------------------------------- */
 
       /* Darken the most common muted text classes in light mode - stronger contrast */
-      html:not(.dark) .text-slate-300 {
+      /* Only apply when NOT also using text-white */
+      html:not(.dark) .text-slate-300:not(.text-white) {
         color: #475569 !important; /* slate-600 */
       }
-      html:not(.dark) .text-slate-400 {
+      html:not(.dark) .text-slate-400:not(.text-white) {
         color: #334155 !important; /* slate-700 */
       }
-      html:not(.dark) .text-slate-500 {
+      html:not(.dark) .text-slate-500:not(.text-white) {
         color: #1e293b !important; /* slate-800 */
       }
-      html:not(.dark) .text-slate-600 {
+      html:not(.dark) .text-slate-600:not(.text-white) {
         color: #0f172a !important; /* slate-900 */
       }
 
@@ -229,12 +230,9 @@
         font-weight: 700 !important;
       }
 
-      /* Ensure labels and captions are visible */
-      html:not(.dark) .text-xs {
-        color: #1e293b;
-      }
-      html:not(.dark) .uppercase {
-        font-weight: 700;
+      /* Preserve white text on dark backgrounds - these must NOT be overridden */
+      .text-white {
+        color: #ffffff !important;
       }
     </style>
 
