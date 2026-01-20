@@ -4770,23 +4770,23 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
                             {/* Follow-up Alert Banner for Sent Estimates */}
                             {est.status === 'sent' && (isFollowUpOverdue || isFollowUpSoon) && (
-                              <div className={`flex items-center justify-between gap-3 p-3 rounded-lg mb-4 ${isFollowUpOverdue ? 'bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30' : 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30'}`}>
-                                <div className="flex items-center gap-2">
-                                  <Clock3 size={16} className={isFollowUpOverdue ? 'text-orange-600 dark:text-orange-400' : 'text-blue-600 dark:text-blue-400'} />
+                              <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 p-3 rounded-lg mb-4 ${isFollowUpOverdue ? 'bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30' : 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30'}`}>
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <Clock3 size={16} className={`flex-shrink-0 ${isFollowUpOverdue ? 'text-orange-600 dark:text-orange-400' : 'text-blue-600 dark:text-blue-400'}`} />
                                   <span className={`text-sm font-bold ${isFollowUpOverdue ? 'text-orange-800 dark:text-orange-300' : 'text-blue-800 dark:text-blue-300'}`}>
                                     {isFollowUpOverdue ? `Follow-up was due ${est.followUpDate}` : `Follow-up: ${est.followUpDate}`}
                                   </span>
                                 </div>
-                                <div className="flex gap-2">
+                                <div className="flex gap-2 flex-shrink-0">
                                   <button
                                     onClick={(e) => { e.stopPropagation(); recordFollowUp(est, 7); }}
-                                    className="px-2 py-1 rounded text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+                                    className="px-3 py-1.5 rounded text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700"
                                   >
                                     Done +7d
                                   </button>
                                   <button
                                     onClick={(e) => { e.stopPropagation(); snoozeFollowUp(est, 3); }}
-                                    className="px-2 py-1 rounded text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+                                    className="px-3 py-1.5 rounded text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all border border-slate-200 dark:border-slate-700"
                                   >
                                     +3d
                                   </button>
