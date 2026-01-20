@@ -6177,16 +6177,16 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
                     {/* License Details */}
                     {isLicenseValid && licenseInfo && (
-                      <div className="mt-4 pt-4 border-t border-emerald-200 dark:border-emerald-800 grid grid-cols-2 gap-4">
+                      <div className="mt-4 pt-4 border-t border-emerald-200 dark:border-emerald-800 space-y-3">
                         {licenseInfo.email && (
                           <div>
-                            <label className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Email</label>
-                            <p className="text-sm text-emerald-900 dark:text-emerald-100 font-medium">{licenseInfo.email}</p>
+                            <label className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Email</label>
+                            <p className="text-sm text-emerald-900 dark:text-emerald-100 font-medium break-all">{licenseInfo.email}</p>
                           </div>
                         )}
                         {licenseInfo.purchaseDate && (
                           <div>
-                            <label className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Purchased</label>
+                            <label className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Purchased</label>
                             <p className="text-sm text-emerald-900 dark:text-emerald-100 font-medium">
                               {new Date(licenseInfo.purchaseDate).toLocaleDateString()}
                             </p>
