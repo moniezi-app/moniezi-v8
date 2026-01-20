@@ -3241,7 +3241,14 @@ TIMELINE: Assumes 48-72hr feedback turnaround.`,
                    setTimeout(resolve, 2000);
                  });
              }));
-             const opt = { margin: [10, 10, 10, 10], filename: `Estimate_${selectedEstimateForDoc.client.replace(/[^a-z0-9]/gi, '_')}_${selectedEstimateForDoc.date}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+             const opt = { 
+              margin: [10, 10, 10, 10], 
+              filename: `Estimate_${selectedEstimateForDoc.client.replace(/[^a-z0-9]/gi, '_')}_${selectedEstimateForDoc.date}.pdf`, 
+              image: { type: 'jpeg', quality: 0.98 }, 
+              html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0 }, 
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+              pagebreak: { mode: ['avoid-all', 'css', 'legacy'], before: '.page-break-before', after: '.page-break-after', avoid: '.page-break-avoid' }
+            };
              await (window as any).html2pdf().set(opt).from(element).save();
              if (isMounted) { showToast('PDF Downloaded', 'success'); setTimeout(() => setIsEstimatePdfPreviewOpen(false), 1000); }
          } catch (error) { console.error('Estimate PDF failed:', error); if (isMounted) showToast('Export failed', 'error'); } finally { if (isMounted) setIsGeneratingEstimatePdf(false); }
@@ -3973,7 +3980,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
                     {/* Exclusions */}
                     {(selectedEstimateForDoc as any).exclusions && (
-                      <div className="mb-8 z-10 relative">
+                      <div className="mb-8 z-10 relative" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                         <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Not Included in This Estimate</h4>
                         <div className="bg-amber-50 border border-amber-100 rounded-lg p-4">
                           <p className="text-sm text-amber-800 leading-relaxed whitespace-pre-wrap">{(selectedEstimateForDoc as any).exclusions}</p>
@@ -3982,7 +3989,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                     )}
 
                     {/* Notes, Terms, and Acceptance */}
-                    <div className="mt-auto z-10 relative">
+                    <div className="mt-auto z-10 relative" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-slate-100 pt-8">
                             <div>
                               {selectedEstimateForDoc.notes && (
@@ -4004,14 +4011,14 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
                         {/* How to Accept */}
                         {(selectedEstimateForDoc as any).acceptanceTerms && (
-                          <div className="mt-8 bg-blue-50 border border-blue-100 rounded-lg p-6 text-center">
+                          <div className="mt-8 bg-blue-50 border border-blue-100 rounded-lg p-6 text-center" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                             <h4 className="text-sm font-bold text-blue-900 uppercase tracking-wider mb-2">How to Accept This Estimate</h4>
                             <p className="text-blue-700">{(selectedEstimateForDoc as any).acceptanceTerms}</p>
                           </div>
                         )}
 
                         {/* Signature Line (optional for printed versions) */}
-                        <div className="mt-12 pt-8 border-t border-slate-200">
+                        <div className="mt-12 pt-8 border-t border-slate-200" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                           <div className="grid grid-cols-2 gap-12">
                             <div>
                               <div className="border-b border-slate-300 pb-8 mb-2"></div>
