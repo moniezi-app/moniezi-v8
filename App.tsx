@@ -4608,10 +4608,21 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
             </div>
 
              {filterPeriod !== 'all' && (
-                <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 mb-6 flex items-center justify-between shadow-sm gap-4">
-                   <div className="text-center flex-1 border-r border-slate-200 dark:border-slate-800"><div className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">Paid</div><div className="text-lg font-bold text-slate-900 dark:text-white">{formatCurrency.format(invoicePeriodTotals.paid)}</div></div>
-                   <div className="text-center flex-1 border-r border-slate-200 dark:border-slate-800"><div className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">Due Soon</div><div className="text-lg font-bold text-slate-900 dark:text-white">{formatCurrency.format(invoicePeriodTotals.unpaid - invoicePeriodTotals.overdue)}</div></div>
-                   <div className="text-center flex-1"><div className="text-xs font-bold text-red-600 uppercase tracking-wider mb-1">Overdue</div><div className="text-lg font-bold text-slate-900 dark:text-white">{formatCurrency.format(invoicePeriodTotals.overdue)}</div></div>
+                <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 mb-6 shadow-sm">
+                   <div className="grid grid-cols-3 gap-2">
+                     <div className="text-center py-2">
+                       <div className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-1">Paid</div>
+                       <div className="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">{formatCurrency.format(invoicePeriodTotals.paid)}</div>
+                     </div>
+                     <div className="text-center py-2 border-x border-slate-200 dark:border-slate-700">
+                       <div className="text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-1">Due Soon</div>
+                       <div className="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">{formatCurrency.format(invoicePeriodTotals.unpaid - invoicePeriodTotals.overdue)}</div>
+                     </div>
+                     <div className="text-center py-2">
+                       <div className="text-[10px] font-bold text-red-600 uppercase tracking-wider mb-1">Overdue</div>
+                       <div className="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">{formatCurrency.format(invoicePeriodTotals.overdue)}</div>
+                     </div>
+                   </div>
                 </div>
              )}
             <div className="space-y-4">
