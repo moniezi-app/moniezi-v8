@@ -4177,13 +4177,13 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
               <div className="text-4xl font-extrabold tracking-tighter mb-6 text-slate-950 dark:text-white font-brand">{formatCurrency.format(homeTotals.profit)}</div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-slate-50 dark:bg-white/10 backdrop-blur-md px-4 py-3 rounded-lg border border-slate-200 dark:border-white/5">
+                <div className="bg-slate-50 dark:bg-white/10 backdrop-blur-md px-4 py-3 rounded-lg border border-slate-200 dark:border-white/5 flex flex-col items-center justify-center">
                   <div className="flex items-center justify-center gap-2 mb-1 text-emerald-600 dark:text-emerald-300"><TrendingUp size={16} strokeWidth={2.5} /><span className="text-xs font-bold uppercase tracking-wide">In</span></div>
-                  <div className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white text-center" style={{ whiteSpace: 'nowrap' }}>{formatCurrency.format(homeTotals.income)}</div>
+                  <div className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white text-center w-full">{formatCurrency.format(homeTotals.income)}</div>
                 </div>
-                <div className="bg-slate-50 dark:bg-white/10 backdrop-blur-md px-4 py-3 rounded-lg border border-slate-200 dark:border-white/5">
+                <div className="bg-slate-50 dark:bg-white/10 backdrop-blur-md px-4 py-3 rounded-lg border border-slate-200 dark:border-white/5 flex flex-col items-center justify-center">
                   <div className="flex items-center justify-center gap-2 mb-1 text-red-600 dark:text-red-300"><TrendingDown size={16} strokeWidth={2.5} /><span className="text-xs font-bold uppercase tracking-wide">Out</span></div>
-                  <div className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white text-center" style={{ whiteSpace: 'nowrap' }}>{formatCurrency.format(homeTotals.expense)}</div>
+                  <div className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white text-center w-full">{formatCurrency.format(homeTotals.expense)}</div>
                 </div>
               </div>
             </div>
