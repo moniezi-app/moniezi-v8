@@ -133,6 +133,59 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
+      /* ========================================
+         SEMANTIC COLOR TOKENS
+         ======================================== */
+      :root {
+        /* Text tokens - Light theme (darker for better contrast) */
+        --text-primary: #0f172a;           /* slate-900 */
+        --text-secondary: #334155;         /* slate-700 - improved from slate-500 */
+        --text-muted: #475569;             /* slate-600 - improved from slate-400 */
+        --text-hint: #64748b;              /* slate-500 */
+        
+        /* Navigation & Tab tokens - Light theme */
+        --nav-inactive: #475569;           /* slate-600 - darker than before */
+        --nav-active: #2563eb;             /* blue-600 */
+        --tab-inactive: #475569;           /* slate-600 */
+        --tab-active: #2563eb;             /* blue-600 */
+        
+        /* Scroll-to-top button - Light theme */
+        --scroll-btn-bg: #ffffff;
+        --scroll-btn-icon: #3b82f6;        /* blue-500 */
+        --scroll-btn-border: rgba(0,0,0,0.1);
+        --scroll-btn-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      }
+      
+      .dark {
+        /* Text tokens - Dark theme (brighter for better contrast) */
+        --text-primary: #f8fafc;           /* slate-50 */
+        --text-secondary: #cbd5e1;         /* slate-300 - improved from slate-400 */
+        --text-muted: #94a3b8;             /* slate-400 - improved from slate-500 */
+        --text-hint: #64748b;              /* slate-500 */
+        
+        /* Navigation & Tab tokens - Dark theme */
+        --nav-inactive: #94a3b8;           /* slate-400 - brighter than before */
+        --nav-active: #ffffff;             /* white */
+        --tab-inactive: #94a3b8;           /* slate-400 */
+        --tab-active: #60a5fa;             /* blue-400 */
+        
+        /* Scroll-to-top button - Dark theme */
+        --scroll-btn-bg: #1e293b;          /* slate-800 */
+        --scroll-btn-icon: #60a5fa;        /* blue-400 */
+        --scroll-btn-border: rgba(255,255,255,0.1);
+        --scroll-btn-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      }
+      
+      /* Utility classes using semantic tokens */
+      .text-primary { color: var(--text-primary) !important; }
+      .text-secondary { color: var(--text-secondary) !important; }
+      .text-muted { color: var(--text-muted) !important; }
+      .text-hint { color: var(--text-hint) !important; }
+      .nav-inactive { color: var(--nav-inactive) !important; }
+      .nav-active { color: var(--nav-active) !important; }
+      .tab-inactive { color: var(--tab-inactive) !important; }
+      .tab-active { color: var(--tab-active) !important; }
+
       /* Force consistent base font size across all browsers */
       html {
         font-size: 16px !important;
