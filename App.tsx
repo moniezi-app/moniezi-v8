@@ -4953,18 +4953,44 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                 </div>
               </div>
 
-              <div ref={taxSnapshotRef} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white p-8 rounded-lg shadow-xl relative overflow-hidden border border-slate-200 dark:border-slate-800">
+              <div ref={taxSnapshotRef} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white p-5 sm:p-8 rounded-lg shadow-xl relative overflow-hidden border border-slate-200 dark:border-slate-800">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-blue-50 dark:bg-blue-600/20 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-                <div className="flex items-center justify-between mb-8 relative z-10">
-                  <div className="flex items-center gap-3"><Calculator size={24} strokeWidth={2} className="text-emerald-600 dark:text-emerald-400" /><div><h3 className="text-lg sm:text-xl font-bold uppercase tracking-tight font-brand">Tax Snapshot</h3><p className="text-xs text-slate-600 dark:text-slate-300 font-bold mt-1">Based on Net Profit: {formatCurrency.format(reportData.ytdNetProfit)}</p></div></div>
-                  <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenTaxDrawer(); }} className="relative z-30 cursor-pointer text-xs font-bold text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors uppercase tracking-wider active:scale-95">Manage Payments</button>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8 relative z-10">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Calculator size={20} strokeWidth={2} className="text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                    <div>
+                      <h3 style={{ fontSize: '16px' }} className="font-bold uppercase tracking-tight font-brand">Tax Snapshot</h3>
+                      <p style={{ fontSize: '11px' }} className="text-slate-600 dark:text-slate-300 font-bold mt-0.5">Based on Net Profit: {formatCurrency.format(reportData.ytdNetProfit)}</p>
+                    </div>
+                  </div>
+                  <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenTaxDrawer(); }} style={{ fontSize: '10px' }} className="relative z-30 cursor-pointer font-bold text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors uppercase tracking-wider active:scale-95 self-start sm:self-auto">Manage Payments</button>
                 </div>
-                <div className="space-y-6 relative z-10">
-                  <div className="flex justify-between items-center"><div><div className="text-sm font-bold text-slate-700 dark:text-slate-300">Self-Employment Tax</div><div className="text-xs text-slate-600 dark:text-slate-300 uppercase tracking-wider">Social Security & Medicare (~15.3%)</div></div><div className="text-xl font-bold">{formatCurrency.format(reportData.seTaxLiability)}</div></div>
-                  <div className="flex justify-between items-center"><div><div className="text-sm font-bold text-slate-700 dark:text-slate-300">Income Tax Estimate</div><div className="text-xs text-slate-600 dark:text-slate-300 uppercase tracking-wider">Based on {reportData.totalIncomeTaxRate}% Combined Rate</div></div><div className="text-xl font-bold">{formatCurrency.format(reportData.incomeTaxLiability)}</div></div>
-                  <div className="flex justify-between items-center py-2 bg-slate-50 dark:bg-slate-900/50 -mx-4 px-4 rounded-lg"><div><div className="text-sm font-bold text-slate-700 dark:text-slate-300">Less: Payments (YTD)</div></div><div className="text-xl font-bold text-emerald-600 dark:text-emerald-400">-{formatCurrency.format(reportData.totalTaxPaidYTD)}</div></div>
-                  <div className="h-px bg-slate-100 dark:bg-slate-800 my-4" />
-                  <div className="flex justify-between items-end"><span className="font-bold text-sm uppercase tracking-widest font-brand text-slate-600 dark:text-slate-300">{reportData.taxAhead > 0 ? 'Overpaid (Refund Est.)' : 'Net Remaining To Pay'}</span><span className={`font-extrabold text-3xl font-brand ${reportData.taxAhead > 0 ? 'text-emerald-500' : 'text-slate-900 dark:text-white'}`}>{formatCurrency.format(reportData.taxAhead > 0 ? reportData.taxAhead : reportData.taxRemaining)}</span></div>
+                <div className="space-y-4 sm:space-y-6 relative z-10">
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div style={{ fontSize: '13px' }} className="font-bold text-slate-700 dark:text-slate-300">Self-Employment Tax</div>
+                      <div style={{ fontSize: '10px' }} className="text-slate-500 dark:text-slate-400 uppercase tracking-wider">Social Security & Medicare (~15.3%)</div>
+                    </div>
+                    <div style={{ fontSize: '18px' }} className="font-bold flex-shrink-0">{formatCurrency.format(reportData.seTaxLiability)}</div>
+                  </div>
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div style={{ fontSize: '13px' }} className="font-bold text-slate-700 dark:text-slate-300">Income Tax Estimate</div>
+                      <div style={{ fontSize: '10px' }} className="text-slate-500 dark:text-slate-400 uppercase tracking-wider">Based on {reportData.totalIncomeTaxRate}% Combined Rate</div>
+                    </div>
+                    <div style={{ fontSize: '18px' }} className="font-bold flex-shrink-0">{formatCurrency.format(reportData.incomeTaxLiability)}</div>
+                  </div>
+                  <div className="flex justify-between items-start gap-2 py-2 bg-slate-50 dark:bg-slate-900/50 -mx-4 sm:-mx-4 px-4 rounded-lg">
+                    <div className="min-w-0 flex-1">
+                      <div style={{ fontSize: '13px' }} className="font-bold text-slate-700 dark:text-slate-300">Less: Payments (YTD)</div>
+                    </div>
+                    <div style={{ fontSize: '18px' }} className="font-bold text-emerald-600 dark:text-emerald-400 flex-shrink-0">-{formatCurrency.format(reportData.totalTaxPaidYTD)}</div>
+                  </div>
+                  <div className="h-px bg-slate-100 dark:bg-slate-800 my-3 sm:my-4" />
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-1">
+                    <span style={{ fontSize: '12px' }} className="font-bold uppercase tracking-widest font-brand text-slate-600 dark:text-slate-300">{reportData.taxAhead > 0 ? 'Overpaid (Refund Est.)' : 'Net Remaining To Pay'}</span>
+                    <span style={{ fontSize: '28px' }} className={`font-extrabold font-brand ${reportData.taxAhead > 0 ? 'text-emerald-500' : 'text-slate-900 dark:text-white'}`}>{formatCurrency.format(reportData.taxAhead > 0 ? reportData.taxAhead : reportData.taxRemaining)}</span>
+                  </div>
                 </div>
 
                 {/* --- Tax Planner (2026) Accordion --- */}
