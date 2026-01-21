@@ -594,6 +594,27 @@ export default function App() {
     requestAnimationFrame(toTop);
     setTimeout(toTop, 0);
   }, [currentPage]);
+
+  // Scroll-to-top button visibility
+  useEffect(() => {
+    const el = mainScrollRef.current;
+    if (!el) return;
+    
+    const handleScroll = () => {
+      // Show button after scrolling 400px
+      setShowScrollToTop(el.scrollTop > 400);
+    };
+    
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    return () => el.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    const el = mainScrollRef.current;
+    if (el) {
+      el.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
   
   // License / Activation State
   const LICENSE_STORAGE_KEY = 'moniezi_license';
@@ -712,6 +733,7 @@ export default function App() {
   const [duplicationCount, setDuplicationCount] = useState<Record<string, number>>({});
   const [showTemplateSuggestion, setShowTemplateSuggestion] = useState(false);
   const [templateSuggestionData, setTemplateSuggestionData] = useState<{name: string, category: string, type: string} | null>(null);
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
   
   // Phase 3: Advanced Duplicate Features
   const [showBatchDuplicateModal, setShowBatchDuplicateModal] = useState(false);
@@ -4644,8 +4666,9 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       className={`px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-bold uppercase tracking-wide transition-all ${
                         billingDocType === 'invoice' 
                           ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-md ring-1 ring-black/5 dark:ring-white/10' 
-                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                          : 'hover:text-slate-900 dark:hover:text-slate-200'
                       }`}
+                      style={{ color: billingDocType === 'invoice' ? undefined : 'var(--tab-inactive)' }}
                     >
                       Invoices
                     </button>
@@ -4654,8 +4677,9 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       className={`px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-bold uppercase tracking-wide transition-all ${
                         billingDocType === 'estimate' 
                           ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-md ring-1 ring-black/5 dark:ring-white/10' 
-                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                          : 'hover:text-slate-900 dark:hover:text-slate-200'
                       }`}
+                      style={{ color: billingDocType === 'estimate' ? undefined : 'var(--tab-inactive)' }}
                     >
                       Estimates
                     </button>
@@ -6393,40 +6417,61 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
       </main>
 
+      {/* Scroll to Top Button */}
+      {showScrollToTop && (
+        <button
+          onClick={scrollToTop}
+          className="no-print fixed right-4 z-[54] w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 active:scale-95 animate-in fade-in slide-in-from-bottom-4"
+          style={{
+            bottom: 'calc(5rem + env(safe-area-inset-bottom, 0px) + 16px)',
+            backgroundColor: 'var(--scroll-btn-bg)',
+            color: 'var(--scroll-btn-icon)',
+            border: '1px solid var(--scroll-btn-border)',
+            boxShadow: 'var(--scroll-btn-shadow)',
+          }}
+          aria-label="Scroll to top"
+        >
+          <ChevronUp size={22} strokeWidth={2.5} />
+        </button>
+      )}
+
       <div className="no-print fixed bottom-0 left-0 right-0 z-[55] pb-safe">
         <div className="bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800/50 px-1 pt-2 pb-3">
           <div className="max-w-xl mx-auto flex justify-between items-end relative">
             {/* Home */}
             <button 
               onClick={() => setCurrentPage(Page.Dashboard)} 
-              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${currentPage === Page.Dashboard ? 'text-blue-600 dark:text-white' : 'text-slate-600 dark:text-slate-400'}`}
+              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${currentPage === Page.Dashboard ? 'text-blue-600 dark:text-white' : ''}`}
+              style={{ color: currentPage === Page.Dashboard ? undefined : 'var(--nav-inactive)' }}
             >
               <div className={`p-1.5 rounded-lg ${currentPage === Page.Dashboard ? 'bg-blue-100 dark:bg-slate-800' : ''}`}>
                 <LayoutGrid size={20} strokeWidth={currentPage === Page.Dashboard ? 2 : 1.5} />
               </div>
-              <span className={`text-[10px] mt-0.5 ${currentPage === Page.Dashboard ? 'font-bold text-blue-600 dark:text-white' : 'font-semibold text-slate-600 dark:text-slate-400'}`}>Home</span>
+              <span className={`text-[11px] mt-0.5 ${currentPage === Page.Dashboard ? 'font-bold text-blue-600 dark:text-white' : 'font-semibold'}`} style={{ color: currentPage === Page.Dashboard ? undefined : 'var(--nav-inactive)' }}>Home</span>
             </button>
 
             {/* Invoice */}
             <button 
               onClick={() => { setBillingDocType('invoice'); setCurrentPage(Page.Invoices); }} 
-              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'invoice' ? 'text-blue-600 dark:text-white' : 'text-slate-600 dark:text-slate-400'}`}
+              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'invoice' ? 'text-blue-600 dark:text-white' : ''}`}
+              style={{ color: (currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'invoice' ? undefined : 'var(--nav-inactive)' }}
             >
               <div className={`p-1.5 rounded-lg ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'invoice' ? 'bg-blue-100 dark:bg-slate-800' : ''}`}>
                 <FileText size={20} strokeWidth={(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'invoice' ? 2 : 1.5} />
               </div>
-              <span className={`text-[10px] mt-0.5 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'invoice' ? 'font-bold text-blue-600 dark:text-white' : 'font-semibold text-slate-600 dark:text-slate-400'}`}>Invoice</span>
+              <span className={`text-[11px] mt-0.5 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'invoice' ? 'font-bold text-blue-600 dark:text-white' : 'font-semibold'}`} style={{ color: (currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'invoice' ? undefined : 'var(--nav-inactive)' }}>Invoice</span>
             </button>
 
             {/* Estimate */}
             <button 
               onClick={() => { setBillingDocType('estimate'); setCurrentPage(Page.Invoices); }} 
-              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 'text-blue-600 dark:text-white' : 'text-slate-600 dark:text-slate-400'}`}
+              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 'text-blue-600 dark:text-white' : ''}`}
+              style={{ color: (currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? undefined : 'var(--nav-inactive)' }}
             >
               <div className={`p-1.5 rounded-lg ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 'bg-blue-100 dark:bg-slate-800' : ''}`}>
                 <ClipboardList size={20} strokeWidth={(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 2 : 1.5} />
               </div>
-              <span className={`text-[10px] mt-0.5 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 'font-bold text-blue-600 dark:text-white' : 'font-semibold text-slate-600 dark:text-slate-400'}`}>Estimate</span>
+              <span className={`text-[11px] mt-0.5 ${(currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? 'font-bold text-blue-600 dark:text-white' : 'font-semibold'}`} style={{ color: (currentPage === Page.Invoices || currentPage === Page.Invoice) && billingDocType === 'estimate' ? undefined : 'var(--nav-inactive)' }}>Estimate</span>
             </button>
 
             {/* Center FAB - Ledger with + */}
@@ -6443,29 +6488,31 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
               >
                 <Plus size={24} strokeWidth={2.5} className="text-white" />
               </button>
-              <span className={`text-[10px] mt-1 ${(currentPage === Page.AllTransactions || currentPage === Page.Ledger) ? 'font-bold text-blue-600 dark:text-blue-400' : 'font-semibold text-slate-600 dark:text-slate-400'}`}>Ledger</span>
+              <span className={`text-[11px] mt-1 ${(currentPage === Page.AllTransactions || currentPage === Page.Ledger) ? 'font-bold text-blue-600 dark:text-blue-400' : 'font-semibold'}`} style={{ color: (currentPage === Page.AllTransactions || currentPage === Page.Ledger) ? undefined : 'var(--nav-inactive)' }}>Ledger</span>
             </div>
 
             {/* Clients */}
             <button 
               onClick={() => setCurrentPage(Page.Clients)} 
-              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${currentPage === Page.Clients ? 'text-blue-600 dark:text-white' : 'text-slate-600 dark:text-slate-400'}`}
+              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${currentPage === Page.Clients ? 'text-blue-600 dark:text-white' : ''}`}
+              style={{ color: currentPage === Page.Clients ? undefined : 'var(--nav-inactive)' }}
             >
               <div className={`p-1.5 rounded-lg ${currentPage === Page.Clients ? 'bg-blue-100 dark:bg-slate-800' : ''}`}>
                 <Users size={20} strokeWidth={currentPage === Page.Clients ? 2 : 1.5} />
               </div>
-              <span className={`text-[10px] mt-0.5 ${currentPage === Page.Clients ? 'font-bold text-blue-600 dark:text-white' : 'font-semibold text-slate-600 dark:text-slate-400'}`}>Clients</span>
+              <span className={`text-[11px] mt-0.5 ${currentPage === Page.Clients ? 'font-bold text-blue-600 dark:text-white' : 'font-semibold'}`} style={{ color: currentPage === Page.Clients ? undefined : 'var(--nav-inactive)' }}>Clients</span>
             </button>
 
             {/* Reports */}
             <button 
               onClick={() => setCurrentPage(Page.Reports)} 
-              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${currentPage === Page.Reports ? 'text-blue-600 dark:text-white' : 'text-slate-600 dark:text-slate-400'}`}
+              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all active:scale-95 ${currentPage === Page.Reports ? 'text-blue-600 dark:text-white' : ''}`}
+              style={{ color: currentPage === Page.Reports ? undefined : 'var(--nav-inactive)' }}
             >
               <div className={`p-1.5 rounded-lg ${currentPage === Page.Reports ? 'bg-blue-100 dark:bg-slate-800' : ''}`}>
                 <BarChart3 size={20} strokeWidth={currentPage === Page.Reports ? 2 : 1.5} />
               </div>
-              <span className={`text-[10px] mt-0.5 ${currentPage === Page.Reports ? 'font-bold text-blue-600 dark:text-white' : 'font-semibold text-slate-600 dark:text-slate-400'}`}>Reports</span>
+              <span className={`text-[11px] mt-0.5 ${currentPage === Page.Reports ? 'font-bold text-blue-600 dark:text-white' : 'font-semibold'}`} style={{ color: currentPage === Page.Reports ? undefined : 'var(--nav-inactive)' }}>Reports</span>
             </button>
           </div>
         </div>
