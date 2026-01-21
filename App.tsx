@@ -566,6 +566,7 @@ export default function App() {
   // not the browser window. Without resetting this container, switching pages via the
   // bottom nav keeps the previous scroll position.
   const mainScrollRef = useRef<HTMLElement | null>(null);
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
 
   // Always reset scroll position when switching bottom tabs.
   // Some mobile browsers "remember" the scrollTop of the same scrolling container.
@@ -733,7 +734,6 @@ export default function App() {
   const [duplicationCount, setDuplicationCount] = useState<Record<string, number>>({});
   const [showTemplateSuggestion, setShowTemplateSuggestion] = useState(false);
   const [templateSuggestionData, setTemplateSuggestionData] = useState<{name: string, category: string, type: string} | null>(null);
-  const [showScrollToTop, setShowScrollToTop] = useState(false);
   
   // Phase 3: Advanced Duplicate Features
   const [showBatchDuplicateModal, setShowBatchDuplicateModal] = useState(false);
