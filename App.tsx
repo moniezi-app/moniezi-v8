@@ -1813,7 +1813,7 @@ OWNERSHIP
     const expense = scoped.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
     const profit = income - expense;
 
-    const label = homeKpiPeriod === 'ytd' ? 'YTD' : homeKpiPeriod === 'mtd' ? 'MTD' : homeKpiPeriod === '30d' ? '30D' : 'ALL';
+    const label = homeKpiPeriod === 'ytd' ? 'This Year' : homeKpiPeriod === 'mtd' ? 'This Month' : homeKpiPeriod === '30d' ? '30 Days' : 'All Time';
 
     const fmtShort = (d: Date) => d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
     const rangeText = start ? `${fmtShort(start)} — ${fmtShort(end)}` : `All Time`;
@@ -4152,7 +4152,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
             <div className="bg-white dark:bg-gradient-to-br dark:from-blue-800 dark:to-indigo-950 p-6 sm:p-8 rounded-xl shadow-xl dark:shadow-none border border-slate-200 dark:border-white/10 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-80 h-80 bg-slate-100/50 dark:bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 group-hover:bg-slate-200/50 transition-colors duration-700 pointer-events-none" />
 
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
+              <div className="flex flex-col gap-4 mb-4">
                 <div style={{ flexShrink: 0 }}>
                   <label className="text-xs font-bold text-slate-500 dark:text-blue-200 mb-1 block tracking-widest uppercase font-brand" style={{ whiteSpace: 'nowrap' }}>
                     Net Profit ({homeTotals.label})
@@ -4160,17 +4160,42 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                   <div className="text-[11px] font-bold text-slate-500 dark:text-blue-200/80 tracking-wide" style={{ whiteSpace: 'nowrap' }}>{homeTotals.rangeText}</div>
                 </div>
 
-                <div className="flex bg-slate-100/70 dark:bg-white/10 p-1 rounded-xl border border-slate-200/70 dark:border-white/10 shadow-sm" style={{ flexShrink: 0 }}>
-                  {(['ytd', 'mtd', '30d', 'all'] as HomeKpiPeriod[]).map(p => (
-                    <button
-                      key={p}
-                      onClick={() => setHomeKpiPeriod(p)}
-                      className={`px-2.5 sm:px-3 py-1.5 text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider rounded-lg transition-all ${homeKpiPeriod === p ? 'bg-white dark:bg-slate-950/70 text-blue-600 dark:text-white shadow' : 'text-slate-500 dark:text-blue-100/80 hover:text-slate-900 dark:hover:text-white'}`}
-                      style={{ whiteSpace: 'nowrap' }}
-                    >
-                      {p === 'ytd' ? 'YTD' : p === 'mtd' ? 'MTD' : p === '30d' ? '30D' : 'ALL'}
-                    </button>
-                  ))}
+                {/* Redesigned Period Selector - User Friendly */}
+                <div className="grid grid-cols-4 gap-1.5 sm:gap-2 bg-slate-100/80 dark:bg-white/10 p-1.5 sm:p-2 rounded-2xl border border-slate-200/70 dark:border-white/10 shadow-sm">
+                  {(['ytd', 'mtd', '30d', 'all'] as HomeKpiPeriod[]).map(p => {
+                    const isActive = homeKpiPeriod === p;
+                    const labels: Record<HomeKpiPeriod, { short: string; full: string }> = {
+                      'ytd': { short: 'Year', full: 'This Year' },
+                      'mtd': { short: 'Month', full: 'This Month' },
+                      '30d': { short: '30 Days', full: '30 Days' },
+                      'all': { short: 'All', full: 'All Time' }
+                    };
+                    return (
+                      <button
+                        key={p}
+                        onClick={() => setHomeKpiPeriod(p)}
+                        className={`relative flex flex-col items-center justify-center min-h-[48px] sm:min-h-[52px] px-2 py-2 rounded-xl transition-all duration-200 ${
+                          isActive 
+                            ? 'bg-white dark:bg-slate-900/90 shadow-lg shadow-blue-500/10 dark:shadow-black/30 ring-1 ring-blue-500/20 dark:ring-white/20' 
+                            : 'hover:bg-white/50 dark:hover:bg-white/5 active:scale-95'
+                        }`}
+                      >
+                        <span 
+                          className={`text-[13px] sm:text-sm font-bold leading-tight text-center transition-colors ${
+                            isActive 
+                              ? 'text-blue-600 dark:text-white' 
+                              : 'text-slate-500 dark:text-blue-100/70'
+                          }`}
+                          style={{ fontVariantNumeric: 'tabular-nums' }}
+                        >
+                          {labels[p].short}
+                        </span>
+                        {isActive && (
+                          <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-6 h-1 bg-blue-500 dark:bg-blue-400 rounded-full" />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
