@@ -4635,11 +4635,30 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                 <div className="p-2 sm:p-2.5 rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 flex-shrink-0">
                   <FileText size={20} className="sm:w-6 sm:h-6" strokeWidth={1.5} />
                 </div>
-                <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
+                <div className="flex flex-col gap-2 sm:gap-3 min-w-0">
                   <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-950 dark:text-white font-brand">{billingDocType === 'estimate' ? 'Estimates' : 'Invoices'}</h2>
-                  <div className="inline-flex w-fit bg-slate-200 dark:bg-slate-900 p-1 rounded-lg">
-                    <button onClick={() => { setBillingDocType('invoice'); setInvoiceQuickFilter('all'); }} className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${billingDocType === 'invoice' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-600 dark:text-slate-300'}`}>Invoices</button>
-                    <button onClick={() => { setBillingDocType('estimate'); setEstimateQuickFilter('all'); }} className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${billingDocType === 'estimate' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-600 dark:text-slate-300'}`}>Estimates</button>
+                  {/* Redesigned Invoices/Estimates Segmented Tabs */}
+                  <div className="inline-flex w-fit bg-slate-200/80 dark:bg-slate-900 p-1.5 rounded-xl border border-slate-300/50 dark:border-slate-700/50 shadow-sm">
+                    <button 
+                      onClick={() => { setBillingDocType('invoice'); setInvoiceQuickFilter('all'); }} 
+                      className={`px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-bold uppercase tracking-wide transition-all ${
+                        billingDocType === 'invoice' 
+                          ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-md ring-1 ring-black/5 dark:ring-white/10' 
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      }`}
+                    >
+                      Invoices
+                    </button>
+                    <button 
+                      onClick={() => { setBillingDocType('estimate'); setEstimateQuickFilter('all'); }} 
+                      className={`px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-bold uppercase tracking-wide transition-all ${
+                        billingDocType === 'estimate' 
+                          ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-md ring-1 ring-black/5 dark:ring-white/10' 
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      }`}
+                    >
+                      Estimates
+                    </button>
                   </div>
                 </div>
               </div>
