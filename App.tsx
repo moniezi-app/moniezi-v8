@@ -4153,11 +4153,12 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
               <div className="absolute top-0 right-0 w-80 h-80 bg-slate-100/50 dark:bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 group-hover:bg-slate-200/50 transition-colors duration-700 pointer-events-none" />
 
               <div className="flex flex-col gap-4 mb-4">
-                <div style={{ flexShrink: 0 }}>
-                  <label className="text-xs font-bold text-slate-500 dark:text-blue-200 mb-1 block tracking-widest uppercase font-brand" style={{ whiteSpace: 'nowrap' }}>
-                    Net Profit ({homeTotals.label})
-                  </label>
-                  <div className="text-[11px] font-bold text-slate-500 dark:text-blue-200/80 tracking-wide" style={{ whiteSpace: 'nowrap' }}>{homeTotals.rangeText}</div>
+                {/* Header - Larger Typography */}
+                <div className="relative z-10">
+                  <h2 className="text-base sm:text-lg font-extrabold text-slate-700 dark:text-white tracking-wide uppercase font-brand mb-1">
+                    Net Profit <span className="text-blue-600 dark:text-blue-300">({homeTotals.label})</span>
+                  </h2>
+                  <p className="text-sm sm:text-base font-semibold text-slate-500 dark:text-blue-200/90 tracking-wide">{homeTotals.rangeText}</p>
                 </div>
 
                 {/* Redesigned Period Selector - User Friendly */}
