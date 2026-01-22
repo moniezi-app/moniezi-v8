@@ -739,6 +739,17 @@ export default function App() {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [isPdfPreviewOpen, setIsPdfPreviewOpen] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  
+  // Pro P&L State
+  const [plPeriodType, setPlPeriodType] = useState<'month' | 'quarter' | 'year' | 'ytd' | 'lastYear' | 'trailing12' | 'custom'>('ytd');
+  const [plCustomStart, setPlCustomStart] = useState<string>(new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0]);
+  const [plCustomEnd, setPlCustomEnd] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [plShowComparison, setPlShowComparison] = useState(false);
+  const [plAccountingBasis, setPlAccountingBasis] = useState<'cash' | 'accrual'>('cash');
+  const [plShowPreparedBy, setPlShowPreparedBy] = useState(true);
+  const [plShowAddress, setPlShowAddress] = useState(true);
+  const [showProPLPreview, setShowProPLPreview] = useState(false);
+  const [isGeneratingProPLPdf, setIsGeneratingProPLPdf] = useState(false);
   const [seedSuccess, setSeedSuccess] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [showInsights, setShowInsights] = useState(false);
@@ -2041,6 +2052,223 @@ OWNERSHIP
         totalIncomeTaxRate
     };
   }, [transactions, settings, taxPayments]);
+
+  // Pro P&L Data Calculation
+  const proPLData = useMemo(() => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    
+    // Calculate date range based on period type
+    let startDate: Date;
+    let endDate: Date;
+    let priorStartDate: Date;
+    let priorEndDate: Date;
+    
+    switch (plPeriodType) {
+      case 'month':
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        priorStartDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        priorEndDate = new Date(now.getFullYear(), now.getMonth(), 0);
+        break;
+      case 'quarter':
+        const currentQuarter = Math.floor(now.getMonth() / 3);
+        startDate = new Date(now.getFullYear(), currentQuarter * 3, 1);
+        endDate = new Date(now.getFullYear(), (currentQuarter + 1) * 3, 0);
+        priorStartDate = new Date(now.getFullYear(), (currentQuarter - 1) * 3, 1);
+        priorEndDate = new Date(now.getFullYear(), currentQuarter * 3, 0);
+        break;
+      case 'year':
+        startDate = new Date(currentYear, 0, 1);
+        endDate = new Date(currentYear, 11, 31);
+        priorStartDate = new Date(currentYear - 1, 0, 1);
+        priorEndDate = new Date(currentYear - 1, 11, 31);
+        break;
+      case 'ytd':
+        startDate = new Date(currentYear, 0, 1);
+        endDate = now;
+        priorStartDate = new Date(currentYear - 1, 0, 1);
+        priorEndDate = new Date(currentYear - 1, now.getMonth(), now.getDate());
+        break;
+      case 'lastYear':
+        startDate = new Date(currentYear - 1, 0, 1);
+        endDate = new Date(currentYear - 1, 11, 31);
+        priorStartDate = new Date(currentYear - 2, 0, 1);
+        priorEndDate = new Date(currentYear - 2, 11, 31);
+        break;
+      case 'trailing12':
+        endDate = now;
+        startDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() + 1);
+        priorEndDate = new Date(startDate.getTime() - 1);
+        priorStartDate = new Date(priorEndDate.getFullYear() - 1, priorEndDate.getMonth(), priorEndDate.getDate() + 1);
+        break;
+      case 'custom':
+        startDate = new Date(plCustomStart);
+        endDate = new Date(plCustomEnd);
+        const daysDiff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+        priorEndDate = new Date(startDate.getTime() - 1);
+        priorStartDate = new Date(priorEndDate.getTime() - daysDiff * 24 * 60 * 60 * 1000);
+        break;
+      default:
+        startDate = new Date(currentYear, 0, 1);
+        endDate = now;
+        priorStartDate = new Date(currentYear - 1, 0, 1);
+        priorEndDate = new Date(currentYear - 1, now.getMonth(), now.getDate());
+    }
+    
+    // Filter transactions by period
+    const periodTx = transactions.filter(t => {
+      const d = new Date(t.date);
+      return d >= startDate && d <= endDate;
+    });
+    
+    const priorPeriodTx = transactions.filter(t => {
+      const d = new Date(t.date);
+      return d >= priorStartDate && d <= priorEndDate;
+    });
+    
+    // Categorize income with refunds as contra-revenue
+    const salesServices = periodTx.filter(t => t.type === 'income' && t.category !== 'Refunds').reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const refunds = periodTx.filter(t => t.type === 'income' && t.category === 'Refunds').reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const interestIncome = periodTx.filter(t => t.type === 'income' && (t.category === 'Interest / Bank' || t.category === 'Interest')).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const otherIncome = periodTx.filter(t => t.type === 'income' && !['Refunds', 'Interest / Bank', 'Interest', 'Sales / Services'].includes(t.category)).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    
+    // Prior period income
+    const priorSalesServices = priorPeriodTx.filter(t => t.type === 'income' && t.category !== 'Refunds').reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const priorRefunds = priorPeriodTx.filter(t => t.type === 'income' && t.category === 'Refunds').reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    
+    // Net Revenue
+    const netRevenue = salesServices - refunds;
+    const priorNetRevenue = priorSalesServices - priorRefunds;
+    
+    // COGS / Direct Costs (categories that are direct costs)
+    const cogsCategories = ['Materials', 'Subcontractors', 'Shipping', 'Payment Processing', 'Direct Costs'];
+    const cogs = periodTx.filter(t => t.type === 'expense' && cogsCategories.some(c => t.category.toLowerCase().includes(c.toLowerCase()))).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const priorCogs = priorPeriodTx.filter(t => t.type === 'expense' && cogsCategories.some(c => t.category.toLowerCase().includes(c.toLowerCase()))).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    
+    // Gross Profit
+    const grossProfit = netRevenue - cogs;
+    const priorGrossProfit = priorNetRevenue - priorCogs;
+    const grossMargin = netRevenue > 0 ? (grossProfit / netRevenue) * 100 : 0;
+    
+    // Operating Expenses by category
+    const opexCategories = [
+      'Advertising & Marketing', 'Marketing', 'Advertising',
+      'Bank Charges / Merchant Fees', 'Bank Charges', 'Merchant Fees',
+      'Insurance',
+      'Office Supplies', 'Office',
+      'Phone/Internet', 'Phone', 'Internet', 'Communications',
+      'Professional Fees', 'Legal', 'Accounting',
+      'Rent / Lease', 'Rent', 'Lease',
+      'Repairs & Maintenance', 'Repairs', 'Maintenance',
+      'Software & Subscriptions', 'Software', 'Subscriptions', 'Software / SaaS',
+      'Travel',
+      'Meals', 'Meals & Entertainment',
+      'Utilities',
+      'Payroll', 'Wages', 'Salaries',
+      'Payroll Taxes',
+      'Taxes & Licenses', 'Taxes', 'Licenses',
+      'Vehicle', 'Auto',
+      'Depreciation', 'Amortization'
+    ];
+    
+    // Get all expenses grouped by category
+    const expensesByCategory: Record<string, number> = {};
+    const priorExpensesByCategory: Record<string, number> = {};
+    
+    periodTx.filter(t => t.type === 'expense' && !cogsCategories.some(c => t.category.toLowerCase().includes(c.toLowerCase()))).forEach(t => {
+      const cat = t.category || 'Other';
+      expensesByCategory[cat] = (expensesByCategory[cat] || 0) + (Number(t.amount) || 0);
+    });
+    
+    priorPeriodTx.filter(t => t.type === 'expense' && !cogsCategories.some(c => t.category.toLowerCase().includes(c.toLowerCase()))).forEach(t => {
+      const cat = t.category || 'Other';
+      priorExpensesByCategory[cat] = (priorExpensesByCategory[cat] || 0) + (Number(t.amount) || 0);
+    });
+    
+    const totalOpex = Object.values(expensesByCategory).reduce((sum, amt) => sum + amt, 0);
+    const priorTotalOpex = Object.values(priorExpensesByCategory).reduce((sum, amt) => sum + amt, 0);
+    
+    // Operating Income
+    const operatingIncome = grossProfit - totalOpex;
+    const priorOperatingIncome = priorGrossProfit - priorTotalOpex;
+    
+    // Other Income/Expense
+    const otherIncomeTotal = interestIncome;
+    const interestExpense = periodTx.filter(t => t.type === 'expense' && (t.category === 'Interest Expense' || t.category === 'Interest')).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const netOtherIncome = otherIncomeTotal - interestExpense;
+    
+    // Net Income
+    const netIncome = operatingIncome + netOtherIncome;
+    const priorNetIncome = priorOperatingIncome;
+    
+    // Data integrity checks
+    const uncategorizedTx = periodTx.filter(t => !t.category || t.category === 'Uncategorized' || t.category === 'Other');
+    const uncategorizedCount = uncategorizedTx.length;
+    const uncategorizedAmount = uncategorizedTx.reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    
+    // YoY change
+    const revenueChange = priorNetRevenue > 0 ? ((netRevenue - priorNetRevenue) / priorNetRevenue) * 100 : 0;
+    const netIncomeChange = priorNetIncome !== 0 ? ((netIncome - priorNetIncome) / Math.abs(priorNetIncome)) * 100 : 0;
+    
+    return {
+      // Period info
+      startDate,
+      endDate,
+      priorStartDate,
+      priorEndDate,
+      periodLabel: plPeriodType === 'custom' 
+        ? `${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} – ${endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
+        : plPeriodType === 'ytd' ? `Year to Date (${currentYear})`
+        : plPeriodType === 'lastYear' ? `Full Year ${currentYear - 1}`
+        : plPeriodType === 'trailing12' ? 'Trailing 12 Months'
+        : plPeriodType === 'month' ? now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+        : plPeriodType === 'quarter' ? `Q${Math.floor(now.getMonth() / 3) + 1} ${currentYear}`
+        : `${currentYear}`,
+      
+      // Revenue
+      salesServices,
+      refunds,
+      netRevenue,
+      priorNetRevenue,
+      revenueChange,
+      
+      // COGS
+      cogs,
+      priorCogs,
+      grossProfit,
+      priorGrossProfit,
+      grossMargin,
+      
+      // Operating Expenses
+      expensesByCategory,
+      priorExpensesByCategory,
+      totalOpex,
+      priorTotalOpex,
+      
+      // Operating Income
+      operatingIncome,
+      priorOperatingIncome,
+      
+      // Other
+      interestIncome,
+      interestExpense,
+      netOtherIncome,
+      
+      // Net Income
+      netIncome,
+      priorNetIncome,
+      netIncomeChange,
+      
+      // Data integrity
+      uncategorizedCount,
+      uncategorizedAmount,
+      hasDataIssues: uncategorizedCount > 0,
+      
+      // Transaction count
+      transactionCount: periodTx.length
+    };
+  }, [transactions, plPeriodType, plCustomStart, plCustomEnd]);
 
   const getFilteredTransactions = useCallback(() => {
      if (filterPeriod === 'all') return transactions;
@@ -4992,20 +5220,18 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-950 dark:text-white font-brand">Reports</h2>
               </div>
               
-              {/* Enhanced Profit & Loss Statement */}
+              {/* Pro-Grade U.S. P&L Statement */}
               <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl">
-                {/* Header with Actions */}
-                <div className="flex items-center justify-between mb-6">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                   <div className="flex items-center gap-3">
                     <BarChart3 size={24} strokeWidth={2} className="text-blue-600 dark:text-blue-400" />
                     <div>
                       <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight font-brand">
-                        Profit & Loss
+                        Profit & Loss Statement
                       </h3>
                       <p className="text-sm text-slate-600 dark:text-slate-300 mt-0.5">
-                        {filterPeriod === 'month' ? referenceDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) :
-                         filterPeriod === 'quarter' ? `Q${Math.floor(referenceDate.getMonth() / 3) + 1} ${referenceDate.getFullYear()}` :
-                         filterPeriod === 'year' ? referenceDate.getFullYear().toString() : 'All Time'}
+                        {proPLData.periodLabel} • {plAccountingBasis === 'cash' ? 'Cash Basis' : 'Accrual Basis'}
                       </p>
                     </div>
                   </div>
@@ -5013,49 +5239,258 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                   {/* Actions */}
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => { setPlExportRequested(false); setShowPLPreview(true); }}
+                      onClick={() => setShowProPLPreview(true)}
                       className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm flex items-center gap-2 transition-colors"
                     >
                       <Eye className="w-4 h-4" />
-                      <span className="hidden sm:inline">Preview</span>
-                    </button>
-
-                    <button
-                      onClick={handleExportPLPDF}
-                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold text-sm flex items-center gap-2 transition-colors"
-                    >
-                      <Download className="w-4 h-4" />
-                      <span className="hidden sm:inline">Export PDF</span>
+                      <span className="hidden sm:inline">Preview & Export</span>
                     </button>
                   </div>
                 </div>
 
-                {/* Compact Summary - Left Aligned */}
-                <div className="space-y-4">
-                  <div className="py-3 border-b border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">Revenue</span>
-                    </div>
-                    <div className="text-2xl font-bold text-emerald-600 tabular-nums">{formatCurrency.format(reportData.income)}</div>
+                {/* Period Selector */}
+                <div className="mb-6 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {[
+                      { value: 'month', label: 'This Month' },
+                      { value: 'ytd', label: 'Year to Date' },
+                      { value: 'lastYear', label: 'Last Year' },
+                      { value: 'trailing12', label: 'Trailing 12 Mo' },
+                      { value: 'custom', label: 'Custom' },
+                    ].map(opt => (
+                      <button
+                        key={opt.value}
+                        onClick={() => setPlPeriodType(opt.value as any)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+                          plPeriodType === opt.value 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
                   </div>
                   
-                  <div className="py-3 border-b border-slate-100 dark:border-slate-800">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">Operating Expenses</span>
+                  {plPeriodType === 'custom' && (
+                    <div className="flex flex-wrap items-center gap-3 mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase">From:</label>
+                        <input
+                          type="date"
+                          value={plCustomStart}
+                          onChange={(e) => setPlCustomStart(e.target.value)}
+                          className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm"
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase">To:</label>
+                        <input
+                          type="date"
+                          value={plCustomEnd}
+                          onChange={(e) => setPlCustomEnd(e.target.value)}
+                          className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm"
+                        />
+                      </div>
                     </div>
-                    <div className="text-2xl font-bold text-red-600 tabular-nums">{formatCurrency.format(reportData.expense)}</div>
-                  </div>
+                  )}
                   
-                  <div className="pt-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-base font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">Net Profit</span>
-                      <span className="text-sm text-slate-600 dark:text-slate-300">
-                        {reportData.income > 0 ? `${((reportData.netProfit / reportData.income) * 100).toFixed(1)}% margin` : '—'}
+                  {/* Comparison Toggle */}
+                  <div className="flex items-center gap-3 mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                    <button
+                      onClick={() => setPlShowComparison(!plShowComparison)}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+                        plShowComparison 
+                          ? 'bg-purple-600 text-white' 
+                          : 'bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600'
+                      }`}
+                    >
+                      {plShowComparison ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
+                      Show Prior Period
+                    </button>
+                    <select
+                      value={plAccountingBasis}
+                      onChange={(e) => setPlAccountingBasis(e.target.value as 'cash' | 'accrual')}
+                      className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-xs font-bold uppercase"
+                    >
+                      <option value="cash">Cash Basis</option>
+                      <option value="accrual">Accrual Basis</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Data Integrity Warning */}
+                {proPLData.hasDataIssues && (
+                  <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-bold text-amber-800 dark:text-amber-300">Data Review Recommended</p>
+                      <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">
+                        {proPLData.uncategorizedCount} uncategorized transaction{proPLData.uncategorizedCount !== 1 ? 's' : ''} totaling {formatCurrency.format(proPLData.uncategorizedAmount)}. 
+                        For CPA/tax-ready reports, categorize all transactions.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* P&L Summary */}
+                <div className="space-y-6">
+                  {/* REVENUE SECTION */}
+                  <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
+                    <h4 className="text-sm font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                      <TrendingUp size={16} /> Revenue
+                    </h4>
+                    <div className="space-y-2 ml-6">
+                      <div className="flex justify-between items-center py-1">
+                        <span className="text-sm text-slate-700 dark:text-slate-300">Gross Sales / Services</span>
+                        <div className="flex items-center gap-4">
+                          <span className="text-sm font-semibold text-slate-900 dark:text-white tabular-nums">{formatCurrency.format(proPLData.salesServices)}</span>
+                          {plShowComparison && <span className="text-xs text-slate-500 tabular-nums w-24 text-right">{formatCurrency.format(proPLData.priorNetRevenue + proPLData.refunds)}</span>}
+                        </div>
+                      </div>
+                      {proPLData.refunds > 0 && (
+                        <div className="flex justify-between items-center py-1">
+                          <span className="text-sm text-slate-700 dark:text-slate-300">Less: Returns & Refunds</span>
+                          <div className="flex items-center gap-4">
+                            <span className="text-sm font-semibold text-red-600 tabular-nums">({formatCurrency.format(proPLData.refunds)})</span>
+                            {plShowComparison && <span className="text-xs text-slate-500 tabular-nums w-24 text-right">—</span>}
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center py-2 border-t border-slate-100 dark:border-slate-800 mt-2">
+                        <span className="text-sm font-bold text-slate-900 dark:text-white">Net Revenue</span>
+                        <div className="flex items-center gap-4">
+                          <span className="text-base font-bold text-emerald-600 tabular-nums">{formatCurrency.format(proPLData.netRevenue)}</span>
+                          {plShowComparison && (
+                            <span className={`text-xs font-semibold tabular-nums w-24 text-right ${proPLData.revenueChange >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                              {proPLData.revenueChange >= 0 ? '+' : ''}{proPLData.revenueChange.toFixed(1)}%
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* COGS SECTION (if any) */}
+                  {proPLData.cogs > 0 && (
+                    <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
+                      <h4 className="text-sm font-bold text-orange-700 dark:text-orange-400 uppercase tracking-wider mb-3">Cost of Goods Sold</h4>
+                      <div className="space-y-2 ml-6">
+                        <div className="flex justify-between items-center py-1">
+                          <span className="text-sm text-slate-700 dark:text-slate-300">Direct Costs / COGS</span>
+                          <span className="text-sm font-semibold text-slate-900 dark:text-white tabular-nums">{formatCurrency.format(proPLData.cogs)}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-2 border-t border-slate-100 dark:border-slate-800 mt-2">
+                          <span className="text-sm font-bold text-slate-900 dark:text-white">Gross Profit</span>
+                          <div className="flex items-center gap-3">
+                            <span className="text-base font-bold text-slate-900 dark:text-white tabular-nums">{formatCurrency.format(proPLData.grossProfit)}</span>
+                            <span className="text-xs text-slate-500">({proPLData.grossMargin.toFixed(1)}% margin)</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* OPERATING EXPENSES SECTION */}
+                  <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
+                    <h4 className="text-sm font-bold text-red-700 dark:text-red-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                      <TrendingDown size={16} /> Operating Expenses
+                    </h4>
+                    <div className="space-y-1 ml-6">
+                      {Object.entries(proPLData.expensesByCategory)
+                        .sort(([,a], [,b]) => b - a)
+                        .slice(0, 10)
+                        .map(([category, amount]) => (
+                          <div key={category} className="flex justify-between items-center py-1">
+                            <span className="text-sm text-slate-700 dark:text-slate-300">{category}</span>
+                            <div className="flex items-center gap-4">
+                              <span className="text-sm font-semibold text-slate-900 dark:text-white tabular-nums">{formatCurrency.format(amount)}</span>
+                              {plShowComparison && (
+                                <span className="text-xs text-slate-500 tabular-nums w-24 text-right">
+                                  {formatCurrency.format(proPLData.priorExpensesByCategory[category] || 0)}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      {Object.keys(proPLData.expensesByCategory).length > 10 && (
+                        <div className="text-xs text-slate-500 py-1">+ {Object.keys(proPLData.expensesByCategory).length - 10} more categories...</div>
+                      )}
+                      <div className="flex justify-between items-center py-2 border-t border-slate-100 dark:border-slate-800 mt-2">
+                        <span className="text-sm font-bold text-slate-900 dark:text-white">Total Operating Expenses</span>
+                        <span className="text-base font-bold text-red-600 tabular-nums">{formatCurrency.format(proPLData.totalOpex)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* OPERATING INCOME */}
+                  <div className="py-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg px-4 -mx-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Operating Income</span>
+                      <span className={`text-lg font-bold tabular-nums ${proPLData.operatingIncome >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                        {proPLData.operatingIncome < 0 ? '(' : ''}{formatCurrency.format(Math.abs(proPLData.operatingIncome))}{proPLData.operatingIncome < 0 ? ')' : ''}
                       </span>
                     </div>
-                    <div className={`text-4xl font-bold tabular-nums ${reportData.netProfit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                      {formatCurrency.format(reportData.netProfit)}
+                  </div>
+
+                  {/* OTHER INCOME/EXPENSE (if any) */}
+                  {(proPLData.interestIncome > 0 || proPLData.interestExpense > 0) && (
+                    <div className="border-b border-slate-200 dark:border-slate-700 pb-4">
+                      <h4 className="text-sm font-bold text-slate-700 dark:text-slate-400 uppercase tracking-wider mb-3">Other Income / Expense</h4>
+                      <div className="space-y-1 ml-6">
+                        {proPLData.interestIncome > 0 && (
+                          <div className="flex justify-between items-center py-1">
+                            <span className="text-sm text-slate-700 dark:text-slate-300">Interest Income</span>
+                            <span className="text-sm font-semibold text-emerald-600 tabular-nums">{formatCurrency.format(proPLData.interestIncome)}</span>
+                          </div>
+                        )}
+                        {proPLData.interestExpense > 0 && (
+                          <div className="flex justify-between items-center py-1">
+                            <span className="text-sm text-slate-700 dark:text-slate-300">Interest Expense</span>
+                            <span className="text-sm font-semibold text-red-600 tabular-nums">({formatCurrency.format(proPLData.interestExpense)})</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between items-center py-2 border-t border-slate-100 dark:border-slate-800 mt-2">
+                          <span className="text-sm font-bold text-slate-900 dark:text-white">Net Other Income</span>
+                          <span className={`text-sm font-bold tabular-nums ${proPLData.netOtherIncome >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                            {formatCurrency.format(proPLData.netOtherIncome)}
+                          </span>
+                        </div>
+                      </div>
                     </div>
+                  )}
+
+                  {/* NET INCOME */}
+                  <div className="pt-4 border-t-2 border-slate-900 dark:border-slate-100">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-wider">Net Income</span>
+                        {proPLData.netRevenue > 0 && (
+                          <span className="text-sm text-slate-500 ml-2">({((proPLData.netIncome / proPLData.netRevenue) * 100).toFixed(1)}% margin)</span>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <span className={`text-3xl font-bold tabular-nums ${proPLData.netIncome >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                          {proPLData.netIncome < 0 ? '(' : ''}{formatCurrency.format(Math.abs(proPLData.netIncome))}{proPLData.netIncome < 0 ? ')' : ''}
+                        </span>
+                        {plShowComparison && (
+                          <div className={`text-sm font-semibold mt-1 ${proPLData.netIncomeChange >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                            {proPLData.netIncomeChange >= 0 ? '↑' : '↓'} {Math.abs(proPLData.netIncomeChange).toFixed(1)}% vs prior
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Info */}
+                <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400">
+                  <div className="flex flex-wrap gap-x-4 gap-y-1">
+                    <span>Period: {proPLData.startDate.toLocaleDateString()} – {proPLData.endDate.toLocaleDateString()}</span>
+                    <span>•</span>
+                    <span>Basis: {plAccountingBasis === 'cash' ? 'Cash' : 'Accrual'}</span>
+                    <span>•</span>
+                    <span>{proPLData.transactionCount} transactions</span>
                   </div>
                 </div>
               </div>
@@ -5801,6 +6236,219 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                         <Download className="w-4 h-4" />
                         {isGeneratingPDF ? 'Generating...' : 'Export PDF'}
                       </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Pro P&L Preview Modal */}
+              {showProPLPreview && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-stretch justify-stretch p-0">
+                  <div className="bg-white dark:bg-slate-900 rounded-none w-full h-full overflow-hidden flex flex-col">
+                    {/* Modal Header */}
+                    <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+                      <div className="flex items-center gap-2">
+                        <BarChart3 className="text-blue-600" size={20} />
+                        <span className="font-bold text-sm uppercase tracking-wider text-gray-900 dark:text-white">Pro P&L Statement</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={async () => {
+                            setIsGeneratingProPLPdf(true);
+                            try {
+                              await new Promise(resolve => setTimeout(resolve, 300));
+                              const element = document.getElementById('pro-pl-pdf-content');
+                              if (!element) throw new Error('Preview content not found');
+                              
+                              const opt = {
+                                margin: [10, 10, 15, 10],
+                                filename: `ProfitLoss_${settings.businessName.replace(/[^a-z0-9]/gi, '_')}_${proPLData.startDate.toISOString().split('T')[0]}_to_${proPLData.endDate.toISOString().split('T')[0]}.pdf`,
+                                image: { type: 'jpeg', quality: 0.98 },
+                                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0 },
+                                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                                pagebreak: { mode: 'avoid-all', before: '.page-break-before', after: '.page-break-after' }
+                              };
+                              
+                              await (window as any).html2pdf().set(opt).from(element).save();
+                              showToast('Pro P&L PDF exported successfully!', 'success');
+                            } catch (error) {
+                              console.error('PDF generation error:', error);
+                              showToast('Failed to generate PDF. Please try again.', 'error');
+                            }
+                            setIsGeneratingProPLPdf(false);
+                          }}
+                          disabled={isGeneratingProPLPdf}
+                          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold text-sm flex items-center gap-2 transition-colors disabled:opacity-50"
+                        >
+                          {isGeneratingProPLPdf ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+                          <span className="hidden sm:inline">{isGeneratingProPLPdf ? 'Generating...' : 'Download PDF'}</span>
+                        </button>
+                        <button
+                          onClick={() => setShowProPLPreview(false)}
+                          className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                        >
+                          <X className="w-5 h-5 text-gray-500" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* PDF Preview Content */}
+                    <div className="flex-1 overflow-y-auto p-0 bg-white">
+                      <div id="pro-pl-pdf-content" className="w-full min-h-full bg-white text-gray-900 p-6 sm:p-10" style={{ backgroundColor: '#ffffff', color: '#111827', maxWidth: '800px', margin: '0 auto' }}>
+                        {/* Professional Header */}
+                        <div className="mb-8 pb-6 border-b-2 border-gray-400">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h1 className="text-2xl font-bold text-gray-900 mb-1">{settings.businessName}</h1>
+                              {settings.ownerName && settings.ownerName !== settings.businessName && (
+                                <p className="text-sm text-gray-600">DBA: {settings.ownerName}</p>
+                              )}
+                              {plShowAddress && settings.businessAddress && (
+                                <p className="text-sm text-gray-600 mt-1 whitespace-pre-line">{settings.businessAddress}</p>
+                              )}
+                            </div>
+                            <div className="text-right">
+                              <h2 className="text-xl font-bold text-gray-900 uppercase">Profit & Loss Statement</h2>
+                              <p className="text-sm text-gray-700 mt-2 font-semibold">
+                                Period: {proPLData.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} – {proPLData.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                              </p>
+                              <p className="text-xs text-gray-600 mt-1">Prepared on: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                              <p className="text-xs text-gray-600">Currency: USD • Basis: {plAccountingBasis === 'cash' ? 'Cash' : 'Accrual'}</p>
+                              {plShowPreparedBy && <p className="text-xs text-gray-500 mt-1">Prepared by Moniezi</p>}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* REVENUE SECTION */}
+                        <div className="mb-6">
+                          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3 pb-1 border-b border-gray-300">Income</h3>
+                          <div className="space-y-1 ml-4">
+                            <div className="flex justify-between py-1">
+                              <span className="text-sm text-gray-800">Sales / Services (gross)</span>
+                              <span className="text-sm font-semibold text-gray-900 tabular-nums">{formatCurrency.format(proPLData.salesServices)}</span>
+                            </div>
+                            {proPLData.refunds > 0 && (
+                              <div className="flex justify-between py-1">
+                                <span className="text-sm text-gray-800 italic">Less: Returns & Refunds</span>
+                                <span className="text-sm font-semibold text-gray-900 tabular-nums">({formatCurrency.format(proPLData.refunds)})</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex justify-between py-2 mt-2 border-t border-gray-200 font-bold">
+                            <span className="text-sm text-gray-900">Net Revenue</span>
+                            <span className="text-sm text-gray-900 tabular-nums">{formatCurrency.format(proPLData.netRevenue)}</span>
+                          </div>
+                        </div>
+
+                        {/* COGS SECTION */}
+                        {proPLData.cogs > 0 && (
+                          <div className="mb-6">
+                            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3 pb-1 border-b border-gray-300">Cost of Goods Sold</h3>
+                            <div className="space-y-1 ml-4">
+                              <div className="flex justify-between py-1">
+                                <span className="text-sm text-gray-800">Direct Costs / Materials</span>
+                                <span className="text-sm font-semibold text-gray-900 tabular-nums">{formatCurrency.format(proPLData.cogs)}</span>
+                              </div>
+                            </div>
+                            <div className="flex justify-between py-2 mt-2 border-t border-gray-200">
+                              <span className="text-sm font-bold text-gray-900">Total Cost of Goods Sold</span>
+                              <span className="text-sm font-bold text-gray-900 tabular-nums">{formatCurrency.format(proPLData.cogs)}</span>
+                            </div>
+                            <div className="flex justify-between py-2 bg-gray-50 px-3 -mx-3 mt-2">
+                              <span className="text-sm font-bold text-gray-900">Gross Profit</span>
+                              <div className="text-right">
+                                <span className="text-sm font-bold text-gray-900 tabular-nums">{formatCurrency.format(proPLData.grossProfit)}</span>
+                                <span className="text-xs text-gray-600 ml-2">({proPLData.grossMargin.toFixed(1)}%)</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* OPERATING EXPENSES SECTION */}
+                        <div className="mb-6">
+                          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3 pb-1 border-b border-gray-300">Operating Expenses</h3>
+                          <div className="space-y-1 ml-4">
+                            {Object.entries(proPLData.expensesByCategory)
+                              .sort(([a], [b]) => a.localeCompare(b))
+                              .map(([category, amount]) => (
+                                <div key={category} className="flex justify-between py-1">
+                                  <span className="text-sm text-gray-800">{category}</span>
+                                  <span className="text-sm font-semibold text-gray-900 tabular-nums">{formatCurrency.format(amount)}</span>
+                                </div>
+                              ))}
+                          </div>
+                          <div className="flex justify-between py-2 mt-2 border-t border-gray-200 font-bold">
+                            <span className="text-sm text-gray-900">Total Operating Expenses</span>
+                            <span className="text-sm text-gray-900 tabular-nums">{formatCurrency.format(proPLData.totalOpex)}</span>
+                          </div>
+                        </div>
+
+                        {/* OPERATING INCOME */}
+                        <div className="flex justify-between py-3 bg-gray-100 px-4 -mx-4 mb-6">
+                          <span className="font-bold text-gray-900">Operating Income</span>
+                          <span className={`font-bold tabular-nums ${proPLData.operatingIncome >= 0 ? 'text-gray-900' : 'text-red-700'}`}>
+                            {proPLData.operatingIncome < 0 ? '(' : ''}{formatCurrency.format(Math.abs(proPLData.operatingIncome))}{proPLData.operatingIncome < 0 ? ')' : ''}
+                          </span>
+                        </div>
+
+                        {/* OTHER INCOME/EXPENSE */}
+                        {(proPLData.interestIncome > 0 || proPLData.interestExpense > 0) && (
+                          <div className="mb-6">
+                            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3 pb-1 border-b border-gray-300">Other Income / Expense</h3>
+                            <div className="space-y-1 ml-4">
+                              {proPLData.interestIncome > 0 && (
+                                <div className="flex justify-between py-1">
+                                  <span className="text-sm text-gray-800">Interest Income</span>
+                                  <span className="text-sm font-semibold text-gray-900 tabular-nums">{formatCurrency.format(proPLData.interestIncome)}</span>
+                                </div>
+                              )}
+                              {proPLData.interestExpense > 0 && (
+                                <div className="flex justify-between py-1">
+                                  <span className="text-sm text-gray-800">Interest Expense</span>
+                                  <span className="text-sm font-semibold text-gray-900 tabular-nums">({formatCurrency.format(proPLData.interestExpense)})</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex justify-between py-2 mt-2 border-t border-gray-200 font-bold">
+                              <span className="text-sm text-gray-900">Net Other Income</span>
+                              <span className="text-sm text-gray-900 tabular-nums">{formatCurrency.format(proPLData.netOtherIncome)}</span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* NET INCOME */}
+                        <div className="py-4 border-t-2 border-gray-900 border-b-2 mb-6">
+                          <div className="flex justify-between items-center">
+                            <span className="text-lg font-bold text-gray-900 uppercase">Net Income</span>
+                            <span className={`text-2xl font-bold tabular-nums ${proPLData.netIncome >= 0 ? 'text-gray-900' : 'text-red-700'}`}>
+                              {proPLData.netIncome < 0 ? '(' : ''}{formatCurrency.format(Math.abs(proPLData.netIncome))}{proPLData.netIncome < 0 ? ')' : ''}
+                            </span>
+                          </div>
+                          {proPLData.netRevenue > 0 && (
+                            <p className="text-xs text-gray-600 mt-1 text-right">Net Profit Margin: {((proPLData.netIncome / proPLData.netRevenue) * 100).toFixed(1)}%</p>
+                          )}
+                        </div>
+
+                        {/* NOTES / DISCLOSURES */}
+                        <div className="mt-8 pt-6 border-t border-gray-300">
+                          <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">Notes / Disclosures</h4>
+                          <div className="text-xs text-gray-600 space-y-1">
+                            <p>• Accounting Basis: {plAccountingBasis === 'cash' ? 'Cash' : 'Accrual'}</p>
+                            <p>• Reconciliation Status: {proPLData.hasDataIssues ? 'Review Recommended' : 'Complete'}</p>
+                            {proPLData.uncategorizedCount > 0 && (
+                              <p>• Data Completeness: {proPLData.uncategorizedCount} uncategorized transaction(s) totaling {formatCurrency.format(proPLData.uncategorizedAmount)}</p>
+                            )}
+                            <p>• This statement has been prepared from the books of {settings.businessName}.</p>
+                            <p>• Owner distributions/draws are not included as expenses.</p>
+                          </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="mt-8 pt-4 border-t border-gray-200 text-center text-xs text-gray-500">
+                          <p>Profit & Loss Statement • {proPLData.periodLabel}</p>
+                          <p className="mt-1">Generated {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
