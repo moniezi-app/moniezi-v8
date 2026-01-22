@@ -8,7 +8,8 @@ import {
   X, 
   Trash2, 
   Download, 
-  ArrowRight, 
+  ArrowRight,
+  ArrowUp,
   BrainCircuit, 
   Sparkles, 
   Receipt, 
@@ -6436,17 +6437,16 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
       {showScrollToTop && (
         <button
           onClick={scrollToTop}
-          className="no-print fixed right-4 z-[54] w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 active:scale-95 animate-in fade-in slide-in-from-bottom-4"
+          className="no-print fixed right-4 z-[54] w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 active:scale-90 animate-in fade-in zoom-in-75 duration-200"
           style={{
-            bottom: 'calc(5rem + env(safe-area-inset-bottom, 0px) + 16px)',
-            backgroundColor: 'var(--scroll-btn-bg)',
-            color: 'var(--scroll-btn-icon)',
-            border: '1px solid var(--scroll-btn-border)',
-            boxShadow: 'var(--scroll-btn-shadow)',
+            bottom: 'calc(5rem + env(safe-area-inset-bottom, 0px) + 20px)',
+            backgroundColor: '#ffffff',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
+            border: '1px solid rgba(0, 0, 0, 0.08)',
           }}
           aria-label="Scroll to top"
         >
-          <ChevronUp size={22} strokeWidth={2.5} />
+          <ArrowUp size={26} strokeWidth={2.5} className="text-slate-700" />
         </button>
       )}
 
