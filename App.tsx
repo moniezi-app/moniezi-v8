@@ -597,12 +597,19 @@ export default function App() {
     setTimeout(toTop, 0);
   }, [currentPage]);
 
-  // Scroll-to-top button visibility - listen to WINDOW scroll
+  // Scroll-to-top button visibility - show after 65% scroll of page
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPos = window.scrollY || document.documentElement.scrollTop;
-      // Show button after scrolling 80px
-      setShowScrollToTop(scrollPos > 80);
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = document.documentElement.clientHeight;
+      const scrollableHeight = scrollHeight - clientHeight;
+      
+      // Calculate scroll percentage (0 to 1)
+      const scrollPercent = scrollableHeight > 0 ? scrollTop / scrollableHeight : 0;
+      
+      // Show button after scrolling 65% of the page
+      setShowScrollToTop(scrollPercent > 0.65);
     };
     
     // Add scroll listener to window
@@ -615,7 +622,7 @@ export default function App() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [currentPage]); // Re-check when page changes as content length varies
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -6424,20 +6431,17 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
       </div>
 
-      {/* Scroll to Top Button */}
+      {/* Scroll to Top Button - Theme Aware */}
       {showScrollToTop && (
         <button
           onClick={scrollToTop}
-          className="no-print fixed right-4 z-[54] w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 active:scale-90 animate-in fade-in zoom-in-75 duration-200"
+          className="no-print fixed right-4 z-[54] w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 active:scale-90 animate-in fade-in zoom-in-75 duration-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg shadow-slate-900/10 dark:shadow-black/30 hover:shadow-xl hover:scale-105"
           style={{
             bottom: 'calc(5rem + env(safe-area-inset-bottom, 0px) + 20px)',
-            backgroundColor: '#ffffff',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1)',
-            border: '1px solid rgba(0, 0, 0, 0.08)',
           }}
           aria-label="Scroll to top"
         >
-          <ArrowUp size={26} strokeWidth={2.5} className="text-slate-700" />
+          <ArrowUp size={22} strokeWidth={2.5} className="text-slate-600 dark:text-slate-300" />
         </button>
       )}
 
