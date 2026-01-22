@@ -189,26 +189,20 @@
       /* ========================================
          GLOBAL CONTRAST IMPROVEMENTS
          Override Tailwind's default slate colors for better readability
-         Using :not(.dark) for light theme to avoid breaking dark theme
+         Using html:not(.dark) for light theme to avoid breaking dark theme
          ======================================== */
       
-      /* Light theme ONLY: Make ALL gray text PURE BLACK for maximum sharpness */
-      :root:not(.dark) .text-slate-300,
-      html:not(.dark) .text-slate-300 { color: #000000 !important; }
-      :root:not(.dark) .text-slate-400,
-      html:not(.dark) .text-slate-400 { color: #000000 !important; }
-      :root:not(.dark) .text-slate-500,
-      html:not(.dark) .text-slate-500 { color: #000000 !important; }
-      :root:not(.dark) .text-slate-600,
-      html:not(.dark) .text-slate-600 { color: #000000 !important; }
-      :root:not(.dark) .text-slate-700,
-      html:not(.dark) .text-slate-700 { color: #000000 !important; }
-      :root:not(.dark) .text-slate-800,
-      html:not(.dark) .text-slate-800 { color: #000000 !important; }
-      :root:not(.dark) .text-slate-900,
-      html:not(.dark) .text-slate-900 { color: #000000 !important; }
-      :root:not(.dark) .text-slate-950,
-      html:not(.dark) .text-slate-950 { color: #000000 !important; }
+      /* Light theme ONLY: Make ALL gray text BLACK for maximum sharpness */
+      html:not(.dark) .text-slate-300,
+      html:not(.dark) .text-slate-400,
+      html:not(.dark) .text-slate-500,
+      html:not(.dark) .text-slate-600,
+      html:not(.dark) .text-slate-700,
+      html:not(.dark) .text-slate-800,
+      html:not(.dark) .text-slate-900,
+      html:not(.dark) .text-slate-950 { 
+        color: #000000 !important; 
+      }
       
       /* Dark theme: Make ALL gray text BRIGHT for readability */
       .dark .text-slate-300 { color: #ffffff !important; }
@@ -219,14 +213,12 @@
       .dark .text-slate-800 { color: #cbd5e1 !important; }
       
       /* Light theme ONLY: Fix blue-tinted text */
-      :root:not(.dark) .text-blue-100\/80,
-      html:not(.dark) .text-blue-100\/80 { color: #000000 !important; }
-      :root:not(.dark) .text-blue-200,
-      html:not(.dark) .text-blue-200 { color: #000000 !important; }
-      :root:not(.dark) .text-blue-200\/80,
-      html:not(.dark) .text-blue-200\/80 { color: #000000 !important; }
-      :root:not(.dark) .text-blue-200\/90,
-      html:not(.dark) .text-blue-200\/90 { color: #000000 !important; }
+      html:not(.dark) .text-blue-100\/80,
+      html:not(.dark) .text-blue-200,
+      html:not(.dark) .text-blue-200\/80,
+      html:not(.dark) .text-blue-200\/90 { 
+        color: #000000 !important; 
+      }
       
       /* Dark theme: bright blue tints */
       .dark .text-blue-100\/80 { color: #ffffff !important; }
@@ -235,45 +227,73 @@
       .dark .text-blue-200\/90 { color: #f1f5f9 !important; }
 
       /* ========================================
-         LIGHT THEME FONT WEIGHT BOOST
-         Make all text bolder and sharper - LIGHT THEME ONLY
-         More moderate boost to maintain consistency
+         LIGHT THEME MASTER FIX
+         Force readable typography across the entire app
          ======================================== */
-      
-      /* Light theme ONLY: Moderate font weight increase */
-      html:not(.dark) .font-medium { font-weight: 550 !important; }
-      html:not(.dark) .font-semibold { font-weight: 650 !important; }
-      html:not(.dark) .font-bold { font-weight: 700 !important; }
-      html:not(.dark) .font-extrabold { font-weight: 800 !important; }
-      
-      /* Light theme ONLY: Make small text slightly heavier for readability */
-      html:not(.dark) .text-xs { font-weight: 450; }
-      html:not(.dark) .text-sm { font-weight: 450; }
-      html:not(.dark) .text-\[10px\] { font-weight: 500 !important; }
-      html:not(.dark) .text-\[11px\] { font-weight: 500 !important; }
-      html:not(.dark) .text-\[13px\] { font-weight: 450 !important; }
       
       /* Ensure Inter font is used everywhere */
       * {
         font-family: "Inter", system-ui, -apple-system, sans-serif !important;
       }
       
-      /* Light theme ONLY: Sharper text rendering */
+      /* LIGHT THEME: Global text color override - make EVERYTHING dark */
+      html:not(.dark) {
+        --light-text-primary: #000000;
+        --light-text-secondary: #0a0a0a;
+        --light-text-muted: #171717;
+      }
+      
+      /* Force all text in light mode to be dark and readable */
       html:not(.dark) body {
-        -webkit-font-smoothing: auto;
-        -moz-osx-font-smoothing: auto;
-        text-rendering: geometricPrecision;
+        color: #000000;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
       
-      html:not(.dark) body * {
-        -webkit-font-smoothing: auto;
-        text-rendering: geometricPrecision;
+      /* Light theme: Boost ALL font weights for better readability */
+      html:not(.dark) .font-medium { font-weight: 600 !important; }
+      html:not(.dark) .font-semibold { font-weight: 700 !important; }
+      html:not(.dark) .font-bold { font-weight: 800 !important; }
+      html:not(.dark) .font-extrabold { font-weight: 900 !important; }
+      
+      /* Light theme: Make ALL small text bolder */
+      html:not(.dark) .text-\[10px\],
+      html:not(.dark) .text-\[11px\] { 
+        font-weight: 700 !important; 
+        color: #000000 !important;
       }
       
-      /* Light theme ONLY: Tighter tracking */
-      html:not(.dark) .tracking-wide { letter-spacing: 0.015em !important; }
-      html:not(.dark) .tracking-wider { letter-spacing: 0.03em !important; }
-      html:not(.dark) .tracking-widest { letter-spacing: 0.08em !important; }
+      html:not(.dark) .text-xs { 
+        font-weight: 600 !important; 
+      }
+      
+      html:not(.dark) .text-sm { 
+        font-weight: 500 !important; 
+      }
+      
+      /* Light theme: Force uppercase labels to be bold and black */
+      html:not(.dark) .uppercase {
+        font-weight: 700 !important;
+        color: #000000 !important;
+      }
+      
+      /* Light theme: Make tracking-wider text bold */
+      html:not(.dark) .tracking-wide,
+      html:not(.dark) .tracking-wider,
+      html:not(.dark) .tracking-widest {
+        font-weight: 700 !important;
+        color: #000000 !important;
+      }
+      
+      /* Light theme: Override any remaining gray colors with specificity */
+      html:not(.dark) [class*="text-slate-"] {
+        color: #000000 !important;
+      }
+      
+      /* Light theme: Tighter tracking for sharper appearance */
+      html:not(.dark) .tracking-wide { letter-spacing: 0.02em !important; }
+      html:not(.dark) .tracking-wider { letter-spacing: 0.04em !important; }
+      html:not(.dark) .tracking-widest { letter-spacing: 0.1em !important; }
 
       /* Force consistent base font size across all browsers */
       html {
