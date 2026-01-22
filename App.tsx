@@ -4177,10 +4177,10 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
               <div className="flex flex-col gap-4 mb-4">
                 {/* Header - Larger Typography */}
                 <div className="relative z-10">
-                  <h2 className="text-base sm:text-lg font-extrabold text-slate-700 dark:text-white tracking-wide uppercase font-brand mb-1">
+                  <h2 className="text-base sm:text-lg font-extrabold tracking-wide uppercase font-brand mb-1" style={{ color: 'var(--text-primary)' }}>
                     Net Profit <span className="text-blue-600 dark:text-blue-300">({homeTotals.label})</span>
                   </h2>
-                  <p className="text-sm sm:text-base font-semibold text-slate-500 dark:text-blue-200/90 tracking-wide">{homeTotals.rangeText}</p>
+                  <p className="text-sm sm:text-base font-semibold tracking-wide" style={{ color: 'var(--text-secondary)' }}>{homeTotals.rangeText}</p>
                 </div>
 
                 {/* Redesigned Period Selector - User Friendly */}
@@ -4207,9 +4207,12 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                           className={`text-[13px] sm:text-sm font-bold leading-tight text-center transition-colors ${
                             isActive 
                               ? 'text-blue-600 dark:text-white' 
-                              : 'text-slate-500 dark:text-blue-100/70'
+                              : ''
                           }`}
-                          style={{ fontVariantNumeric: 'tabular-nums' }}
+                          style={{ 
+                            fontVariantNumeric: 'tabular-nums',
+                            color: isActive ? undefined : 'var(--tab-inactive)'
+                          }}
                         >
                           {labels[p].short}
                         </span>
