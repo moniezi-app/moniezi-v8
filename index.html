@@ -112,7 +112,7 @@
           extend: {
             fontFamily: {
               sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
-              brand: ["Space Grotesk", "sans-serif"],
+              brand: ["Inter", "system-ui", "-apple-system", "sans-serif"],
             },
             colors: {
               // Light-mode background (stronger light blue)
@@ -125,7 +125,7 @@
 
     <!-- Fonts -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300..700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
 
@@ -237,31 +237,26 @@
       /* ========================================
          LIGHT THEME FONT WEIGHT BOOST
          Make all text bolder and sharper - LIGHT THEME ONLY
+         More moderate boost to maintain consistency
          ======================================== */
       
-      /* Light theme ONLY: Increase font weights globally */
-      :root:not(.dark) .font-normal,
-      html:not(.dark) .font-normal { font-weight: 500 !important; }
-      :root:not(.dark) .font-medium,
-      html:not(.dark) .font-medium { font-weight: 600 !important; }
-      :root:not(.dark) .font-semibold,
-      html:not(.dark) .font-semibold { font-weight: 700 !important; }
-      :root:not(.dark) .font-bold,
-      html:not(.dark) .font-bold { font-weight: 800 !important; }
-      :root:not(.dark) .font-extrabold,
-      html:not(.dark) .font-extrabold { font-weight: 900 !important; }
+      /* Light theme ONLY: Moderate font weight increase */
+      html:not(.dark) .font-medium { font-weight: 550 !important; }
+      html:not(.dark) .font-semibold { font-weight: 650 !important; }
+      html:not(.dark) .font-bold { font-weight: 700 !important; }
+      html:not(.dark) .font-extrabold { font-weight: 800 !important; }
       
-      /* Light theme ONLY: Make small text heavier */
-      :root:not(.dark) .text-xs,
-      html:not(.dark) .text-xs { font-weight: 500; }
-      :root:not(.dark) .text-sm,
-      html:not(.dark) .text-sm { font-weight: 500; }
-      :root:not(.dark) .text-\[10px\],
-      html:not(.dark) .text-\[10px\] { font-weight: 600 !important; }
-      :root:not(.dark) .text-\[11px\],
-      html:not(.dark) .text-\[11px\] { font-weight: 600 !important; }
-      :root:not(.dark) .text-\[13px\],
-      html:not(.dark) .text-\[13px\] { font-weight: 500 !important; }
+      /* Light theme ONLY: Make small text slightly heavier for readability */
+      html:not(.dark) .text-xs { font-weight: 450; }
+      html:not(.dark) .text-sm { font-weight: 450; }
+      html:not(.dark) .text-\[10px\] { font-weight: 500 !important; }
+      html:not(.dark) .text-\[11px\] { font-weight: 500 !important; }
+      html:not(.dark) .text-\[13px\] { font-weight: 450 !important; }
+      
+      /* Ensure Inter font is used everywhere */
+      * {
+        font-family: "Inter", system-ui, -apple-system, sans-serif !important;
+      }
       
       /* Light theme ONLY: Sharper text rendering */
       html:not(.dark) body {
