@@ -565,7 +565,7 @@ export default function App() {
   // The app scrolls inside an internal container (<main className="overflow-y-auto">),
   // not the browser window. Without resetting this container, switching pages via the
   // bottom nav keeps the previous scroll position.
-  const mainScrollRef = useRef<HTMLElement | null>(null);
+  const mainScrollRef = useRef<HTMLDivElement>(null);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
 
   // Always reset scroll position when switching bottom tabs.
@@ -599,20 +599,28 @@ export default function App() {
   // Scroll-to-top button visibility
   useEffect(() => {
     const el = mainScrollRef.current;
-    if (!el) return;
+    if (!el) {
+      console.log('Scroll ref not found');
+      return;
+    }
     
     const handleScroll = () => {
-      // Show button after scrolling 150px (about half a screen)
-      setShowScrollToTop(el.scrollTop > 150);
+      const scrollPos = el.scrollTop;
+      // Show button after scrolling 150px
+      setShowScrollToTop(scrollPos > 150);
     };
     
+    // Add scroll listener
     el.addEventListener('scroll', handleScroll, { passive: true });
     
-    // Call once on mount to initialize state correctly
+    // Initialize state
     handleScroll();
     
-    return () => el.removeEventListener('scroll', handleScroll);
-  }, [currentPage]); // Re-attach when page changes to ensure ref is valid
+    // Cleanup
+    return () => {
+      el.removeEventListener('scroll', handleScroll);
+    };
+  }, [currentPage]);
 
   const scrollToTop = () => {
     const el = mainScrollRef.current;
@@ -4169,7 +4177,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
         </div>
       </header>
 
-      <main ref={mainScrollRef} className="flex-1 overflow-y-auto pb-44 px-6 md:px-8 no-print custom-scrollbar">
+      <div ref={mainScrollRef} className="flex-1 overflow-y-auto pb-44 px-6 md:px-8 no-print custom-scrollbar" role="main">
 
       <PageErrorBoundary key={currentPage} onReset={() => setCurrentPage(Page.Dashboard)}>
 
@@ -6422,7 +6430,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
       </PageErrorBoundary>
 
-      </main>
+      </div>
 
       {/* Scroll to Top Button */}
       {showScrollToTop && (
