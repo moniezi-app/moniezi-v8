@@ -293,7 +293,7 @@ const Logo: React.FC<{ size?: 'sm' | 'lg', onClick?: () => void, forceDarkText?:
           <span className="font-bold">Moni</span>
           <span className={`font-bold ${forceDarkText ? 'text-blue-700' : 'bg-gradient-to-r bg-clip-text text-transparent from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400'}`}>ezi</span>
         </div>
-        <div className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.18em] sm:tracking-[0.22em] text-slate-500 dark:text-slate-300 mt-0.5 sm:mt-1 pl-0.5`} style={{ whiteSpace: 'nowrap' }}>
+        <div className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.18em] sm:tracking-[0.22em] text-slate-600 dark:text-slate-300 mt-0.5 sm:mt-1 pl-0.5`} style={{ whiteSpace: 'nowrap' }}>
           Pro Finance
         </div>
        
@@ -325,7 +325,7 @@ const ToastContainer: React.FC<{ notifications: Notification[]; remove: (id: str
 
 const EmptyState: React.FC<{ icon: React.ReactNode, title: string, subtitle: string, action?: () => void, actionLabel?: string }> = ({ icon, title, subtitle, action, actionLabel }) => (
   <div className="flex flex-col items-center justify-center py-16 px-4 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/50 dark:bg-slate-900/50">
-    <div className="mb-4 text-slate-500 dark:text-slate-300 p-4 bg-white dark:bg-slate-950 rounded-full shadow-sm">
+    <div className="mb-4 text-slate-600 dark:text-slate-300 p-4 bg-white dark:bg-slate-950 rounded-full shadow-sm">
       {icon}
     </div>
     <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1 font-brand">{title}</h3>
@@ -369,11 +369,11 @@ const StatCard: React.FC<{
 
 const DateInput = ({ label, value, onChange }: { label: string, value: string, onChange: (val: string) => void }) => (
   <div className="group">
-    <label className="text-xs font-bold text-slate-500 dark:text-slate-300 uppercase tracking-wider mb-2 block pl-1 group-focus-within:text-blue-600 dark:group-focus-within:text-white transition-colors">
+    <label className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2 block pl-1 group-focus-within:text-blue-600 dark:group-focus-within:text-white transition-colors">
       {label}
     </label>
     <div className="relative">
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 pointer-events-none">
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 pointer-events-none">
         <Calendar size={18} />
       </div>
       <input 
@@ -3540,13 +3540,13 @@ TIMELINE: Assumes 48-72hr feedback turnaround.`,
     return (
       <div className="mt-3 space-y-3">
          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-400" size={16} />
             <input type="text" placeholder="Search or add category..." value={categorySearch} onChange={e => setCategorySearch(e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg pl-9 pr-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500 text-slate-900 dark:text-white" />
          </div>
          <div className="max-h-48 overflow-y-auto custom-scrollbar p-1">
             {!categorySearch && recentCategories.length > 0 && (
                 <div className="mb-4">
-                    <label className="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-2 block">Recent</label>
+                    <label className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-2 block">Recent</label>
                     <div className="flex flex-wrap gap-2">
                         {recentCategories.map(cat => (
                             <button key={`recent-${cat}`} type="button" onClick={() => onSelect(cat)} className={`px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 border ${current === cat ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'}`}>{getCategoryIcon(cat)}{cat}</button>
@@ -3555,10 +3555,10 @@ TIMELINE: Assumes 48-72hr feedback turnaround.`,
                 </div>
             )}
             <div>
-               <label className="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-2 block">{categorySearch ? 'Results' : 'All Categories'}</label>
+               <label className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-2 block">{categorySearch ? 'Results' : 'All Categories'}</label>
                <div className="flex flex-wrap gap-2">
                   {displayList.map(cat => (
-                    <button key={cat} type="button" onClick={() => onSelect(cat)} className={`px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${current === cat ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-200 dark:bg-slate-900 text-slate-700 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-800 border border-slate-300/50 dark:border-0'}`}>{getCategoryIcon(cat)}{cat}</button>
+                    <button key={cat} type="button" onClick={() => onSelect(cat)} className={`px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${current === cat ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-200 dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-800 border border-slate-300/50 dark:border-0'}`}>{getCategoryIcon(cat)}{cat}</button>
                   ))}
                   <button type="button" onClick={() => { if (drawerMode !== 'create_cat') previousDrawerMode.current = drawerMode as any; setNewCategoryName(categorySearch); setDrawerMode('create_cat'); }} className="px-3 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 border-2 border-dashed border-blue-200 dark:border-blue-900 hover:bg-blue-50 dark:hover:bg-blue-900/30"><Plus size={14} />{categorySearch ? `Create "${categorySearch}"` : "Custom Category..."}</button>
                </div>
@@ -4285,7 +4285,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                     {totals.overdueCount > 0 ? `${totals.overdueCount} overdue` : totals.pendingCount > 0 ? `${totals.pendingCount} unpaid` : 'Great job'}
                   </div>
 
-                  <div className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-3">Tap to open invoices</div>
+                  <div className="text-[11px] text-slate-600 dark:text-slate-300 font-semibold mt-3">Tap to open invoices</div>
                 </div>
               </div>
 
@@ -4308,13 +4308,13 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                     </div>
                     <div>
                       <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wide">Sales Pipeline</h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">Estimates & Proposals</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-300">Estimates & Proposals</p>
                     </div>
                   </div>
                   {pipelineStats.conversionRate > 0 && (
                     <div className="text-right">
                       <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{pipelineStats.conversionRate.toFixed(0)}%</div>
-                      <div className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Win Rate</div>
+                      <div className="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Win Rate</div>
                     </div>
                   )}
                 </div>
@@ -4324,7 +4324,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                   <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl p-4 mb-5 border border-purple-100 dark:border-purple-800/30">
                     <div className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-1">Pipeline Value</div>
                     <div className="text-3xl font-extrabold text-slate-900 dark:text-white">{formatCurrency.format(pipelineStats.pipelineValue)}</div>
-                    <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                    <div className="text-xs text-slate-600 dark:text-slate-300 mt-1">
                       {pipelineStats.draft.count} draft{pipelineStats.draft.count !== 1 ? 's' : ''} + {pipelineStats.sent.count} awaiting response
                     </div>
                   </div>
@@ -4334,7 +4334,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                 <div className="grid grid-cols-4 gap-2 mb-4">
                   <div className="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
                     <div className="text-lg font-bold text-slate-600 dark:text-slate-300">{pipelineStats.draft.count}</div>
-                    <div className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Draft</div>
+                    <div className="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Draft</div>
                   </div>
                   <div className="text-center p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20">
                     <div className="text-lg font-bold text-blue-600 dark:text-blue-400">{pipelineStats.sent.count}</div>
@@ -4386,7 +4386,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                           </button>
                           <button
                             onClick={(e) => { e.stopPropagation(); snoozeFollowUp(est, 3); }}
-                            className="px-3 py-2 rounded-md text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all border border-slate-200/50 dark:border-slate-700/50"
+                            className="px-3 py-2 rounded-md text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all border border-slate-200/50 dark:border-slate-700/50"
                             title="Snooze 3 days"
                           >
                             +3d
@@ -4418,12 +4418,12 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                 {/* Won Revenue */}
                 {pipelineStats.accepted.amount > 0 && (
                   <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                    <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Revenue Won (All Time)</div>
+                    <div className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Revenue Won (All Time)</div>
                     <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency.format(pipelineStats.accepted.amount)}</div>
                   </div>
                 )}
 
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-4 text-center">Tap to view estimates</div>
+                <div className="text-[11px] text-slate-600 dark:text-slate-300 font-semibold mt-4 text-center">Tap to view estimates</div>
               </div>
             )}
             
@@ -4445,7 +4445,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       </div>
                       <div className="text-right flex-shrink-0">
                          <div className={`text-base font-bold whitespace-nowrap ${t.type === 'income' ? 'text-emerald-600' : 'text-red-600'}`}>{t.type === 'income' ? '+' : ''}{formatCurrency.format(t.amount)}</div>
-                         <div className="text-left md:text-right mt-1"><div className="text-xs font-bold text-slate-500 dark:text-slate-300 whitespace-nowrap">{t.date}</div></div>
+                         <div className="text-left md:text-right mt-1"><div className="text-xs font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap">{t.date}</div></div>
                       </div>
                     </div>
                   ))
@@ -4456,11 +4456,11 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
             <div onClick={() => { setScrollToTaxSnapshot(true); setCurrentPage(Page.Reports); }} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white p-6 rounded-xl shadow-md border border-slate-200 dark:border-slate-800 cursor-pointer active:scale-95 transition-all hover:shadow-lg hover:border-emerald-500/30 group">
                <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400"><Calculator size={20} /><span className="text-xs font-bold uppercase tracking-widest font-brand">Tax Snapshot</span></div>
-                  <ArrowRight size={18} className="text-slate-300 dark:text-slate-400 -rotate-45 group-hover:rotate-0 group-hover:text-emerald-500 transition-all duration-300"/>
+                  <ArrowRight size={18} className="text-slate-300 dark:text-slate-300 -rotate-45 group-hover:rotate-0 group-hover:text-emerald-500 transition-all duration-300"/>
                </div>
                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
-                  <div><div className="text-xs text-slate-500 dark:text-slate-300 uppercase tracking-wider font-bold mb-1">Estimated Tax (YTD)</div><div className="text-2xl font-extrabold font-brand text-slate-900 dark:text-white">{formatCurrency.format(reportData.totalEstimatedTax)}</div></div>
-                  <div><div className="text-xs text-slate-500 dark:text-slate-300 uppercase tracking-wider font-bold mb-1">YTD Net Profit</div><div className="text-2xl font-bold text-slate-600 dark:text-slate-200">{formatCurrency.format(reportData.ytdNetProfit)}</div></div>
+                  <div><div className="text-xs text-slate-600 dark:text-slate-300 uppercase tracking-wider font-bold mb-1">Estimated Tax (YTD)</div><div className="text-2xl font-extrabold font-brand text-slate-900 dark:text-white">{formatCurrency.format(reportData.totalEstimatedTax)}</div></div>
+                  <div><div className="text-xs text-slate-600 dark:text-slate-300 uppercase tracking-wider font-bold mb-1">YTD Net Profit</div><div className="text-2xl font-bold text-slate-600 dark:text-slate-200">{formatCurrency.format(reportData.ytdNetProfit)}</div></div>
                </div>
                <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
                   <div className="text-xs font-bold text-slate-600 dark:text-slate-300">Next Deadline: <span className="text-emerald-600 dark:text-emerald-400">{getNextEstimatedTaxDeadline().date}</span> — {getNextEstimatedTaxDeadline().days} days left</div>
@@ -4478,7 +4478,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                    <div className="bg-white dark:bg-slate-900 p-2.5 rounded-full shadow-sm text-slate-900 dark:text-white">
                      <Camera size={20} />
                    </div>
-                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Scan</span>
+                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">Scan</span>
                 </button>
                 <input type="file" ref={scanInputRef} className="hidden" accept="image/*" capture="environment" onChange={handleScanReceipt} />
                 
@@ -4550,7 +4550,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                     let badgeText = '';
                     
                     if (isVoid) {
-                      badgeClass = 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400';
+                      badgeClass = 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-300';
                       badgeText = 'VOID';
                     } else if (inv.status === 'paid') {
                       badgeClass = 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300';
@@ -4589,21 +4589,21 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                               {isRecurring && <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">Recurring</span>}
                             </div>
                             <div className="text-sm font-medium text-slate-600 dark:text-slate-300">{inv.description}</div>
-                            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{inv.date}</div>
+                            <div className="text-xs text-slate-600 dark:text-slate-300 mt-1">{inv.date}</div>
                           </div>
                         </div>
                         
                         {/* Bottom Section: Amount, Status, Actions */}
                         <div className="flex items-end justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                           <div>
-                              <label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1 uppercase tracking-wide">Total</label>
+                              <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1 uppercase tracking-wide">Total</label>
                               <div className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white mb-2">{formatCurrency.format(inv.amount)}</div>
                               <div className="flex flex-col gap-1">
-                                <div className={`flex-shrink-0 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 w-fit ${isVoid ? 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400' : inv.status === 'paid' ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300' : isOverdue ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300'}`}>
+                                <div className={`flex-shrink-0 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 w-fit ${isVoid ? 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-300' : inv.status === 'paid' ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300' : isOverdue ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300'}`}>
                                   {isOverdue && !isVoid && <AlertTriangle size={12} />}
                                   {isVoid ? 'Void' : inv.status === 'paid' ? 'Paid' : isOverdue ? `Overdue (${overdueDays}d)` : 'Unpaid'}
                                 </div>
-                                <div className={`text-xs font-medium ${isOverdue && !isVoid ? 'text-red-600 dark:text-red-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                                <div className={`text-xs font-medium ${isOverdue && !isVoid ? 'text-red-600 dark:text-red-400' : 'text-slate-600 dark:text-slate-300'}`}>
                                   {isOverdue && !isVoid ? `Due was ${inv.due}` : `Due ${inv.due}`}
                                   {isRecurring && inv.recurrence && <span className="block text-blue-500 mt-0.5">Next: {inv.recurrence.nextDate}</span>}
                                 </div>
@@ -4631,7 +4631,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                       <div className="font-bold text-slate-900 dark:text-white text-base leading-tight">{item.name || item.client}</div>
                                       {invoiceStatusBadge}
                                   </div>
-                                  <div className="text-xs font-medium text-slate-500 dark:text-slate-400">{item.date} · {item.category}</div>
+                                  <div className="text-xs font-medium text-slate-600 dark:text-slate-300">{item.date} · {item.category}</div>
                               </div>
                           </div>
                           <div className={`text-xl font-bold whitespace-nowrap flex-shrink-0 pt-1 ${amountColor}`}>{isIncome ? '+' : ''}{formatCurrency.format(item.amount)}</div>
@@ -4639,9 +4639,9 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       
                       {/* Bottom Row: Action Buttons */}
                       <div className="flex items-center justify-end gap-1 pt-2 border-t border-slate-100 dark:border-slate-800">
-                           <button onClick={(e) => { e.stopPropagation(); if (isInvoice) duplicateInvoice(item as Invoice); else duplicateTransaction(item as Transaction); }} className="p-2 rounded-lg text-slate-400 dark:text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all active:scale-95" title="Duplicate"><Copy size={18}/></button>
-                           <button onClick={(e) => { e.stopPropagation(); handleEditItem(item); }} className="p-2 rounded-lg text-slate-400 dark:text-slate-400 hover:text-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-95" title="Edit"><Edit3 size={18}/></button>
-                           <button onClick={(e) => { e.stopPropagation(); if (isInvoice) deleteInvoice(item); else deleteTransaction(item.id); }} className="p-2 rounded-lg text-slate-400 dark:text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all active:scale-95" title="Delete"><Trash2 size={18}/></button>
+                           <button onClick={(e) => { e.stopPropagation(); if (isInvoice) duplicateInvoice(item as Invoice); else duplicateTransaction(item as Transaction); }} className="p-2 rounded-lg text-slate-400 dark:text-slate-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all active:scale-95" title="Duplicate"><Copy size={18}/></button>
+                           <button onClick={(e) => { e.stopPropagation(); handleEditItem(item); }} className="p-2 rounded-lg text-slate-400 dark:text-slate-300 hover:text-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-95" title="Edit"><Edit3 size={18}/></button>
+                           <button onClick={(e) => { e.stopPropagation(); if (isInvoice) deleteInvoice(item); else deleteTransaction(item.id); }} className="p-2 rounded-lg text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all active:scale-95" title="Delete"><Trash2 size={18}/></button>
                       </div>
                    </div>
                   );
@@ -4748,25 +4748,25 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
                           <div className={`font-bold text-slate-900 dark:text-white text-lg ${isVoid ? 'line-through text-slate-400' : ''}`}>{inv.client}</div>
-                          {inv.number && <span className="text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded font-mono font-bold">{inv.number}</span>}
+                          {inv.number && <span className="text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded font-mono font-bold">{inv.number}</span>}
                           {isRecurring && <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">Recurring</span>}
                         </div>
                         <div className="text-sm font-medium text-slate-600 dark:text-slate-300">{inv.description}</div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{inv.date}</div>
+                        <div className="text-xs text-slate-600 dark:text-slate-300 mt-1">{inv.date}</div>
                       </div>
                     </div>
                     
                     {/* Bottom Section: Amount, Status, Actions */}
                     <div className="flex items-end justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                       <div>
-                          <label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1 uppercase tracking-wide">Total</label>
+                          <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1 uppercase tracking-wide">Total</label>
                           <div className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white mb-2">{formatCurrency.format(inv.amount)}</div>
                           <div className="flex flex-col gap-1">
-                            <div className={`flex-shrink-0 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 w-fit ${isVoid ? 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400' : inv.status === 'paid' ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300' : isOverdue ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300'}`}>
+                            <div className={`flex-shrink-0 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 w-fit ${isVoid ? 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-300' : inv.status === 'paid' ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300' : isOverdue ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300' : 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300'}`}>
                               {isOverdue && !isVoid && <AlertTriangle size={12} />}
                               {isVoid ? 'Void' : inv.status === 'paid' ? 'Paid' : isOverdue ? `Overdue (${overdueDays}d)` : 'Unpaid'}
                             </div>
-                            <div className={`text-xs font-medium ${isOverdue && !isVoid ? 'text-red-600 dark:text-red-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                            <div className={`text-xs font-medium ${isOverdue && !isVoid ? 'text-red-600 dark:text-red-400' : 'text-slate-600 dark:text-slate-300'}`}>
                               {isOverdue && !isVoid ? `Due was ${inv.due}` : `Due ${inv.due}`}
                               {isRecurring && inv.recurrence && <span className="block text-blue-500 mt-0.5">Next: {inv.recurrence.nextDate}</span>}
                             </div>
@@ -4805,7 +4805,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       .map(est => {
                         const isExpired = est.validUntil ? new Date(est.validUntil) < new Date() : false;
                         const statusLabel = est.status === 'accepted' ? 'Accepted' : est.status === 'declined' ? 'Declined' : est.status === 'sent' ? 'Sent' : est.status === 'void' ? 'Void' : 'Draft';
-                        const statusClass = est.status === 'accepted' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300' : est.status === 'declined' ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300' : est.status === 'sent' ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : est.status === 'void' ? 'bg-slate-200 text-slate-500 dark:bg-slate-800 dark:text-slate-500' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+                        const statusClass = est.status === 'accepted' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300' : est.status === 'declined' ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300' : est.status === 'sent' ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : est.status === 'void' ? 'bg-slate-200 text-slate-500 dark:bg-slate-800 dark:text-slate-400' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
                         const isVoid = est.status === 'void';
                         
                         // Follow-up status calculation
@@ -4822,17 +4822,17 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                         return (
                           <div key={est.id} className={`bg-white dark:bg-slate-900 p-6 rounded-lg border border-slate-200 dark:border-slate-800 group hover:border-blue-500/30 hover:shadow-lg transition-all shadow-md cursor-pointer ${isExpired && est.status !== 'accepted' && !isVoid ? 'border-l-4 border-l-amber-500' : ''} ${est.status === 'accepted' ? 'border-l-4 border-l-emerald-500' : ''} ${isFollowUpOverdue ? 'border-l-4 border-l-orange-500' : ''} ${isVoid ? 'opacity-60' : ''}`} onClick={() => handleEditItem({ dataType: 'estimate', original: est })}>
                             <div className="flex items-start gap-4 mb-4">
-                              <div className={`w-12 h-12 rounded-md flex items-center justify-center flex-shrink-0 ${est.status === 'accepted' ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : est.status === 'sent' ? 'bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
+                              <div className={`w-12 h-12 rounded-md flex items-center justify-center flex-shrink-0 ${est.status === 'accepted' ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : est.status === 'sent' ? 'bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}>
                                 {est.status === 'accepted' ? <CheckCircle size={20} strokeWidth={1.5} /> : <FileText size={20} strokeWidth={1.5} />}
                               </div>
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                                   <div className="font-bold text-slate-900 dark:text-white text-lg">{est.client}</div>
-                                  {est.number && <span className="text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded font-mono font-bold">{est.number}</span>}
+                                  {est.number && <span className="text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded font-mono font-bold">{est.number}</span>}
                                   {isFollowUpOverdue && <span className="text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 px-2 py-0.5 rounded font-bold flex items-center gap-1"><Clock3 size={12} /> Follow-up due</span>}
                                 </div>
                                 <div className="text-sm font-medium text-slate-600 dark:text-slate-300">{est.description}</div>
-                                <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                <div className="text-xs text-slate-600 dark:text-slate-300 mt-1">
                                   {est.date}{est.validUntil ? ` • Valid until ${est.validUntil}` : ''}
                                   {est.status === 'sent' && daysSinceSent !== null && <span className="ml-2 text-blue-600 dark:text-blue-400">• Sent {daysSinceSent}d ago</span>}
                                   {est.followUpCount !== undefined && est.followUpCount > 0 && <span className="ml-2 text-purple-600 dark:text-purple-400">• {est.followUpCount} follow-up{est.followUpCount > 1 ? 's' : ''}</span>}
@@ -4922,7 +4922,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
                             <div className="flex items-end justify-between">
                               <div>
-                                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1 uppercase tracking-wide">Total</label>
+                                <label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1 uppercase tracking-wide">Total</label>
                                 <div className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white mb-2">{formatCurrency.format(est.amount)}</div>
                                 <div className="flex flex-col gap-1">
                                   <div className={`flex-shrink-0 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 w-fit ${statusClass}`}>{statusLabel}</div>
@@ -4964,7 +4964,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight font-brand">
                         Profit & Loss
                       </h3>
-                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                      <p className="text-sm text-slate-600 dark:text-slate-300 mt-0.5">
                         {filterPeriod === 'month' ? referenceDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) :
                          filterPeriod === 'quarter' ? `Q${Math.floor(referenceDate.getMonth() / 3) + 1} ${referenceDate.getFullYear()}` :
                          filterPeriod === 'year' ? referenceDate.getFullYear().toString() : 'All Time'}
@@ -4996,22 +4996,22 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                 <div className="space-y-4">
                   <div className="py-3 border-b border-slate-100 dark:border-slate-800">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Revenue</span>
+                      <span className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">Revenue</span>
                     </div>
                     <div className="text-2xl font-bold text-emerald-600 tabular-nums">{formatCurrency.format(reportData.income)}</div>
                   </div>
                   
                   <div className="py-3 border-b border-slate-100 dark:border-slate-800">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Operating Expenses</span>
+                      <span className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">Operating Expenses</span>
                     </div>
                     <div className="text-2xl font-bold text-red-600 tabular-nums">{formatCurrency.format(reportData.expense)}</div>
                   </div>
                   
                   <div className="pt-6">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-base font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Net Profit</span>
-                      <span className="text-sm text-slate-500 dark:text-slate-400">
+                      <span className="text-base font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide">Net Profit</span>
+                      <span className="text-sm text-slate-600 dark:text-slate-300">
                         {reportData.income > 0 ? `${((reportData.netProfit / reportData.income) * 100).toFixed(1)}% margin` : '—'}
                       </span>
                     </div>
@@ -5038,14 +5038,14 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                   <div className="flex justify-between items-start gap-2">
                     <div className="min-w-0 flex-1">
                       <div style={{ fontSize: '13px' }} className="font-bold text-slate-700 dark:text-slate-300">Self-Employment Tax</div>
-                      <div style={{ fontSize: '10px' }} className="text-slate-500 dark:text-slate-400 uppercase tracking-wider">Social Security & Medicare (~15.3%)</div>
+                      <div style={{ fontSize: '10px' }} className="text-slate-600 dark:text-slate-300 uppercase tracking-wider">Social Security & Medicare (~15.3%)</div>
                     </div>
                     <div style={{ fontSize: '18px' }} className="font-bold flex-shrink-0">{formatCurrency.format(reportData.seTaxLiability)}</div>
                   </div>
                   <div className="flex justify-between items-start gap-2">
                     <div className="min-w-0 flex-1">
                       <div style={{ fontSize: '13px' }} className="font-bold text-slate-700 dark:text-slate-300">Income Tax Estimate</div>
-                      <div style={{ fontSize: '10px' }} className="text-slate-500 dark:text-slate-400 uppercase tracking-wider">Based on {reportData.totalIncomeTaxRate}% Combined Rate</div>
+                      <div style={{ fontSize: '10px' }} className="text-slate-600 dark:text-slate-300 uppercase tracking-wider">Based on {reportData.totalIncomeTaxRate}% Combined Rate</div>
                     </div>
                     <div style={{ fontSize: '18px' }} className="font-bold flex-shrink-0">{formatCurrency.format(reportData.incomeTaxLiability)}</div>
                   </div>
@@ -5073,14 +5073,14 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                     <div className="flex items-center gap-3">
                       <BrainCircuit size={22} className="text-blue-600 dark:text-blue-400" />
                       <h3 className="text-lg sm:text-xl font-bold uppercase tracking-tight font-brand text-slate-900 dark:text-white">
-                        Tax Planner <span className="text-slate-500 dark:text-slate-400">(2026)</span>
+                        Tax Planner <span className="text-slate-600 dark:text-slate-300">(2026)</span>
                       </h3>
                     </div>
                     <span className="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-xl bg-white/60 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-700/60 shadow-sm">
                       {isPlannerOpen ? <ChevronUp size={18} className="text-slate-600 dark:text-slate-300" /> : <ChevronDown size={18} className="text-slate-600 dark:text-slate-300" />}
                     </span>
                   </button>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 pl-9">
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 pl-9">
                     Estimate and plan your 2026 taxes in one place.
                   </p>
 
@@ -5089,8 +5089,8 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                             
                             {/* Tab Switcher */}
                             <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-lg mb-4">
-                                <button onClick={() => setPlannerTab('basic')} className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${plannerTab === 'basic' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}>Basic</button>
-                                <button onClick={() => setPlannerTab('advanced')} className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${plannerTab === 'advanced' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}>Advanced</button>
+                                <button onClick={() => setPlannerTab('basic')} className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${plannerTab === 'basic' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-600 dark:text-slate-300'}`}>Basic</button>
+                                <button onClick={() => setPlannerTab('advanced')} className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${plannerTab === 'advanced' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-300'}`}>Advanced</button>
                             </div>
 
                             {plannerTab === 'basic' ? (
@@ -5098,9 +5098,9 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                 <div className="space-y-6">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-2 block">Projected Annual Income</label>
+                                            <label className="text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-2 block">Projected Annual Income</label>
                                             <div className="relative">
-                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 font-bold">$</span>
+                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 font-bold">$</span>
                                                 <input 
                                                     type="number" 
                                                     value={plannerData.income || ''} 
@@ -5111,9 +5111,9 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-2 block">Projected Annual Expenses</label>
+                                            <label className="text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-2 block">Projected Annual Expenses</label>
                                             <div className="relative">
-                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 font-bold">$</span>
+                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 font-bold">$</span>
                                                 <input 
                                                     type="number" 
                                                     value={plannerData.expenses || ''} 
@@ -5130,7 +5130,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-2 block">Filing Status</label>
+                                            <label className="text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-2 block">Filing Status</label>
                                             <select 
                                                 value={plannerData.filingStatus} 
                                                 onChange={e => setPlannerData(p => ({...p, filingStatus: e.target.value as any}))}
@@ -5143,7 +5143,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-2 block">Est. Income Tax Rate</label>
+                                            <label className="text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-2 block">Est. Income Tax Rate</label>
                                             <div className="flex gap-2 mb-2">
                                                 {[10, 15, 20].map(rate => (
                                                     <button 
@@ -5169,7 +5169,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                                         onChange={e => setPlannerData(p => ({...p, taxRate: Number(e.target.value)}))}
                                                         className="w-full pl-3 pr-8 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-sm font-bold text-slate-900 dark:text-white outline-none"
                                                     />
-                                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 font-bold text-xs">%</span>
+                                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 font-bold text-xs">%</span>
                                                 </div>
                                             )}
                                         </div>
@@ -5198,9 +5198,9 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-2 block">Annual Retirement Contrib.</label>
+                                            <label className="text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-2 block">Annual Retirement Contrib.</label>
                                             <div className="relative">
-                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 font-bold">$</span>
+                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 font-bold">$</span>
                                                 <input 
                                                     type="number" 
                                                     value={plannerData.retirement || ''} 
@@ -5211,9 +5211,9 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-2 block">Expected Annual Credits</label>
+                                            <label className="text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-2 block">Expected Annual Credits</label>
                                             <div className="relative">
-                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 font-bold">$</span>
+                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 font-bold">$</span>
                                                 <input 
                                                     type="number" 
                                                     value={plannerData.credits || ''} 
@@ -5231,9 +5231,9 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                     {/* Reused Core Inputs */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-2 block">Projected Annual Income</label>
+                                            <label className="text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-2 block">Projected Annual Income</label>
                                             <div className="relative">
-                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 font-bold">$</span>
+                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 font-bold">$</span>
                                                 <input 
                                                     type="number" 
                                                     value={plannerData.income || ''} 
@@ -5244,9 +5244,9 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-2 block">Projected Annual Expenses</label>
+                                            <label className="text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-2 block">Projected Annual Expenses</label>
                                             <div className="relative">
-                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 font-bold">$</span>
+                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 font-bold">$</span>
                                                 <input 
                                                     type="number" 
                                                     value={plannerData.expenses || ''} 
@@ -5263,7 +5263,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                     
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-2 block">Filing Status</label>
+                                            <label className="text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-2 block">Filing Status</label>
                                             <select 
                                                 value={plannerData.filingStatus} 
                                                 onChange={e => setPlannerData(p => ({...p, filingStatus: e.target.value as any}))}
@@ -5276,7 +5276,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-2 block">Est. Income Tax Rate</label>
+                                            <label className="text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-2 block">Est. Income Tax Rate</label>
                                             <div className="flex gap-2 mb-2">
                                                 {[10, 15, 20].map(rate => (
                                                     <button 
@@ -5302,7 +5302,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                                         onChange={e => setPlannerData(p => ({...p, taxRate: Number(e.target.value)}))}
                                                         className="w-full pl-3 pr-8 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded text-sm font-bold text-slate-900 dark:text-white outline-none"
                                                     />
-                                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 font-bold text-xs">%</span>
+                                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 font-bold text-xs">%</span>
                                                 </div>
                                             )}
                                         </div>
@@ -5317,17 +5317,17 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                                     <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center"><Wallet size={16}/></div>
                                                     <div className="text-left">
                                                         <div className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wide">A. Other Income</div>
-                                                        <div className="text-xs text-slate-500 dark:text-slate-400">Interest, Dividends, Capital Gains</div>
+                                                        <div className="text-xs text-slate-600 dark:text-slate-300">Interest, Dividends, Capital Gains</div>
                                                     </div>
                                                 </div>
                                                 {advSection === 'income' ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}
                                             </button>
                                             {advSection === 'income' && (
                                                 <div className="p-4 bg-white dark:bg-slate-950 grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in slide-in-from-top-2">
-                                                    <div><label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">Interest</label><input type="number" value={plannerData.otherIncomeInterest || ''} onChange={e => setPlannerData(p => ({...p, otherIncomeInterest: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 text-sm outline-none" placeholder="0"/></div>
-                                                    <div><label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">Dividends</label><input type="number" value={plannerData.otherIncomeDividends || ''} onChange={e => setPlannerData(p => ({...p, otherIncomeDividends: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 text-sm outline-none" placeholder="0"/></div>
-                                                    <div><label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">Capital Gains</label><input type="number" value={plannerData.otherIncomeCapital || ''} onChange={e => setPlannerData(p => ({...p, otherIncomeCapital: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 text-sm outline-none" placeholder="0"/></div>
-                                                    <div><label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">Other</label><input type="number" value={plannerData.otherIncomeOther || ''} onChange={e => setPlannerData(p => ({...p, otherIncomeOther: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 text-sm outline-none" placeholder="0"/></div>
+                                                    <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">Interest</label><input type="number" value={plannerData.otherIncomeInterest || ''} onChange={e => setPlannerData(p => ({...p, otherIncomeInterest: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 text-sm outline-none" placeholder="0"/></div>
+                                                    <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">Dividends</label><input type="number" value={plannerData.otherIncomeDividends || ''} onChange={e => setPlannerData(p => ({...p, otherIncomeDividends: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 text-sm outline-none" placeholder="0"/></div>
+                                                    <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">Capital Gains</label><input type="number" value={plannerData.otherIncomeCapital || ''} onChange={e => setPlannerData(p => ({...p, otherIncomeCapital: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 text-sm outline-none" placeholder="0"/></div>
+                                                    <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">Other</label><input type="number" value={plannerData.otherIncomeOther || ''} onChange={e => setPlannerData(p => ({...p, otherIncomeOther: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 text-sm outline-none" placeholder="0"/></div>
                                                 </div>
                                             )}
                                         </div>
@@ -5339,7 +5339,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                                     <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center"><FileText size={16}/></div>
                                                     <div className="text-left">
                                                         <div className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wide">B. Deductions</div>
-                                                        <div className="text-xs text-slate-500 dark:text-slate-400">Standard vs. Itemized</div>
+                                                        <div className="text-xs text-slate-600 dark:text-slate-300">Standard vs. Itemized</div>
                                                     </div>
                                                 </div>
                                                 {advSection === 'deductions' ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}
@@ -5351,7 +5351,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                                         <button onClick={() => setPlannerData(p => ({...p, deductionMode: 'itemized'}))} className={`flex-1 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${plannerData.deductionMode === 'itemized' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-500'}`}>Itemized</button>
                                                     </div>
                                                     {plannerData.deductionMode === 'itemized' ? (
-                                                        <div><label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">Total Itemized Deductions</label><input type="number" value={plannerData.itemizedDeduction || ''} onChange={e => setPlannerData(p => ({...p, itemizedDeduction: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none" placeholder="0"/></div>
+                                                        <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">Total Itemized Deductions</label><input type="number" value={plannerData.itemizedDeduction || ''} onChange={e => setPlannerData(p => ({...p, itemizedDeduction: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none" placeholder="0"/></div>
                                                     ) : (
                                                         <div className="text-sm text-slate-600 dark:text-slate-300">Using 2026 Standard Deduction for <b>{plannerData.filingStatus}</b>: {formatCurrency.format(plannerResults.deduction)}</div>
                                                     )}
@@ -5366,16 +5366,16 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                                     <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center"><Shield size={16}/></div>
                                                     <div className="text-left">
                                                         <div className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wide">C. Adjustments</div>
-                                                        <div className="text-xs text-slate-500 dark:text-slate-400">Retirement, HSA, Health Ins</div>
+                                                        <div className="text-xs text-slate-600 dark:text-slate-300">Retirement, HSA, Health Ins</div>
                                                     </div>
                                                 </div>
                                                 {advSection === 'adjustments' ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}
                                             </button>
                                             {advSection === 'adjustments' && (
                                                 <div className="p-4 bg-white dark:bg-slate-950 grid grid-cols-1 gap-4 animate-in slide-in-from-top-2">
-                                                    <div><label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">Retirement Contributions</label><input type="number" value={plannerData.retirement || ''} onChange={e => setPlannerData(p => ({...p, retirement: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none" placeholder="0"/></div>
-                                                    <div><label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">HSA Contributions</label><input type="number" value={plannerData.adjustmentHSA || ''} onChange={e => setPlannerData(p => ({...p, adjustmentHSA: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none" placeholder="0"/></div>
-                                                    <div><label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">SE Health Insurance</label><input type="number" value={plannerData.adjustmentHealth || ''} onChange={e => setPlannerData(p => ({...p, adjustmentHealth: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none" placeholder="0"/></div>
+                                                    <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">Retirement Contributions</label><input type="number" value={plannerData.retirement || ''} onChange={e => setPlannerData(p => ({...p, retirement: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none" placeholder="0"/></div>
+                                                    <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">HSA Contributions</label><input type="number" value={plannerData.adjustmentHSA || ''} onChange={e => setPlannerData(p => ({...p, adjustmentHSA: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none" placeholder="0"/></div>
+                                                    <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">SE Health Insurance</label><input type="number" value={plannerData.adjustmentHealth || ''} onChange={e => setPlannerData(p => ({...p, adjustmentHealth: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none" placeholder="0"/></div>
                                                 </div>
                                             )}
                                         </div>
@@ -5387,14 +5387,14 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                                     <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center"><CreditCard size={16}/></div>
                                                     <div className="text-left">
                                                         <div className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wide">D. Credits & Taxes</div>
-                                                        <div className="text-xs text-slate-500 dark:text-slate-400">Credits, SE Tax Toggle</div>
+                                                        <div className="text-xs text-slate-600 dark:text-slate-300">Credits, SE Tax Toggle</div>
                                                     </div>
                                                 </div>
                                                 {advSection === 'credits' ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}
                                             </button>
                                             {advSection === 'credits' && (
                                                 <div className="p-4 bg-white dark:bg-slate-950 animate-in slide-in-from-top-2 space-y-4">
-                                                    <div><label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">Expected Credits ($)</label><input type="number" value={plannerData.credits || ''} onChange={e => setPlannerData(p => ({...p, credits: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none" placeholder="0"/></div>
+                                                    <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">Expected Credits ($)</label><input type="number" value={plannerData.credits || ''} onChange={e => setPlannerData(p => ({...p, credits: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none" placeholder="0"/></div>
                                                     <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-900">
                                                         <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Apply SE Tax (~15.3%)</label>
                                                         <button 
@@ -5415,7 +5415,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                                     <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center"><Briefcase size={16}/></div>
                                                     <div className="text-left">
                                                         <div className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wide">E. QBI Deduction (Optional)</div>
-                                                        <div className="text-xs text-slate-500 dark:text-slate-400">Section 199A Estimate</div>
+                                                        <div className="text-xs text-slate-600 dark:text-slate-300">Section 199A Estimate</div>
                                                     </div>
                                                 </div>
                                                 {advSection === 'qbi' ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}
@@ -5433,8 +5433,8 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                                     </div>
                                                     {plannerData.applyQBI && (
                                                         <>
-                                                            <div><label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">QBI Amount Override ($)</label><input type="number" value={plannerData.qbiOverride || ''} onChange={e => setPlannerData(p => ({...p, qbiOverride: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none" placeholder="Default: Profit"/></div>
-                                                            <div className="text-xs text-slate-500 dark:text-slate-400 italic">Eligibility limits vary. Estimate is 20% of QBI base.</div>
+                                                            <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">QBI Amount Override ($)</label><input type="number" value={plannerData.qbiOverride || ''} onChange={e => setPlannerData(p => ({...p, qbiOverride: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none" placeholder="Default: Profit"/></div>
+                                                            <div className="text-xs text-slate-600 dark:text-slate-300 italic">Eligibility limits vary. Estimate is 20% of QBI base.</div>
                                                         </>
                                                     )}
                                                 </div>
@@ -5448,7 +5448,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                                     <div className="w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 flex items-center justify-center"><CheckCircle size={16}/></div>
                                                     <div className="text-left">
                                                         <div className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wide">F. Payments & On-Track</div>
-                                                        <div className="text-xs text-slate-500 dark:text-slate-400">YTD Status & Suggestions</div>
+                                                        <div className="text-xs text-slate-600 dark:text-slate-300">YTD Status & Suggestions</div>
                                                     </div>
                                                 </div>
                                                 {advSection === 'payments' ? <ChevronUp size={16}/> : <ChevronDown size={16}/>}
@@ -5456,15 +5456,15 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                             {advSection === 'payments' && (
                                                 <div className="p-4 bg-white dark:bg-slate-950 animate-in slide-in-from-top-2 space-y-4">
                                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                        <div><label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">Est. Payments YTD</label><input type="number" value={plannerData.paymentsYTD || ''} onChange={e => setPlannerData(p => ({...p, paymentsYTD: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 text-sm outline-none" placeholder="0"/></div>
-                                                        <div><label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">Withholding YTD</label><input type="number" value={plannerData.withholdingYTD || ''} onChange={e => setPlannerData(p => ({...p, withholdingYTD: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 text-sm outline-none" placeholder="0"/></div>
+                                                        <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">Est. Payments YTD</label><input type="number" value={plannerData.paymentsYTD || ''} onChange={e => setPlannerData(p => ({...p, paymentsYTD: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 text-sm outline-none" placeholder="0"/></div>
+                                                        <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">Withholding YTD</label><input type="number" value={plannerData.withholdingYTD || ''} onChange={e => setPlannerData(p => ({...p, withholdingYTD: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-2 py-1.5 text-sm outline-none" placeholder="0"/></div>
                                                     </div>
-                                                    <div><label className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">Last Year Total Tax (Reference)</label><input type="number" value={plannerData.lastYearTaxRef || ''} onChange={e => setPlannerData(p => ({...p, lastYearTaxRef: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none" placeholder="Optional"/></div>
+                                                    <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 block mb-1">Last Year Total Tax (Reference)</label><input type="number" value={plannerData.lastYearTaxRef || ''} onChange={e => setPlannerData(p => ({...p, lastYearTaxRef: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none" placeholder="Optional"/></div>
                                                     
                                                     <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-100 dark:border-blue-900">
                                                         <div className="text-xs font-bold uppercase text-blue-600 dark:text-blue-400 mb-1">Quarterly Suggestion</div>
                                                         <div className="text-lg font-bold text-slate-900 dark:text-white">{formatCurrency.format(plannerResults.quarterlySuggestion)} <span className="text-xs font-normal text-slate-500">x 4 payments</span></div>
-                                                        <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-2">
+                                                        <div className="text-[10px] text-slate-600 dark:text-slate-300 mt-2">
                                                             Next Due Dates: Apr 15, Jun 15, Sep 15, Jan 15.
                                                             <br/>Dates may shift for weekends/holidays.
                                                         </div>
@@ -5536,11 +5536,11 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                 ) : (
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
                                         <div className="bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-700 text-center">
-                                            <div className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">Monthly Set-Aside</div>
+                                            <div className="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-300">Monthly Set-Aside</div>
                                             <div className="text-lg font-bold text-blue-600 dark:text-blue-400">{formatCurrency.format(plannerResults.monthly)}</div>
                                         </div>
                                         <div className="bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-700 text-center">
-                                            <div className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">Quarterly Payment</div>
+                                            <div className="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-300">Quarterly Payment</div>
                                             <div className="text-lg font-bold text-blue-600 dark:text-blue-400">{formatCurrency.format(plannerResults.quarterly)}</div>
                                         </div>
                                     </div>
@@ -5778,7 +5778,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                    
                    {/* Filing Status Dropdown */}
                    <div className="mb-4">
-                     <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 block uppercase tracking-wide">Filing Status</label>
+                     <label className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-2 block uppercase tracking-wide">Filing Status</label>
                      <select
                        value={settings.filingStatus}
                        onChange={(e) => {
@@ -5854,7 +5854,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
             {/* Search Bar */}
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={18} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-400" size={18} />
               <input
                 type="text"
                 placeholder="Search clients by name, company, or email..."
@@ -5901,7 +5901,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                   const statusColors: Record<ClientStatus, string> = {
                     lead: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
                     client: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
-                    inactive: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                    inactive: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
                   };
 
                   // Calculate client lifetime value
@@ -5945,7 +5945,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
                       {/* Contact Info */}
                       {(client.email || client.phone) && (
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-600 dark:text-slate-300 mb-3">
                           {client.email && (
                             <div className="flex items-center gap-2">
                               <span className="text-slate-400">✉</span>
@@ -5963,13 +5963,13 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
                       {/* Notes Preview */}
                       {client.notes && (
-                        <div className="text-sm text-slate-500 dark:text-slate-400 italic line-clamp-2 mb-3">
+                        <div className="text-sm text-slate-600 dark:text-slate-300 italic line-clamp-2 mb-3">
                           {client.notes}
                         </div>
                       )}
 
                       {/* Stats Row */}
-                      <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800">
+                      <div className="flex items-center gap-4 text-xs text-slate-600 dark:text-slate-300 pt-3 border-t border-slate-100 dark:border-slate-800">
                         {clientRevenue > 0 && (
                           <span className="font-bold text-emerald-600 dark:text-emerald-400">
                             LTV: {formatCurrency.format(clientRevenue)}
@@ -6126,39 +6126,39 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                     </div>
                     
                     <div className="mb-8">
-                        <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300 mb-3 block">Business Logo</label>
+                        <label className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 mb-3 block">Business Logo</label>
                         <div className="flex items-start gap-6">
                             <div className="w-24 h-24 bg-white dark:bg-slate-900 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl flex items-center justify-center overflow-hidden relative group">
                                 {settings.businessLogo ? (<><img src={settings.businessLogo} alt="Logo" className="w-full h-full object-contain p-2" /><div className="absolute inset-0 bg-black/50 flex items-center justify-center transition-opacity"><button onClick={() => setSettings(s => ({ ...s, businessLogo: undefined }))} className="text-white bg-red-500 p-1.5 rounded-full hover:bg-red-600"><Trash2 size={14} /></button></div></>) : <ImageIcon className="text-slate-300 dark:text-slate-600" size={32} />}
                             </div>
-                            <div className="flex-1"><input type="file" ref={logoInputRef} className="hidden" accept="image/png, image/jpeg, image/svg+xml" onChange={handleLogoUpload} /><button onClick={() => logoInputRef.current?.click()} className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-colors mb-2"><Upload size={14} /> Upload Logo</button><p className="text-xs text-slate-500 dark:text-slate-400">Recommended: PNG with transparent background. Max 2MB.</p></div>
+                            <div className="flex-1"><input type="file" ref={logoInputRef} className="hidden" accept="image/png, image/jpeg, image/svg+xml" onChange={handleLogoUpload} /><button onClick={() => logoInputRef.current?.click()} className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-colors mb-2"><Upload size={14} /> Upload Logo</button><p className="text-xs text-slate-600 dark:text-slate-300">Recommended: PNG with transparent background. Max 2MB.</p></div>
                         </div>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                         <div className="space-y-4">
                             <div className="flex items-center justify-between"><span className="text-sm font-bold text-slate-700 dark:text-slate-300">Show Logo on Invoice</span><button onClick={() => setSettings(s => ({ ...s, showLogoOnInvoice: !s.showLogoOnInvoice }))} className={`w-12 h-6 rounded-full p-1 transition-colors ${settings.showLogoOnInvoice ? 'bg-blue-600' : 'bg-slate-300 dark:bg-slate-700'}`}><div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${settings.showLogoOnInvoice ? 'translate-x-6' : 'translate-x-0'}`} /></button></div>
-                            <div><label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300 mb-2 block">Logo Alignment</label><div className="flex bg-slate-200 dark:bg-slate-900 p-1 rounded-lg"><button onClick={() => setSettings(s => ({ ...s, logoAlignment: 'left' }))} className={`flex-1 py-1.5 flex items-center justify-center gap-2 rounded-md transition-all ${settings.logoAlignment === 'left' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500'}`}><AlignLeft size={16} /> <span className="text-[10px] font-bold uppercase">Left</span></button><button onClick={() => setSettings(s => ({ ...s, logoAlignment: 'center' }))} className={`flex-1 py-1.5 flex items-center justify-center gap-2 rounded-md transition-all ${settings.logoAlignment === 'center' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500'}`}><AlignCenter size={16} /> <span className="text-[10px] font-bold uppercase">Center</span></button></div></div>
+                            <div><label className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 mb-2 block">Logo Alignment</label><div className="flex bg-slate-200 dark:bg-slate-900 p-1 rounded-lg"><button onClick={() => setSettings(s => ({ ...s, logoAlignment: 'left' }))} className={`flex-1 py-1.5 flex items-center justify-center gap-2 rounded-md transition-all ${settings.logoAlignment === 'left' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500'}`}><AlignLeft size={16} /> <span className="text-[10px] font-bold uppercase">Left</span></button><button onClick={() => setSettings(s => ({ ...s, logoAlignment: 'center' }))} className={`flex-1 py-1.5 flex items-center justify-center gap-2 rounded-md transition-all ${settings.logoAlignment === 'center' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500'}`}><AlignCenter size={16} /> <span className="text-[10px] font-bold uppercase">Center</span></button></div></div>
                         </div>
-                        <div><label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300 mb-3 block">Brand Accent Color</label><div className="flex flex-wrap gap-3">{['#2563eb', '#4f46e5', '#9333ea', '#059669', '#dc2626', '#0f172a'].map(color => (<button key={color} onClick={() => setSettings(s => ({ ...s, brandColor: color }))} className={`w-10 h-10 rounded-lg shadow-sm transition-transform hover:scale-110 flex items-center justify-center ${settings.brandColor === color ? 'ring-2 ring-offset-2 ring-offset-slate-50 dark:ring-offset-slate-900 ring-slate-400' : ''}`} style={{ backgroundColor: color }}>{settings.brandColor === color && <CheckCircle size={16} className="text-white" strokeWidth={3} />}</button>))}</div><p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Used for invoice headings and highlights.</p></div>
+                        <div><label className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 mb-3 block">Brand Accent Color</label><div className="flex flex-wrap gap-3">{['#2563eb', '#4f46e5', '#9333ea', '#059669', '#dc2626', '#0f172a'].map(color => (<button key={color} onClick={() => setSettings(s => ({ ...s, brandColor: color }))} className={`w-10 h-10 rounded-lg shadow-sm transition-transform hover:scale-110 flex items-center justify-center ${settings.brandColor === color ? 'ring-2 ring-offset-2 ring-offset-slate-50 dark:ring-offset-slate-900 ring-slate-400' : ''}`} style={{ backgroundColor: color }}>{settings.brandColor === color && <CheckCircle size={16} className="text-white" strokeWidth={3} />}</button>))}</div><p className="text-xs text-slate-600 dark:text-slate-300 mt-2">Used for invoice headings and highlights.</p></div>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div><label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300 mb-3 block">Business Name</label><input type="text" value={settings.businessName} onChange={e => setSettings(s => ({ ...s, businessName: e.target.value }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-5 py-4 font-bold text-lg text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-purple-500/20 transition-all" /></div>
-                        <div><label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300 mb-3 block">Owner Name</label><input type="text" value={settings.ownerName} onChange={e => setSettings(s => ({ ...s, ownerName: e.target.value }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-5 py-4 font-bold text-lg text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-purple-500/20 transition-all" /></div>
+                        <div><label className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 mb-3 block">Business Name</label><input type="text" value={settings.businessName} onChange={e => setSettings(s => ({ ...s, businessName: e.target.value }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-5 py-4 font-bold text-lg text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-purple-500/20 transition-all" /></div>
+                        <div><label className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 mb-3 block">Owner Name</label><input type="text" value={settings.ownerName} onChange={e => setSettings(s => ({ ...s, ownerName: e.target.value }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-5 py-4 font-bold text-lg text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-purple-500/20 transition-all" /></div>
                     </div>
 
                     <div className="border border-slate-200 dark:border-slate-800 rounded-lg p-6 bg-slate-50/50 dark:bg-slate-900/50">
                         <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-4">Invoice Contact Details</h4>
                         <div className="space-y-4">
-                            <div><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block">Address</label><input type="text" value={settings.businessAddress || ''} onChange={e => setSettings(s => ({ ...s, businessAddress: e.target.value }))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm font-medium outline-none focus:ring-1 focus:ring-purple-500" placeholder="123 Main St, City, State, Zip" /></div>
+                            <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 block">Address</label><input type="text" value={settings.businessAddress || ''} onChange={e => setSettings(s => ({ ...s, businessAddress: e.target.value }))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm font-medium outline-none focus:ring-1 focus:ring-purple-500" placeholder="123 Main St, City, State, Zip" /></div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block">Email</label><input type="email" value={settings.businessEmail || ''} onChange={e => setSettings(s => ({ ...s, businessEmail: e.target.value }))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm font-medium outline-none focus:ring-1 focus:ring-purple-500" placeholder="contact@business.com" /></div>
-                                <div><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block">Phone</label><input type="tel" value={settings.businessPhone || ''} onChange={e => setSettings(s => ({ ...s, businessPhone: e.target.value }))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm font-medium outline-none focus:ring-1 focus:ring-purple-500" placeholder="(555) 123-4567" /></div>
+                                <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 block">Email</label><input type="email" value={settings.businessEmail || ''} onChange={e => setSettings(s => ({ ...s, businessEmail: e.target.value }))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm font-medium outline-none focus:ring-1 focus:ring-purple-500" placeholder="contact@business.com" /></div>
+                                <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 block">Phone</label><input type="tel" value={settings.businessPhone || ''} onChange={e => setSettings(s => ({ ...s, businessPhone: e.target.value }))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm font-medium outline-none focus:ring-1 focus:ring-purple-500" placeholder="(555) 123-4567" /></div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block">Website</label><input type="text" value={settings.businessWebsite || ''} onChange={e => setSettings(s => ({ ...s, businessWebsite: e.target.value }))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm font-medium outline-none focus:ring-1 focus:ring-purple-500" placeholder="www.yourbusiness.com" /></div>
-                                <div><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block">Tax ID / VAT (Optional)</label><input type="text" value={settings.businessTaxId || ''} onChange={e => setSettings(s => ({ ...s, businessTaxId: e.target.value }))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm font-medium outline-none focus:ring-1 focus:ring-purple-500" placeholder="XX-XXXXXXX" /></div>
+                                <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 block">Website</label><input type="text" value={settings.businessWebsite || ''} onChange={e => setSettings(s => ({ ...s, businessWebsite: e.target.value }))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm font-medium outline-none focus:ring-1 focus:ring-purple-500" placeholder="www.yourbusiness.com" /></div>
+                                <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 block">Tax ID / VAT (Optional)</label><input type="text" value={settings.businessTaxId || ''} onChange={e => setSettings(s => ({ ...s, businessTaxId: e.target.value }))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm font-medium outline-none focus:ring-1 focus:ring-purple-500" placeholder="XX-XXXXXXX" /></div>
                             </div>
                         </div>
                     </div>
@@ -6176,7 +6176,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white">Tax Configuration</h3>
                   </div>
                   
-                 <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300 mb-3 block">How do you want to estimate your income tax?</label>
+                 <label className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 mb-3 block">How do you want to estimate your income tax?</label>
                  <div className="flex bg-slate-200 dark:bg-slate-900 p-1 rounded-lg mb-6">
                     {(['preset', 'lastYear', 'custom'] as TaxEstimationMethod[]).map(method => (
                       <button key={method} onClick={() => setSettings(s => ({ ...s, taxEstimationMethod: method }))} className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${settings.taxEstimationMethod === method ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-200'}`}>{method === 'preset' ? 'Quick Preset' : method === 'lastYear' ? 'Use Last Year' : 'Custom %'}</button>
@@ -6198,8 +6198,8 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                        <div className="space-y-4 animate-in fade-in zoom-in-95">
                           <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">Enter values from last year's tax return to calculate your effective rate.</p>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                             <div><label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-300 mb-2 block">Net Profit (Last Year)</label><div className="relative"><span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 font-bold">$</span><input type="number" placeholder="0.00" value={lastYearCalc.profit} onChange={e => setLastYearCalc(p => ({...p, profit: e.target.value}))} className="w-full pl-8 pr-3 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/20"/></div></div>
-                             <div><label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-300 mb-2 block">Fed. Income Tax Paid</label><div className="relative"><span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 font-bold">$</span><input type="number" placeholder="0.00" value={lastYearCalc.tax} onChange={e => setLastYearCalc(p => ({...p, tax: e.target.value}))} className="w-full pl-8 pr-3 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/20"/></div></div>
+                             <div><label className="text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-2 block">Net Profit (Last Year)</label><div className="relative"><span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 font-bold">$</span><input type="number" placeholder="0.00" value={lastYearCalc.profit} onChange={e => setLastYearCalc(p => ({...p, profit: e.target.value}))} className="w-full pl-8 pr-3 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/20"/></div></div>
+                             <div><label className="text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-2 block">Fed. Income Tax Paid</label><div className="relative"><span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 font-bold">$</span><input type="number" placeholder="0.00" value={lastYearCalc.tax} onChange={e => setLastYearCalc(p => ({...p, tax: e.target.value}))} className="w-full pl-8 pr-3 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/20"/></div></div>
                           </div>
                           <button onClick={() => { const profit = Number(lastYearCalc.profit); const tax = Number(lastYearCalc.tax); if (profit > 0 && tax >= 0) { const rate = Math.min(40, Math.max(0, (tax / profit) * 100)); setSettings(s => ({ ...s, taxRate: Number(rate.toFixed(1)) })); showToast(`Rate set to ${rate.toFixed(1)}%`, 'success'); } else { showToast("Please enter valid profit amount", "error"); } }} className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm uppercase tracking-widest rounded-lg transition-all active:scale-95">Calculate & Apply Rate</button>
                        </div>
@@ -6207,14 +6207,14 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                     {settings.taxEstimationMethod === 'custom' && (
                        <div className="space-y-4 animate-in fade-in zoom-in-95">
                           <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">Manually enter your estimated effective federal income tax rate.</p>
-                          <div><label className="text-xs font-bold uppercase text-slate-500 dark:text-slate-300 mb-2 block">Federal Effective Rate</label><div className="relative"><input type="number" value={settings.taxRate} onChange={e => setSettings(s => ({ ...s, taxRate: Math.min(100, Math.max(0, Number(e.target.value))) }))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-3 pr-12 font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"/><span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 font-bold"><Percent size={18} /></span></div></div>
+                          <div><label className="text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-2 block">Federal Effective Rate</label><div className="relative"><input type="number" value={settings.taxRate} onChange={e => setSettings(s => ({ ...s, taxRate: Math.min(100, Math.max(0, Number(e.target.value))) }))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-3 pr-12 font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"/><span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 font-bold"><Percent size={18} /></span></div></div>
                        </div>
                     )}
                  </div>
                  
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <div><label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300 mb-2 block">State Tax (Optional)</label><div className="relative"><input type="number" value={settings.stateTaxRate} onChange={e => setSettings(s => ({ ...s, stateTaxRate: Math.min(100, Math.max(0, Number(e.target.value))) }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-3 pr-10 font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"/><span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 font-bold">%</span></div></div>
-                    <div><label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-300 mb-2 block">Filing Status</label><select value={settings.filingStatus} onChange={e => setSettings(s => ({ ...s, filingStatus: e.target.value as FilingStatus }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-3 font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all appearance-none"><option value="single">Single</option><option value="joint">Married Filing Jointly</option><option value="separate">Married Filing Separately</option><option value="head">Head of Household</option></select></div>
+                    <div><label className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 mb-2 block">State Tax (Optional)</label><div className="relative"><input type="number" value={settings.stateTaxRate} onChange={e => setSettings(s => ({ ...s, stateTaxRate: Math.min(100, Math.max(0, Number(e.target.value))) }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-3 pr-10 font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"/><span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 font-bold">%</span></div></div>
+                    <div><label className="text-xs font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 mb-2 block">Filing Status</label><select value={settings.filingStatus} onChange={e => setSettings(s => ({ ...s, filingStatus: e.target.value as FilingStatus }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-3 font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all appearance-none"><option value="single">Single</option><option value="joint">Married Filing Jointly</option><option value="separate">Married Filing Separately</option><option value="head">Head of Household</option></select></div>
                  </div>
                  
                  <div className="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-200 dark:border-emerald-800 rounded-lg p-6">
@@ -6552,18 +6552,18 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                     <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">Log New Payment</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <DateInput label="Date" value={activeTaxPayment.date || ''} onChange={v => setActiveTaxPayment(p => ({...p, date: v}))} />
-                        <div><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-2 block pl-1 uppercase tracking-wider">Amount</label><div className="relative"><span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 font-bold">{settings.currencySymbol}</span><input type="number" value={activeTaxPayment.amount || ''} onChange={e => setActiveTaxPayment(p => ({...p, amount: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-0 rounded-lg pl-10 pr-4 py-4 font-bold text-lg outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="0.00" /></div></div>
+                        <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-2 block pl-1 uppercase tracking-wider">Amount</label><div className="relative"><span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 font-bold">{settings.currencySymbol}</span><input type="number" value={activeTaxPayment.amount || ''} onChange={e => setActiveTaxPayment(p => ({...p, amount: Number(e.target.value)}))} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-0 rounded-lg pl-10 pr-4 py-4 font-bold text-lg outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="0.00" /></div></div>
                     </div>
-                    <div className="mb-4"><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-2 block pl-1 uppercase tracking-wider">Payment Type</label><div className="flex bg-slate-200 dark:bg-slate-900 p-1 rounded-lg">{['Estimated', 'Annual', 'Other'].map(type => (<button key={type} onClick={() => setActiveTaxPayment(p => ({...p, type: type as any}))} className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${activeTaxPayment.type === type ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-white shadow-sm' : 'text-slate-600 dark:text-slate-300'}`}>{type}</button>))}</div></div>
+                    <div className="mb-4"><label className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-2 block pl-1 uppercase tracking-wider">Payment Type</label><div className="flex bg-slate-200 dark:bg-slate-900 p-1 rounded-lg">{['Estimated', 'Annual', 'Other'].map(type => (<button key={type} onClick={() => setActiveTaxPayment(p => ({...p, type: type as any}))} className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all ${activeTaxPayment.type === type ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-white shadow-sm' : 'text-slate-600 dark:text-slate-300'}`}>{type}</button>))}</div></div>
                     <button onClick={saveTaxPayment} className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg shadow-blue-500/20 uppercase tracking-widest transition-all active:scale-95">Record Payment</button>
                 </div>
-                <div><h4 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 pl-1">Payment History</h4>{taxPayments.length === 0 ? (<div className="text-center py-8 text-slate-400 italic text-sm">No payments recorded yet.</div>) : (<div className="space-y-3">{taxPayments.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(p => (<div key={p.id} className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center"><CheckCircle size={18} /></div><div><div className="font-bold text-slate-900 dark:text-white">{p.type} Tax</div><div className="text-xs text-slate-500">{p.date}</div></div></div><div className="text-right"><div className="font-bold text-slate-900 dark:text-white">{formatCurrency.format(p.amount)}</div><button onClick={() => deleteTaxPayment(p.id)} className="text-xs text-red-500 hover:text-red-600 mt-1 font-bold">DELETE</button></div></div>))}</div>)}</div>
+                <div><h4 className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-3 pl-1">Payment History</h4>{taxPayments.length === 0 ? (<div className="text-center py-8 text-slate-400 italic text-sm">No payments recorded yet.</div>) : (<div className="space-y-3">{taxPayments.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(p => (<div key={p.id} className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center"><CheckCircle size={18} /></div><div><div className="font-bold text-slate-900 dark:text-white">{p.type} Tax</div><div className="text-xs text-slate-500">{p.date}</div></div></div><div className="text-right"><div className="font-bold text-slate-900 dark:text-white">{formatCurrency.format(p.amount)}</div><button onClick={() => deleteTaxPayment(p.id)} className="text-xs text-red-500 hover:text-red-600 mt-1 font-bold">DELETE</button></div></div>))}</div>)}</div>
              </div>
          ) : drawerMode === 'create_cat' ? (
              <div className="space-y-6">
                  <div className="bg-slate-50 dark:bg-slate-950 p-6 rounded-lg border border-slate-100 dark:border-slate-800">
                      <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">Create {activeTab === 'billing' ? 'Invoice' : activeTab === 'income' ? 'Income' : 'Expense'} Category</h4>
-                     <div className="mb-6"><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-2 block pl-1 uppercase tracking-wider">Category Name</label><input type="text" autoFocus value={newCategoryName} onChange={e => setNewCategoryName(e.target.value)} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-4 font-bold text-lg outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-700" placeholder="e.g. Project Supplies" /><p className="text-xs text-slate-400 mt-2 pl-1">This will be available for future {activeTab} entries.</p></div>
+                     <div className="mb-6"><label className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-2 block pl-1 uppercase tracking-wider">Category Name</label><input type="text" autoFocus value={newCategoryName} onChange={e => setNewCategoryName(e.target.value)} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-4 font-bold text-lg outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-700" placeholder="e.g. Project Supplies" /><p className="text-xs text-slate-400 mt-2 pl-1">This will be available for future {activeTab} entries.</p></div>
                      <div className="flex gap-3"><button onClick={() => setDrawerMode(previousDrawerMode.current)} className="flex-1 py-4 font-bold text-slate-600 dark:text-slate-300 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 rounded-lg transition-colors">Cancel</button><button onClick={saveNewCategory} className="flex-1 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg shadow-blue-500/20 uppercase tracking-widest transition-all active:scale-95">Save Category</button></div>
                  </div>
              </div>
@@ -6600,10 +6600,10 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                 {activeTab === 'billing' ? (
                    <div className="space-y-4">
                       <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
-                          <h4 className="text-xs font-bold text-slate-500 dark:text-slate-300 uppercase tracking-wider mb-3">Client Details</h4>
+                          <h4 className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-3">Client Details</h4>
                           <div className="space-y-3">
                               <div>
-                                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Select Client</label>
+                                <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Select Client</label>
                                 <select value={(activeItem as any).clientId || ''} onChange={e => { const id = e.target.value; setActiveItem(p => ({ ...p, clientId: id || undefined })); if (id) fillDocFromClient(id); }} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-3 font-bold text-sm outline-none focus:ring-1 focus:ring-blue-500">
                                   <option value="">New / Not selected</option>
                                   {clients.map(c => (<option key={c.id} value={c.id}>{c.name}{c.company ? ` — ${c.company}` : ''}{c.status === 'lead' ? ' (Lead)' : ''}</option>))}
@@ -6624,7 +6624,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                           </h4>
                           <div className="space-y-3">
                             <div>
-                              <label className="text-[11px] font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Project Title</label>
+                              <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Project Title</label>
                               <input 
                                 type="text" 
                                 value={(activeItem as any).projectTitle || ''} 
@@ -6634,7 +6634,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                               />
                             </div>
                             <div>
-                              <label className="text-[11px] font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Scope of Work</label>
+                              <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Scope of Work</label>
                               <textarea 
                                 value={(activeItem as any).scopeOfWork || ''} 
                                 onChange={e => setActiveItem(prev => ({ ...prev, scopeOfWork: e.target.value }))} 
@@ -6644,7 +6644,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                               <div>
-                                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Timeline</label>
+                                <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Timeline</label>
                                 <input 
                                   type="text" 
                                   value={(activeItem as any).timeline || ''} 
@@ -6654,7 +6654,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                 />
                               </div>
                               <div>
-                                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Reference #</label>
+                                <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Reference #</label>
                                 <input 
                                   type="text" 
                                   value={(activeItem as any).poNumber || ''} 
@@ -6670,13 +6670,13 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><DateInput label="Date" value={activeItem.date || ''} onChange={v => setActiveItem(prev => ({ ...prev, date: v }))} /><DateInput label={billingDocType === 'estimate' ? "Valid Until" : "Due Date"} value={(billingDocType === 'estimate' ? (activeItem.validUntil as any) : activeItem.due) || ''} onChange={v => setActiveItem(prev => billingDocType === 'estimate' ? ({ ...prev, validUntil: v }) : ({ ...prev, due: v }))} /></div>
                       <div className="bg-slate-50 dark:bg-slate-900 p-1 rounded-lg border border-slate-100 dark:border-slate-800">
-                          <div className="flex items-center justify-between p-3 border-b border-slate-200 dark:border-slate-800"><h4 className="text-xs font-bold text-slate-500 dark:text-slate-300 uppercase tracking-wider">Line Items</h4><button onClick={addInvoiceItem} className="text-xs font-bold text-blue-600 flex items-center gap-1 hover:underline"><PlusCircle size={14}/> Add Item</button></div>
-                          <div className="p-2 space-y-2">{(activeItem.items || []).map((item, idx) => (<div key={item.id} className="flex gap-2 items-start animate-in fade-in slide-in-from-left-2"><div className="flex-1 space-y-2"><input type="text" value={item.description} onChange={(e) => updateInvoiceItem(item.id, 'description', e.target.value)} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500" placeholder="Description" /><div className="flex gap-2"><div className="relative w-20"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 text-xs">Qty</span><input type="number" value={item.quantity || ''} onChange={(e) => updateInvoiceItem(item.id, 'quantity', Number(e.target.value))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded pl-8 pr-2 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500 text-center" placeholder="0"/></div><div className="relative flex-1"><span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 text-xs">$</span><input type="number" value={item.rate || ''} onChange={(e) => updateInvoiceItem(item.id, 'rate', Number(e.target.value))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded pl-6 pr-2 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500" placeholder="0.00" /></div></div></div><div className="pt-2"><button onClick={() => removeInvoiceItem(item.id)} className="text-slate-400 hover:text-red-500 p-1"><MinusCircle size={18} /></button></div></div>))}{(activeItem.items || []).length === 0 && <div className="text-center py-4 text-xs text-slate-400 italic">No items added. Add at least one item.</div>}</div>
+                          <div className="flex items-center justify-between p-3 border-b border-slate-200 dark:border-slate-800"><h4 className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Line Items</h4><button onClick={addInvoiceItem} className="text-xs font-bold text-blue-600 flex items-center gap-1 hover:underline"><PlusCircle size={14}/> Add Item</button></div>
+                          <div className="p-2 space-y-2">{(activeItem.items || []).map((item, idx) => (<div key={item.id} className="flex gap-2 items-start animate-in fade-in slide-in-from-left-2"><div className="flex-1 space-y-2"><input type="text" value={item.description} onChange={(e) => updateInvoiceItem(item.id, 'description', e.target.value)} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500" placeholder="Description" /><div className="flex gap-2"><div className="relative w-20"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 text-xs">Qty</span><input type="number" value={item.quantity || ''} onChange={(e) => updateInvoiceItem(item.id, 'quantity', Number(e.target.value))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded pl-8 pr-2 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500 text-center" placeholder="0"/></div><div className="relative flex-1"><span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 text-xs">$</span><input type="number" value={item.rate || ''} onChange={(e) => updateInvoiceItem(item.id, 'rate', Number(e.target.value))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded pl-6 pr-2 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500" placeholder="0.00" /></div></div></div><div className="pt-2"><button onClick={() => removeInvoiceItem(item.id)} className="text-slate-400 hover:text-red-500 p-1"><MinusCircle size={18} /></button></div></div>))}{(activeItem.items || []).length === 0 && <div className="text-center py-4 text-xs text-slate-400 italic">No items added. Add at least one item.</div>}</div>
                           <div className="p-3 bg-slate-100 dark:bg-slate-900/50 rounded-b-lg space-y-2">
                               <div className="flex justify-between text-xs text-slate-600 dark:text-slate-300"><span>Subtotal</span><span>{formatCurrency.format(activeInvoiceTotals.subtotal)}</span></div>
-                              <div className="flex items-center justify-between gap-4"><label className="text-xs text-slate-600 dark:text-slate-300">Discount</label><div className="relative w-24"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 text-xs">$</span><input type="number" value={activeItem.discount || ''} onChange={e => setActiveItem(p => ({...p, discount: Number(e.target.value)}))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded py-1 pl-5 pr-1 text-xs text-right outline-none" placeholder="0" /></div></div>
-                              <div className="flex items-center justify-between gap-4"><label className="text-xs text-slate-600 dark:text-slate-300">Tax Rate</label><div className="relative w-24"><input type="number" value={activeItem.taxRate || ''} onChange={e => setActiveItem(p => ({...p, taxRate: Number(e.target.value)}))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded py-1 pl-1 pr-5 text-xs text-right outline-none" placeholder="0" /><span className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 text-xs">%</span></div></div>
-                              {billingDocType !== 'estimate' && <div className="flex items-center justify-between gap-4"><label className="text-xs text-slate-600 dark:text-slate-300">Shipping</label><div className="relative w-24"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 text-xs">$</span><input type="number" value={activeItem.shipping || ''} onChange={e => setActiveItem(p => ({...p, shipping: Number(e.target.value)}))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded py-1 pl-5 pr-1 text-xs text-right outline-none" placeholder="0" /></div></div>}
+                              <div className="flex items-center justify-between gap-4"><label className="text-xs text-slate-600 dark:text-slate-300">Discount</label><div className="relative w-24"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 text-xs">$</span><input type="number" value={activeItem.discount || ''} onChange={e => setActiveItem(p => ({...p, discount: Number(e.target.value)}))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded py-1 pl-5 pr-1 text-xs text-right outline-none" placeholder="0" /></div></div>
+                              <div className="flex items-center justify-between gap-4"><label className="text-xs text-slate-600 dark:text-slate-300">Tax Rate</label><div className="relative w-24"><input type="number" value={activeItem.taxRate || ''} onChange={e => setActiveItem(p => ({...p, taxRate: Number(e.target.value)}))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded py-1 pl-1 pr-5 text-xs text-right outline-none" placeholder="0" /><span className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 text-xs">%</span></div></div>
+                              {billingDocType !== 'estimate' && <div className="flex items-center justify-between gap-4"><label className="text-xs text-slate-600 dark:text-slate-300">Shipping</label><div className="relative w-24"><span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 text-xs">$</span><input type="number" value={activeItem.shipping || ''} onChange={e => setActiveItem(p => ({...p, shipping: Number(e.target.value)}))} className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded py-1 pl-5 pr-1 text-xs text-right outline-none" placeholder="0" /></div></div>}
                               <div className="flex justify-between text-sm font-bold pt-2 border-t border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white"><span>{billingDocType === 'estimate' ? 'Estimated Total' : 'Total Due'}</span><span>{formatCurrency.format(activeInvoiceTotals.total)}</span></div>
                           </div>
                       </div>
@@ -6684,7 +6684,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       {/* ESTIMATE-SPECIFIC: Exclusions */}
                       {billingDocType === 'estimate' && (
                         <div>
-                          <label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Exclusions (Not Included)</label>
+                          <label className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Exclusions (Not Included)</label>
                           <textarea 
                             value={(activeItem as any).exclusions || ''} 
                             onChange={e => setActiveItem(prev => ({ ...prev, exclusions: e.target.value }))} 
@@ -6695,14 +6695,14 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       )}
 
                       <div className="space-y-4">
-                          <div><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Internal Category</label>{renderCategoryChips(activeItem.category, (cat) => setActiveItem(prev => ({ ...prev, category: cat })))}</div>
-                          <div><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">{billingDocType === 'estimate' ? 'Notes to Client' : 'Notes / Memo'}</label><textarea value={activeItem.notes || ''} onChange={e => setActiveItem(prev => ({ ...prev, notes: e.target.value }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-50 min-h-[60px]" placeholder={billingDocType === 'estimate' ? "Additional information for your client..." : "Thank you for your business..."} /></div>
-                          <div><label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">{billingDocType === 'estimate' ? 'Terms & Conditions' : 'Payment Terms'}</label><textarea value={activeItem.terms || ''} onChange={e => setActiveItem(prev => ({ ...prev, terms: e.target.value }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500 min-h-[60px]" placeholder={billingDocType === 'estimate' ? "This estimate is valid for 30 days. 50% deposit required to begin work..." : "Net 30. Late fees apply..."} /></div>
+                          <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">Internal Category</label>{renderCategoryChips(activeItem.category, (cat) => setActiveItem(prev => ({ ...prev, category: cat })))}</div>
+                          <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">{billingDocType === 'estimate' ? 'Notes to Client' : 'Notes / Memo'}</label><textarea value={activeItem.notes || ''} onChange={e => setActiveItem(prev => ({ ...prev, notes: e.target.value }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-50 min-h-[60px]" placeholder={billingDocType === 'estimate' ? "Additional information for your client..." : "Thank you for your business..."} /></div>
+                          <div><label className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">{billingDocType === 'estimate' ? 'Terms & Conditions' : 'Payment Terms'}</label><textarea value={activeItem.terms || ''} onChange={e => setActiveItem(prev => ({ ...prev, terms: e.target.value }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500 min-h-[60px]" placeholder={billingDocType === 'estimate' ? "This estimate is valid for 30 days. 50% deposit required to begin work..." : "Net 30. Late fees apply..."} /></div>
                           
                           {/* ESTIMATE-SPECIFIC: Acceptance Terms */}
                           {billingDocType === 'estimate' && (
                             <div>
-                              <label className="text-xs font-bold text-slate-500 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">How to Accept</label>
+                              <label className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 block pl-1 uppercase tracking-wider">How to Accept</label>
                               <input 
                                 type="text" 
                                 value={(activeItem as any).acceptanceTerms || ''} 
@@ -6774,7 +6774,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                         </div>
                       )}
                       <div><label className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-2 block pl-1">Description</label><input type="text" value={activeItem.name || ''} onChange={e => setActiveItem(prev => ({ ...prev, name: e.target.value }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-0 rounded-lg px-4 py-4 font-bold text-lg outline-none focus:ring-2 focus:ring-blue-500/20" placeholder={activeTab === 'income' ? "Client or Source" : "Vendor or Purchase"} /></div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><DateInput label="Date" value={activeItem.date || ''} onChange={v => setActiveItem(prev => ({ ...prev, date: v }))} /><div><label className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-2 block pl-1">Amount</label><div className="relative"><span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300 font-bold">{settings.currencySymbol}</span><input type="number" value={activeItem.amount || ''} onChange={e => setActiveItem(prev => ({ ...prev, amount: Number(e.target.value) }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-0 rounded-lg pl-10 pr-4 py-4 font-bold text-lg outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="0.00" /></div></div></div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><DateInput label="Date" value={activeItem.date || ''} onChange={v => setActiveItem(prev => ({ ...prev, date: v }))} /><div><label className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-2 block pl-1">Amount</label><div className="relative"><span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-300 font-bold">{settings.currencySymbol}</span><input type="number" value={activeItem.amount || ''} onChange={e => setActiveItem(prev => ({ ...prev, amount: Number(e.target.value) }))} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-0 rounded-lg pl-10 pr-4 py-4 font-bold text-lg outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="0.00" /></div></div></div>
                       <div><label className="text-sm font-bold text-slate-600 dark:text-slate-300 mb-2 block pl-1">Category</label>{renderCategoryChips(activeItem.category, (cat) => setActiveItem(prev => ({ ...prev, category: cat })))}</div>
                       <button onClick={() => saveTransaction(activeItem)} className={`w-full py-4 font-bold rounded-lg shadow-lg uppercase tracking-widest transition-all active:scale-95 text-white ${activeTab === 'income' ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20' : 'bg-red-600 hover:bg-red-700 shadow-red-500/20'}`}>Save {activeTab}</button>
                    </div>
@@ -7006,7 +7006,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                 </div>
               </div>
               
-              <div className="text-xs text-slate-500 dark:text-slate-400 italic">
+              <div className="text-xs text-slate-600 dark:text-slate-300 italic">
                 💡 Each copy will be created for the first day of each month starting next month
               </div>
             </div>
@@ -7064,7 +7064,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                 </div>
               </div>
               
-              <div className="text-xs text-slate-500 dark:text-slate-400 italic">
+              <div className="text-xs text-slate-600 dark:text-slate-300 italic">
                 💡 All entries will be created immediately. Review them in your ledger.
               </div>
             </div>
