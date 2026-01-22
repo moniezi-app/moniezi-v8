@@ -602,13 +602,17 @@ export default function App() {
     if (!el) return;
     
     const handleScroll = () => {
-      // Show button after scrolling 400px
-      setShowScrollToTop(el.scrollTop > 400);
+      // Show button after scrolling 150px (about half a screen)
+      setShowScrollToTop(el.scrollTop > 150);
     };
     
     el.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Call once on mount to initialize state correctly
+    handleScroll();
+    
     return () => el.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [currentPage]); // Re-attach when page changes to ensure ref is valid
 
   const scrollToTop = () => {
     const el = mainScrollRef.current;
