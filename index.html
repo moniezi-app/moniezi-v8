@@ -229,6 +229,7 @@
       /* ========================================
          LIGHT THEME MASTER FIX
          Force readable typography across the entire app
+         BUT preserve white text on colored backgrounds
          ======================================== */
       
       /* Ensure Inter font is used everywhere */
@@ -256,37 +257,27 @@
       html:not(.dark) .font-bold { font-weight: 800 !important; }
       html:not(.dark) .font-extrabold { font-weight: 900 !important; }
       
-      /* Light theme: Make ALL small text bolder */
-      html:not(.dark) .text-\[10px\],
-      html:not(.dark) .text-\[11px\] { 
+      /* Light theme: Make ALL small text bolder - but NOT override explicit white */
+      html:not(.dark) .text-\[10px\]:not(.text-white),
+      html:not(.dark) .text-\[11px\]:not(.text-white) { 
         font-weight: 700 !important; 
-        color: #000000 !important;
       }
       
-      html:not(.dark) .text-xs { 
+      html:not(.dark) .text-xs:not(.text-white) { 
         font-weight: 600 !important; 
       }
       
-      html:not(.dark) .text-sm { 
+      html:not(.dark) .text-sm:not(.text-white) { 
         font-weight: 500 !important; 
       }
       
-      /* Light theme: Force uppercase labels to be bold and black */
-      html:not(.dark) .uppercase {
-        font-weight: 700 !important;
-        color: #000000 !important;
-      }
+      /* PRESERVE white text - DO NOT override these */
+      html:not(.dark) .text-white { color: #ffffff !important; }
+      html:not(.dark) .text-white\/90 { color: rgba(255,255,255,0.9) !important; }
+      html:not(.dark) .text-white\/80 { color: rgba(255,255,255,0.8) !important; }
       
-      /* Light theme: Make tracking-wider text bold */
-      html:not(.dark) .tracking-wide,
-      html:not(.dark) .tracking-wider,
-      html:not(.dark) .tracking-widest {
-        font-weight: 700 !important;
-        color: #000000 !important;
-      }
-      
-      /* Light theme: Override any remaining gray colors with specificity */
-      html:not(.dark) [class*="text-slate-"] {
+      /* Light theme: Override gray colors ONLY on elements without colored backgrounds */
+      html:not(.dark) [class*="text-slate-"]:not([class*="bg-blue"]):not([class*="bg-red"]):not([class*="bg-amber"]):not([class*="bg-orange"]):not([class*="bg-emerald"]):not([class*="bg-green"]):not([class*="bg-purple"]) {
         color: #000000 !important;
       }
       
