@@ -597,37 +597,28 @@ export default function App() {
     setTimeout(toTop, 0);
   }, [currentPage]);
 
-  // Scroll-to-top button visibility
+  // Scroll-to-top button visibility - listen to WINDOW scroll
   useEffect(() => {
-    const el = mainScrollRef.current;
-    if (!el) {
-      console.log('Scroll ref not found');
-      return;
-    }
-    
     const handleScroll = () => {
-      const scrollPos = el.scrollTop;
-      // Show button after scrolling 150px
-      setShowScrollToTop(scrollPos > 150);
+      const scrollPos = window.scrollY || document.documentElement.scrollTop;
+      // Show button after scrolling 80px
+      setShowScrollToTop(scrollPos > 80);
     };
     
-    // Add scroll listener
-    el.addEventListener('scroll', handleScroll, { passive: true });
+    // Add scroll listener to window
+    window.addEventListener('scroll', handleScroll, { passive: true });
     
     // Initialize state
     handleScroll();
     
     // Cleanup
     return () => {
-      el.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
-  }, [currentPage]);
+  }, []);
 
   const scrollToTop = () => {
-    const el = mainScrollRef.current;
-    if (el) {
-      el.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
   // License / Activation State
