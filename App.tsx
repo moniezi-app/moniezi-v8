@@ -2128,14 +2128,31 @@ OWNERSHIP
     });
     
     // Categorize income with refunds as contra-revenue
-    const salesServices = periodTx.filter(t => t.type === 'income' && t.category !== 'Refunds').reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
-    const refunds = periodTx.filter(t => t.type === 'income' && t.category === 'Refunds').reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
-    const interestIncome = periodTx.filter(t => t.type === 'income' && (t.category === 'Interest / Bank' || t.category === 'Interest')).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
-    const otherIncome = periodTx.filter(t => t.type === 'income' && !['Refunds', 'Interest / Bank', 'Interest', 'Sales / Services'].includes(t.category)).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    // Sales/Services = all income EXCEPT Refunds and Interest categories
+    const salesServices = periodTx.filter(t => t.type === 'income' && 
+      t.category !== 'Refunds' && 
+      t.category !== 'Interest / Bank' && 
+      t.category !== 'Interest'
+    ).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
     
-    // Prior period income
-    const priorSalesServices = priorPeriodTx.filter(t => t.type === 'income' && t.category !== 'Refunds').reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
-    const priorRefunds = priorPeriodTx.filter(t => t.type === 'income' && t.category === 'Refunds').reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    // Refunds should be tracked from EXPENSE type with 'Refunds' category, OR income marked as refund
+    // Check if refunds are logged as expenses (more common) or as negative income
+    const refundsAsExpense = periodTx.filter(t => t.type === 'expense' && t.category === 'Refunds').reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const refundsAsIncome = periodTx.filter(t => t.type === 'income' && t.category === 'Refunds').reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const refunds = refundsAsExpense + refundsAsIncome;
+    
+    // Interest income (Other Income section)
+    const interestIncome = periodTx.filter(t => t.type === 'income' && (t.category === 'Interest / Bank' || t.category === 'Interest')).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    
+    // Prior period income (same logic)
+    const priorSalesServices = priorPeriodTx.filter(t => t.type === 'income' && 
+      t.category !== 'Refunds' && 
+      t.category !== 'Interest / Bank' && 
+      t.category !== 'Interest'
+    ).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const priorRefundsAsExpense = priorPeriodTx.filter(t => t.type === 'expense' && t.category === 'Refunds').reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const priorRefundsAsIncome = priorPeriodTx.filter(t => t.type === 'income' && t.category === 'Refunds').reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const priorRefunds = priorRefundsAsExpense + priorRefundsAsIncome;
     
     // Net Revenue
     const netRevenue = salesServices - refunds;
@@ -2172,16 +2189,22 @@ OWNERSHIP
       'Depreciation', 'Amortization'
     ];
     
-    // Get all expenses grouped by category
+    // Get all expenses grouped by category (exclude COGS and Refunds)
     const expensesByCategory: Record<string, number> = {};
     const priorExpensesByCategory: Record<string, number> = {};
     
-    periodTx.filter(t => t.type === 'expense' && !cogsCategories.some(c => t.category.toLowerCase().includes(c.toLowerCase()))).forEach(t => {
+    periodTx.filter(t => t.type === 'expense' && 
+      t.category !== 'Refunds' &&
+      !cogsCategories.some(c => t.category.toLowerCase().includes(c.toLowerCase()))
+    ).forEach(t => {
       const cat = t.category || 'Other';
       expensesByCategory[cat] = (expensesByCategory[cat] || 0) + (Number(t.amount) || 0);
     });
     
-    priorPeriodTx.filter(t => t.type === 'expense' && !cogsCategories.some(c => t.category.toLowerCase().includes(c.toLowerCase()))).forEach(t => {
+    priorPeriodTx.filter(t => t.type === 'expense' && 
+      t.category !== 'Refunds' &&
+      !cogsCategories.some(c => t.category.toLowerCase().includes(c.toLowerCase()))
+    ).forEach(t => {
       const cat = t.category || 'Other';
       priorExpensesByCategory[cat] = (priorExpensesByCategory[cat] || 0) + (Number(t.amount) || 0);
     });
@@ -2198,9 +2221,14 @@ OWNERSHIP
     const interestExpense = periodTx.filter(t => t.type === 'expense' && (t.category === 'Interest Expense' || t.category === 'Interest')).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
     const netOtherIncome = otherIncomeTotal - interestExpense;
     
+    // Prior period other income
+    const priorInterestIncome = priorPeriodTx.filter(t => t.type === 'income' && (t.category === 'Interest / Bank' || t.category === 'Interest')).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const priorInterestExpense = priorPeriodTx.filter(t => t.type === 'expense' && (t.category === 'Interest Expense' || t.category === 'Interest')).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const priorNetOtherIncome = priorInterestIncome - priorInterestExpense;
+    
     // Net Income
     const netIncome = operatingIncome + netOtherIncome;
-    const priorNetIncome = priorOperatingIncome;
+    const priorNetIncome = priorOperatingIncome + priorNetOtherIncome;
     
     // Data integrity checks
     const uncategorizedTx = periodTx.filter(t => !t.category || t.category === 'Uncategorized' || t.category === 'Other');
@@ -5466,11 +5494,13 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       <div>
                         <span className="text-lg font-bold text-slate-900 dark:text-white uppercase tracking-wider">Net Income</span>
                         {proPLData.netRevenue > 0 && (
-                          <span className="text-sm text-slate-500 ml-2">({((proPLData.netIncome / proPLData.netRevenue) * 100).toFixed(1)}% margin)</span>
+                          <span className="text-sm text-slate-500 ml-2">
+                            ({Math.min(100, Math.max(-100, (proPLData.netIncome / proPLData.netRevenue) * 100)).toFixed(1)}% margin)
+                          </span>
                         )}
                       </div>
                       <div className="text-right">
-                        <span className={`text-3xl font-bold tabular-nums ${proPLData.netIncome >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                        <span className={`text-2xl font-bold tabular-nums ${proPLData.netIncome >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
                           {proPLData.netIncome < 0 ? '(' : ''}{formatCurrency.format(Math.abs(proPLData.netIncome))}{proPLData.netIncome < 0 ? ')' : ''}
                         </span>
                         {plShowComparison && (
@@ -6425,7 +6455,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                             </span>
                           </div>
                           {proPLData.netRevenue > 0 && (
-                            <p className="text-xs text-gray-600 mt-1 text-right">Net Profit Margin: {((proPLData.netIncome / proPLData.netRevenue) * 100).toFixed(1)}%</p>
+                            <p className="text-xs text-gray-600 mt-1 text-right">Net Profit Margin: {Math.min(100, Math.max(-100, (proPLData.netIncome / proPLData.netRevenue) * 100)).toFixed(1)}%</p>
                           )}
                         </div>
 
