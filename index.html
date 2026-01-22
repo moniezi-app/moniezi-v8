@@ -251,11 +251,11 @@
         -moz-osx-font-smoothing: grayscale;
       }
       
-      /* Light theme: Boost ALL font weights for better readability */
+      /* Light theme: Boost font weights for better readability - but keep large numbers refined */
       html:not(.dark) .font-medium { font-weight: 600 !important; }
       html:not(.dark) .font-semibold { font-weight: 700 !important; }
-      html:not(.dark) .font-bold { font-weight: 800 !important; }
-      html:not(.dark) .font-extrabold { font-weight: 900 !important; }
+      html:not(.dark) .font-bold { font-weight: 700 !important; }
+      html:not(.dark) .font-extrabold { font-weight: 800 !important; }
       
       /* Light theme: Make ALL small text bolder - but NOT override explicit white */
       html:not(.dark) .text-\[10px\]:not(.text-white),
