@@ -3886,7 +3886,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                         <div className="flex-1">
                             <h3 className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-3">Bill To</h3>
                             <div className="text-lg font-bold text-gray-900">{selectedInvoiceForDoc.client}</div>
-                            {selectedInvoiceForDoc.clientCompany && <div className="text-base font-semibold text-gray-800 mt-0.5">{selectedInvoiceForDoc.clientCompany}</div>}
+                            {selectedInvoiceForDoc.clientCompany && selectedInvoiceForDoc.clientCompany !== selectedInvoiceForDoc.client && <div className="text-base font-semibold text-gray-800 mt-0.5">{selectedInvoiceForDoc.clientCompany}</div>}
                             <div className="text-sm text-gray-700 mt-1 space-y-0.5">{selectedInvoiceForDoc.clientEmail && <div>{selectedInvoiceForDoc.clientEmail}</div>}{selectedInvoiceForDoc.clientAddress && <div className="whitespace-pre-line">{selectedInvoiceForDoc.clientAddress}</div>}</div>
                         </div>
                         {(selectedInvoiceForDoc.poNumber || settings.businessTaxId) && (
@@ -4006,7 +4006,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                         <div className="flex-1">
                             <h3 className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-3">Prepared For</h3>
                             <div className="text-lg font-bold text-gray-900">{selectedEstimateForDoc.client}</div>
-                            {selectedEstimateForDoc.clientCompany && <div className="text-base font-semibold text-gray-800 mt-0.5">{selectedEstimateForDoc.clientCompany}</div>}
+                            {selectedEstimateForDoc.clientCompany && selectedEstimateForDoc.clientCompany !== selectedEstimateForDoc.client && <div className="text-base font-semibold text-gray-800 mt-0.5">{selectedEstimateForDoc.clientCompany}</div>}
                             <div className="text-sm text-gray-700 mt-1 space-y-0.5">
                               {selectedEstimateForDoc.clientEmail && <div>{selectedEstimateForDoc.clientEmail}</div>}
                               {(selectedEstimateForDoc as any).clientPhone && <div>{(selectedEstimateForDoc as any).clientPhone}</div>}
