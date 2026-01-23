@@ -5703,10 +5703,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                   <p>{settings.businessName} | Profit & Loss Statement | {proPLData.periodLabel} | {plAccountingBasis === 'cash' ? 'Cash' : 'Accrual'} Basis</p>
                 </div>
               </div>
-                      )}
-                      <div className="flex justify-between items-center py-2 border-t border-slate-100 dark:border-slate-800 mt-2">
-                        <span className="text-sm font-bold text-slate-900 dark:text-white">Net Revenue</span>
-                        <div className="flex items-center gap-4">
+
               <div ref={taxSnapshotRef} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white p-5 sm:p-8 rounded-lg shadow-xl relative overflow-hidden border border-slate-200 dark:border-slate-800">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-blue-50 dark:bg-blue-600/20 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8 relative z-10">
