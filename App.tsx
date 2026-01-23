@@ -9,6 +9,7 @@ import {
   Trash2, 
   Download, 
   ArrowRight,
+  ArrowLeft,
   ArrowUp,
   BrainCircuit, 
   Sparkles, 
