@@ -6354,195 +6354,6 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                 </div>
               )}
 
-              {/* Pro P&L Preview Modal */}
-              {showProPLPreview && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-stretch justify-stretch p-0">
-                  <div className="bg-gray-100 w-full h-full overflow-hidden flex flex-col">
-                    {/* Modal Header */}
-                    <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-300 bg-white flex-shrink-0">
-                      <div className="flex items-center gap-2">
-                        <button onClick={() => setShowProPLPreview(false)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                          <ArrowLeft className="w-5 h-5 text-gray-600" />
-                        </button>
-                        <span className="font-bold text-sm text-gray-900">P&L Preview</span>
-                      </div>
-                      <button
-                        onClick={async () => {
-                          setIsGeneratingProPLPdf(true);
-                          try {
-                            await new Promise(resolve => setTimeout(resolve, 300));
-                            const element = document.getElementById('pro-pl-pdf-content');
-                            if (!element) throw new Error('Preview content not found');
-                            const opt = {
-                              margin: [8, 8, 12, 8],
-                              filename: `PL_${settings.businessName.replace(/[^a-z0-9]/gi, '_')}_${proPLData.startDate.toISOString().split('T')[0]}.pdf`,
-                              image: { type: 'jpeg', quality: 0.98 },
-                              html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0 },
-                              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                              pagebreak: { mode: 'avoid-all' }
-                            };
-                            await (window as any).html2pdf().set(opt).from(element).save();
-                            showToast('PDF exported!', 'success');
-                          } catch (error) {
-                            console.error('PDF error:', error);
-                            showToast('Export failed', 'error');
-                          }
-                          setIsGeneratingProPLPdf(false);
-                        }}
-                        disabled={isGeneratingProPLPdf}
-                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold text-sm flex items-center gap-2 transition-colors disabled:opacity-50"
-                      >
-                        {isGeneratingProPLPdf ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
-                        <span>{isGeneratingProPLPdf ? 'Exporting...' : 'Download PDF'}</span>
-                      </button>
-                    </div>
-
-                    {/* PDF Content - Uses same structure as on-screen report */}
-                    <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-                      <div id="pro-pl-pdf-content" className="bg-white text-gray-900 rounded-lg shadow-lg max-w-3xl mx-auto overflow-hidden" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                        {/* Report Header */}
-                        <div className="px-5 py-5 border-b-2 border-gray-300 bg-gray-50">
-                          <div className="text-center">
-                            <h1 className="text-xl font-bold text-gray-900 uppercase tracking-wide">{settings.businessName}</h1>
-                            <h2 className="text-base font-semibold text-gray-700 mt-1">Profit & Loss Statement</h2>
-                            <p className="text-sm text-gray-600 mt-2">
-                              Period: {proPLData.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} – {proPLData.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-1">{plAccountingBasis === 'cash' ? 'Cash' : 'Accrual'} Basis | USD | Generated {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                          </div>
-                        </div>
-
-                        {/* Column Headers */}
-                        <div className="px-5 py-2 bg-gray-100 border-b border-gray-300">
-                          <div className="flex items-center text-xs font-bold text-gray-600 uppercase">
-                            <div className="flex-1 min-w-0">Account</div>
-                            <div className="w-28 text-right flex-shrink-0">Amount</div>
-                            <div className="w-16 text-right flex-shrink-0">% Rev</div>
-                          </div>
-                        </div>
-
-                        {/* Report Body */}
-                        <div className="px-5 py-3">
-                          {/* REVENUE */}
-                          <div className="mb-5">
-                            <div className="font-bold text-sm text-gray-900 uppercase tracking-wide py-2 border-b border-gray-200">Revenue</div>
-                            <div className="flex items-center py-2">
-                              <div className="flex-1 pl-4 text-gray-700">Gross Sales / Services</div>
-                              <div className="w-28 text-right font-medium tabular-nums">{formatCurrency.format(proPLData.salesServices)}</div>
-                              <div className="w-16 text-right text-gray-500 text-xs">100.0%</div>
-                            </div>
-                            {proPLData.refunds > 0 && (
-                              <div className="flex items-center py-2">
-                                <div className="flex-1 pl-4 text-gray-700 italic">Less: Returns & Refunds</div>
-                                <div className="w-28 text-right font-medium tabular-nums text-red-600">({formatCurrency.format(proPLData.refunds)})</div>
-                                <div className="w-16 text-right"></div>
-                              </div>
-                            )}
-                            <div className="flex items-center py-2 font-bold border-t border-gray-300 mt-2">
-                              <div className="flex-1 text-gray-900">NET REVENUE</div>
-                              <div className="w-28 text-right tabular-nums text-emerald-700">{formatCurrency.format(proPLData.netRevenue)}</div>
-                              <div className="w-16 text-right text-xs">100.0%</div>
-                            </div>
-                          </div>
-
-                          {/* COGS */}
-                          {proPLData.cogs > 0 && (
-                            <div className="mb-5">
-                              <div className="font-bold text-sm text-gray-900 uppercase tracking-wide py-2 border-b border-gray-200">Cost of Goods Sold</div>
-                              <div className="flex items-center py-2">
-                                <div className="flex-1 pl-4 text-gray-700">Direct Costs / COGS</div>
-                                <div className="w-28 text-right font-medium tabular-nums">{formatCurrency.format(proPLData.cogs)}</div>
-                                <div className="w-16 text-right text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.cogs / proPLData.netRevenue) * 100).toFixed(1)}%` : '—'}</div>
-                              </div>
-                              <div className="flex items-center py-2 font-bold border-t border-gray-300 mt-2">
-                                <div className="flex-1 text-gray-900">GROSS PROFIT</div>
-                                <div className="w-28 text-right tabular-nums">{formatCurrency.format(proPLData.grossProfit)}</div>
-                                <div className="w-16 text-right text-xs">{proPLData.grossMargin.toFixed(1)}%</div>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* OPERATING EXPENSES */}
-                          <div className="mb-5">
-                            <div className="font-bold text-sm text-gray-900 uppercase tracking-wide py-2 border-b border-gray-200">Operating Expenses</div>
-                            {Object.entries(proPLData.expensesByCategory).sort(([,a], [,b]) => b - a).map(([category, amount]) => (
-                              <div key={category} className="flex items-center py-1.5">
-                                <div className="flex-1 pl-4 text-gray-700 truncate">{category}</div>
-                                <div className="w-28 text-right font-medium tabular-nums">{formatCurrency.format(amount)}</div>
-                                <div className="w-16 text-right text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((amount / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
-                              </div>
-                            ))}
-                            <div className="flex items-center py-2 font-bold border-t border-gray-300 mt-2">
-                              <div className="flex-1 text-gray-900">TOTAL OPERATING EXPENSES</div>
-                              <div className="w-28 text-right tabular-nums text-red-700">{formatCurrency.format(proPLData.totalOpex)}</div>
-                              <div className="w-16 text-right text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.totalOpex / proPLData.netRevenue) * 100).toFixed(1)}%` : '—'}</div>
-                            </div>
-                          </div>
-
-                          {/* OPERATING INCOME */}
-                          <div className="flex items-center py-3 font-bold bg-gray-100 -mx-5 px-5 mb-5">
-                            <div className="flex-1 text-gray-900 uppercase">Operating Income</div>
-                            <div className={`w-28 text-right tabular-nums ${proPLData.operatingIncome >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
-                              {proPLData.operatingIncome < 0 ? `(${formatCurrency.format(Math.abs(proPLData.operatingIncome))})` : formatCurrency.format(proPLData.operatingIncome)}
-                            </div>
-                            <div className="w-16 text-right text-xs">{proPLData.operatingMargin.toFixed(1)}%</div>
-                          </div>
-
-                          {/* OTHER INCOME/EXPENSE */}
-                          {(proPLData.interestIncome > 0 || proPLData.interestExpense > 0) && (
-                            <div className="mb-5">
-                              <div className="font-bold text-sm text-gray-900 uppercase tracking-wide py-2 border-b border-gray-200">Other Income / Expense</div>
-                              {proPLData.interestIncome > 0 && (
-                                <div className="flex items-center py-2">
-                                  <div className="flex-1 pl-4 text-gray-700">Interest Income</div>
-                                  <div className="w-28 text-right font-medium tabular-nums text-emerald-600">{formatCurrency.format(proPLData.interestIncome)}</div>
-                                  <div className="w-16 text-right"></div>
-                                </div>
-                              )}
-                              {proPLData.interestExpense > 0 && (
-                                <div className="flex items-center py-2">
-                                  <div className="flex-1 pl-4 text-gray-700">Interest Expense</div>
-                                  <div className="w-28 text-right font-medium tabular-nums text-red-600">({formatCurrency.format(proPLData.interestExpense)})</div>
-                                  <div className="w-16 text-right"></div>
-                                </div>
-                              )}
-                              <div className="flex items-center py-2 font-bold border-t border-gray-200 mt-2">
-                                <div className="flex-1 text-gray-900">NET OTHER INCOME</div>
-                                <div className={`w-28 text-right tabular-nums ${proPLData.netOtherIncome >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
-                                  {proPLData.netOtherIncome < 0 ? `(${formatCurrency.format(Math.abs(proPLData.netOtherIncome))})` : formatCurrency.format(proPLData.netOtherIncome)}
-                                </div>
-                                <div className="w-16 text-right"></div>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* NET INCOME */}
-                          <div className="flex items-center py-4 font-bold bg-gray-900 text-white -mx-5 px-5 rounded-b-lg">
-                            <div className="flex-1 uppercase text-lg">Net Income</div>
-                            <div className={`w-28 text-right tabular-nums text-lg ${proPLData.netIncome >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                              {proPLData.netIncome < 0 ? `(${formatCurrency.format(Math.abs(proPLData.netIncome))})` : formatCurrency.format(proPLData.netIncome)}
-                            </div>
-                            <div className="w-16 text-right text-xs text-gray-300">{proPLData.netMargin.toFixed(1)}%</div>
-                          </div>
-                        </div>
-
-                        {/* Notes */}
-                        <div className="px-5 py-4 bg-gray-50 border-t border-gray-200 text-xs text-gray-500">
-                          <div className="font-semibold text-gray-600 mb-1">Notes</div>
-                          <p>• {plAccountingBasis === 'cash' ? 'Cash' : 'Accrual'} Basis | {proPLData.transactionCount} transactions</p>
-                          {proPLData.uncategorizedCount > 0 && <p className="text-amber-600">• {proPLData.uncategorizedCount} uncategorized ({formatCurrency.format(proPLData.uncategorizedAmount)})</p>}
-                          <p>• Owner draws excluded | Management report, may not be GAAP-prepared</p>
-                        </div>
-
-                        {/* Footer */}
-                        <div className="px-5 py-3 border-t border-gray-200 text-center text-xs text-gray-400">
-                          <p>{settings.businessName} | P&L | {proPLData.periodLabel} | Prepared by Moniezi</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                  <div className="bg-white dark:bg-slate-900 p-6 rounded-lg border border-slate-200 dark:border-slate-800 shadow-md"><div className="flex items-center gap-2 mb-4 text-emerald-600"><Shield size={20} /><span className="font-bold uppercase tracking-widest text-xs">Tax Shield</span></div><div className="text-3xl font-extrabold text-slate-900 dark:text-white mb-2">{formatCurrency.format(reportData.taxShield)}</div><p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">Your expenses have lowered your estimated tax bill by this amount. Every valid business expense saves you money at tax time.</p></div>
                  
@@ -6587,6 +6398,196 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                  </div>
               </div>
            </div>
+        )}
+
+        {/* Pro P&L Preview Modal - OUTSIDE Reports conditional for proper rendering */}
+        {showProPLPreview && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-stretch justify-stretch p-0">
+            <div className="bg-gray-100 w-full h-full overflow-hidden flex flex-col">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-300 bg-white flex-shrink-0">
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setShowProPLPreview(false)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <ArrowLeft className="w-5 h-5 text-gray-600" />
+                  </button>
+                  <span className="font-bold text-sm text-gray-900">P&L Preview</span>
+                </div>
+                <button
+                  onClick={async () => {
+                    setIsGeneratingProPLPdf(true);
+                    try {
+                      await new Promise(resolve => setTimeout(resolve, 300));
+                      const element = document.getElementById('pro-pl-pdf-content');
+                      if (!element) throw new Error('Preview content not found');
+                      const opt = {
+                        margin: [8, 8, 12, 8],
+                        filename: `PL_${settings.businessName.replace(/[^a-z0-9]/gi, '_')}_${proPLData.startDate.toISOString().split('T')[0]}.pdf`,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0 },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                        pagebreak: { mode: 'avoid-all' }
+                      };
+                      await (window as any).html2pdf().set(opt).from(element).save();
+                      showToast('PDF exported!', 'success');
+                    } catch (error) {
+                      console.error('PDF error:', error);
+                      showToast('Export failed', 'error');
+                    }
+                    setIsGeneratingProPLPdf(false);
+                  }}
+                  disabled={isGeneratingProPLPdf}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold text-sm flex items-center gap-2 transition-colors disabled:opacity-50"
+                >
+                  {isGeneratingProPLPdf ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+                  <span>{isGeneratingProPLPdf ? 'Exporting...' : 'Download PDF'}</span>
+                </button>
+              </div>
+
+              {/* PDF Content */}
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+                <div id="pro-pl-pdf-content" className="bg-white text-gray-900 rounded-lg shadow-lg max-w-3xl mx-auto overflow-hidden" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                  {/* Report Header */}
+                  <div className="px-5 py-5 border-b-2 border-gray-300 bg-gray-50">
+                    <div className="text-center">
+                      <h1 className="text-xl font-bold text-gray-900 uppercase tracking-wide">{settings.businessName}</h1>
+                      <h2 className="text-base font-semibold text-gray-700 mt-1">Profit & Loss Statement</h2>
+                      <p className="text-sm text-gray-600 mt-2">
+                        Period: {proPLData.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} – {proPLData.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">{plAccountingBasis === 'cash' ? 'Cash' : 'Accrual'} Basis | USD | Generated {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                    </div>
+                  </div>
+
+                  {/* Column Headers */}
+                  <div className="px-5 py-2 bg-gray-100 border-b border-gray-300">
+                    <div className="flex items-center text-xs font-bold text-gray-600 uppercase">
+                      <div className="flex-1 min-w-0">Account</div>
+                      <div className="w-28 text-right flex-shrink-0">Amount</div>
+                      <div className="w-16 text-right flex-shrink-0">% Rev</div>
+                    </div>
+                  </div>
+
+                  {/* Report Body */}
+                  <div className="px-5 py-3">
+                    {/* REVENUE */}
+                    <div className="mb-5">
+                      <div className="font-bold text-sm text-gray-900 uppercase tracking-wide py-2 border-b border-gray-200">Revenue</div>
+                      <div className="flex items-center py-2">
+                        <div className="flex-1 pl-4 text-gray-700">Gross Sales / Services</div>
+                        <div className="w-28 text-right font-medium tabular-nums">{formatCurrency.format(proPLData.salesServices)}</div>
+                        <div className="w-16 text-right text-gray-500 text-xs">100.0%</div>
+                      </div>
+                      {proPLData.refunds > 0 && (
+                        <div className="flex items-center py-2">
+                          <div className="flex-1 pl-4 text-gray-700 italic">Less: Returns & Refunds</div>
+                          <div className="w-28 text-right font-medium tabular-nums text-red-600">({formatCurrency.format(proPLData.refunds)})</div>
+                          <div className="w-16 text-right"></div>
+                        </div>
+                      )}
+                      <div className="flex items-center py-2 font-bold border-t border-gray-300 mt-2">
+                        <div className="flex-1 text-gray-900">NET REVENUE</div>
+                        <div className="w-28 text-right tabular-nums text-emerald-700">{formatCurrency.format(proPLData.netRevenue)}</div>
+                        <div className="w-16 text-right text-xs">100.0%</div>
+                      </div>
+                    </div>
+
+                    {/* COGS */}
+                    {proPLData.cogs > 0 && (
+                      <div className="mb-5">
+                        <div className="font-bold text-sm text-gray-900 uppercase tracking-wide py-2 border-b border-gray-200">Cost of Goods Sold</div>
+                        <div className="flex items-center py-2">
+                          <div className="flex-1 pl-4 text-gray-700">Direct Costs / COGS</div>
+                          <div className="w-28 text-right font-medium tabular-nums">{formatCurrency.format(proPLData.cogs)}</div>
+                          <div className="w-16 text-right text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.cogs / proPLData.netRevenue) * 100).toFixed(1)}%` : '—'}</div>
+                        </div>
+                        <div className="flex items-center py-2 font-bold border-t border-gray-300 mt-2">
+                          <div className="flex-1 text-gray-900">GROSS PROFIT</div>
+                          <div className="w-28 text-right tabular-nums">{formatCurrency.format(proPLData.grossProfit)}</div>
+                          <div className="w-16 text-right text-xs">{proPLData.grossMargin.toFixed(1)}%</div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* OPERATING EXPENSES */}
+                    <div className="mb-5">
+                      <div className="font-bold text-sm text-gray-900 uppercase tracking-wide py-2 border-b border-gray-200">Operating Expenses</div>
+                      {Object.entries(proPLData.expensesByCategory).sort(([,a], [,b]) => b - a).map(([category, amount]) => (
+                        <div key={category} className="flex items-center py-1.5">
+                          <div className="flex-1 pl-4 text-gray-700 truncate">{category}</div>
+                          <div className="w-28 text-right font-medium tabular-nums">{formatCurrency.format(amount)}</div>
+                          <div className="w-16 text-right text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((amount / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                        </div>
+                      ))}
+                      <div className="flex items-center py-2 font-bold border-t border-gray-300 mt-2">
+                        <div className="flex-1 text-gray-900">TOTAL OPERATING EXPENSES</div>
+                        <div className="w-28 text-right tabular-nums text-red-700">{formatCurrency.format(proPLData.totalOpex)}</div>
+                        <div className="w-16 text-right text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.totalOpex / proPLData.netRevenue) * 100).toFixed(1)}%` : '—'}</div>
+                      </div>
+                    </div>
+
+                    {/* OPERATING INCOME */}
+                    <div className="flex items-center py-3 font-bold bg-gray-100 -mx-5 px-5 mb-5">
+                      <div className="flex-1 text-gray-900 uppercase">Operating Income</div>
+                      <div className={`w-28 text-right tabular-nums ${proPLData.operatingIncome >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+                        {proPLData.operatingIncome < 0 ? `(${formatCurrency.format(Math.abs(proPLData.operatingIncome))})` : formatCurrency.format(proPLData.operatingIncome)}
+                      </div>
+                      <div className="w-16 text-right text-xs">{proPLData.operatingMargin.toFixed(1)}%</div>
+                    </div>
+
+                    {/* OTHER INCOME/EXPENSE */}
+                    {(proPLData.interestIncome > 0 || proPLData.interestExpense > 0) && (
+                      <div className="mb-5">
+                        <div className="font-bold text-sm text-gray-900 uppercase tracking-wide py-2 border-b border-gray-200">Other Income / Expense</div>
+                        {proPLData.interestIncome > 0 && (
+                          <div className="flex items-center py-2">
+                            <div className="flex-1 pl-4 text-gray-700">Interest Income</div>
+                            <div className="w-28 text-right font-medium tabular-nums text-emerald-600">{formatCurrency.format(proPLData.interestIncome)}</div>
+                            <div className="w-16 text-right"></div>
+                          </div>
+                        )}
+                        {proPLData.interestExpense > 0 && (
+                          <div className="flex items-center py-2">
+                            <div className="flex-1 pl-4 text-gray-700">Interest Expense</div>
+                            <div className="w-28 text-right font-medium tabular-nums text-red-600">({formatCurrency.format(proPLData.interestExpense)})</div>
+                            <div className="w-16 text-right"></div>
+                          </div>
+                        )}
+                        <div className="flex items-center py-2 font-bold border-t border-gray-200 mt-2">
+                          <div className="flex-1 text-gray-900">NET OTHER INCOME</div>
+                          <div className={`w-28 text-right tabular-nums ${proPLData.netOtherIncome >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+                            {proPLData.netOtherIncome < 0 ? `(${formatCurrency.format(Math.abs(proPLData.netOtherIncome))})` : formatCurrency.format(proPLData.netOtherIncome)}
+                          </div>
+                          <div className="w-16 text-right"></div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* NET INCOME */}
+                    <div className="flex items-center py-4 font-bold bg-gray-900 text-white -mx-5 px-5 rounded-b-lg">
+                      <div className="flex-1 uppercase text-lg">Net Income</div>
+                      <div className={`w-28 text-right tabular-nums text-lg ${proPLData.netIncome >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                        {proPLData.netIncome < 0 ? `(${formatCurrency.format(Math.abs(proPLData.netIncome))})` : formatCurrency.format(proPLData.netIncome)}
+                      </div>
+                      <div className="w-16 text-right text-xs text-gray-300">{proPLData.netMargin.toFixed(1)}%</div>
+                    </div>
+                  </div>
+
+                  {/* Notes */}
+                  <div className="px-5 py-4 bg-gray-50 border-t border-gray-200 text-xs text-gray-500">
+                    <div className="font-semibold text-gray-600 mb-1">Notes</div>
+                    <p>• {plAccountingBasis === 'cash' ? 'Cash' : 'Accrual'} Basis | {proPLData.transactionCount} transactions</p>
+                    {proPLData.uncategorizedCount > 0 && <p className="text-amber-600">• {proPLData.uncategorizedCount} uncategorized ({formatCurrency.format(proPLData.uncategorizedAmount)})</p>}
+                    <p>• Owner draws excluded | Management report, may not be GAAP-prepared</p>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="px-5 py-3 border-t border-gray-200 text-center text-xs text-gray-400">
+                    <p>{settings.businessName} | P&L | {proPLData.periodLabel} | Prepared by Moniezi</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* ==================== CLIENTS PAGE ==================== */}
