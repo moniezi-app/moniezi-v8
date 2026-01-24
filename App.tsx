@@ -2136,6 +2136,27 @@ OWNERSHIP
       t.category !== 'Interest'
     ).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
     
+    // Income by category (for detailed breakdown)
+    const incomeByCategory: Record<string, number> = {};
+    periodTx.filter(t => t.type === 'income' && 
+      t.category !== 'Refunds' && 
+      t.category !== 'Interest / Bank' && 
+      t.category !== 'Interest'
+    ).forEach(t => {
+      const cat = t.category || 'Other Income';
+      incomeByCategory[cat] = (incomeByCategory[cat] || 0) + (Number(t.amount) || 0);
+    });
+    
+    const priorIncomeByCategory: Record<string, number> = {};
+    priorPeriodTx.filter(t => t.type === 'income' && 
+      t.category !== 'Refunds' && 
+      t.category !== 'Interest / Bank' && 
+      t.category !== 'Interest'
+    ).forEach(t => {
+      const cat = t.category || 'Other Income';
+      priorIncomeByCategory[cat] = (priorIncomeByCategory[cat] || 0) + (Number(t.amount) || 0);
+    });
+    
     // Refunds should be tracked from EXPENSE type with 'Refunds' category, OR income marked as refund
     // Check if refunds are logged as expenses (more common) or as negative income
     const refundsAsExpense = periodTx.filter(t => t.type === 'expense' && t.category === 'Refunds').reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
@@ -2163,6 +2184,19 @@ OWNERSHIP
     const cogsCategories = ['Materials', 'Subcontractors', 'Shipping', 'Payment Processing', 'Direct Costs'];
     const cogs = periodTx.filter(t => t.type === 'expense' && cogsCategories.some(c => t.category.toLowerCase().includes(c.toLowerCase()))).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
     const priorCogs = priorPeriodTx.filter(t => t.type === 'expense' && cogsCategories.some(c => t.category.toLowerCase().includes(c.toLowerCase()))).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    
+    // COGS by category (for detailed breakdown)
+    const cogsByCategory: Record<string, number> = {};
+    periodTx.filter(t => t.type === 'expense' && cogsCategories.some(c => t.category.toLowerCase().includes(c.toLowerCase()))).forEach(t => {
+      const cat = t.category || 'Direct Costs';
+      cogsByCategory[cat] = (cogsByCategory[cat] || 0) + (Number(t.amount) || 0);
+    });
+    
+    const priorCogsByCategory: Record<string, number> = {};
+    priorPeriodTx.filter(t => t.type === 'expense' && cogsCategories.some(c => t.category.toLowerCase().includes(c.toLowerCase()))).forEach(t => {
+      const cat = t.category || 'Direct Costs';
+      priorCogsByCategory[cat] = (priorCogsByCategory[cat] || 0) + (Number(t.amount) || 0);
+    });
     
     // Gross Profit
     const grossProfit = netRevenue - cogs;
@@ -2301,6 +2335,8 @@ OWNERSHIP
       // Revenue
       salesServices,
       priorSalesServicesGross,
+      incomeByCategory,
+      priorIncomeByCategory,
       refunds,
       priorRefunds,
       netRevenue,
@@ -2310,6 +2346,8 @@ OWNERSHIP
       // COGS
       cogs,
       priorCogs,
+      cogsByCategory,
+      priorCogsByCategory,
       grossProfit,
       priorGrossProfit,
       grossMargin,
@@ -5448,37 +5486,43 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
                   {/* Report Body */}
                   <div className="px-4 py-2">
-                    {/* REVENUE SECTION */}
+                    {/* REVENUE SECTION - Industry Standard with Category Breakdown */}
                     <div className="mb-4">
                       <div className="font-bold text-xs text-gray-900 uppercase tracking-wide py-2 border-b border-gray-200">Revenue</div>
                       
-                      {/* Line Item */}
-                      <div className="flex items-center py-1.5 text-sm">
-                        <div className="flex-1 min-w-0 pl-4 text-gray-700 truncate">Gross Sales / Services</div>
-                        <div className="w-24 sm:w-28 text-right flex-shrink-0 font-medium tabular-nums">{formatCurrency.format(proPLData.salesServices)}</div>
-                        {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-500 tabular-nums hidden sm:block">{proPLData.priorSalesServicesGross > 0 ? formatCurrency.format(proPLData.priorSalesServicesGross) : '—'}</div>}
-                        {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
-                        <div className="w-14 sm:w-16 text-right flex-shrink-0 text-gray-500 text-xs">100.0%</div>
-                      </div>
+                      {/* Income by Category (like QuickBooks) */}
+                      {Object.entries(proPLData.incomeByCategory)
+                        .sort(([,a], [,b]) => b - a)
+                        .map(([category, amount]) => (
+                          <div key={category} className="flex items-center py-1 text-sm">
+                            <div className="flex-1 min-w-0 pl-4 text-gray-700 truncate">{category}</div>
+                            <div className="w-24 sm:w-28 text-right flex-shrink-0 font-medium tabular-nums">{formatCurrency.format(amount)}</div>
+                            {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-500 tabular-nums hidden sm:block">{proPLData.priorIncomeByCategory[category] ? formatCurrency.format(proPLData.priorIncomeByCategory[category]) : '—'}</div>}
+                            {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
+                            <div className="w-14 sm:w-16 text-right flex-shrink-0 text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((amount / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                          </div>
+                        ))}
                       
-                      {/* Mobile Prior Row */}
-                      {plShowComparison && proPLData.priorSalesServicesGross > 0 && (
-                        <div className="flex items-center py-0.5 text-xs text-gray-400 sm:hidden">
-                          <div className="flex-1 min-w-0 pl-4">Prior:</div>
-                          <div className="text-right tabular-nums">{formatCurrency.format(proPLData.priorSalesServicesGross)}</div>
+                      {/* Gross Sales Total (if multiple categories) */}
+                      {Object.keys(proPLData.incomeByCategory).length > 1 && (
+                        <div className="flex items-center py-1.5 text-sm font-semibold border-t border-gray-200 mt-1">
+                          <div className="flex-1 min-w-0 pl-2 text-gray-800">Total Gross Sales</div>
+                          <div className="w-24 sm:w-28 text-right flex-shrink-0 tabular-nums">{formatCurrency.format(proPLData.salesServices)}</div>
+                          {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-500 tabular-nums hidden sm:block">{proPLData.priorSalesServicesGross > 0 ? formatCurrency.format(proPLData.priorSalesServicesGross) : '—'}</div>}
+                          {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
+                          <div className="w-14 sm:w-16 text-right flex-shrink-0 text-xs"></div>
                         </div>
                       )}
                       
+                      {/* Less: Returns & Refunds */}
                       {(proPLData.refunds > 0 || proPLData.priorRefunds > 0) && (
-                        <>
-                          <div className="flex items-center py-1.5 text-sm">
-                            <div className="flex-1 min-w-0 pl-4 text-gray-700 italic truncate">Less: Returns & Refunds</div>
-                            <div className="w-24 sm:w-28 text-right flex-shrink-0 font-medium tabular-nums text-red-600">({formatCurrency.format(proPLData.refunds)})</div>
-                            {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-500 tabular-nums hidden sm:block">{proPLData.priorRefunds > 0 ? `(${formatCurrency.format(proPLData.priorRefunds)})` : '—'}</div>}
-                            {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
-                            <div className="w-14 sm:w-16 text-right flex-shrink-0"></div>
-                          </div>
-                        </>
+                        <div className="flex items-center py-1.5 text-sm">
+                          <div className="flex-1 min-w-0 pl-4 text-gray-700 italic truncate">Less: Returns & Refunds</div>
+                          <div className="w-24 sm:w-28 text-right flex-shrink-0 font-medium tabular-nums text-red-600">({formatCurrency.format(proPLData.refunds)})</div>
+                          {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-500 tabular-nums hidden sm:block">{proPLData.priorRefunds > 0 ? `(${formatCurrency.format(proPLData.priorRefunds)})` : '—'}</div>}
+                          {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
+                          <div className="w-14 sm:w-16 text-right flex-shrink-0"></div>
+                        </div>
                       )}
                       
                       {/* Net Revenue Subtotal */}
@@ -5491,19 +5535,36 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       </div>
                     </div>
 
-                    {/* COGS SECTION */}
+                    {/* COGS SECTION - Industry Standard with Category Breakdown */}
                     {(proPLData.cogs > 0 || proPLData.priorCogs > 0) && (
                       <div className="mb-4">
                         <div className="font-bold text-xs text-gray-900 uppercase tracking-wide py-2 border-b border-gray-200">Cost of Goods Sold</div>
                         
-                        <div className="flex items-center py-1.5 text-sm">
-                          <div className="flex-1 min-w-0 pl-4 text-gray-700 truncate">Direct Costs / COGS</div>
-                          <div className="w-24 sm:w-28 text-right flex-shrink-0 font-medium tabular-nums">{formatCurrency.format(proPLData.cogs)}</div>
-                          {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-500 tabular-nums hidden sm:block">{proPLData.priorCogs > 0 ? formatCurrency.format(proPLData.priorCogs) : '—'}</div>}
-                          {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
-                          <div className="w-14 sm:w-16 text-right flex-shrink-0 text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.cogs / proPLData.netRevenue) * 100).toFixed(1)}%` : '—'}</div>
-                        </div>
+                        {/* COGS by Category */}
+                        {Object.entries(proPLData.cogsByCategory)
+                          .sort(([,a], [,b]) => b - a)
+                          .map(([category, amount]) => (
+                            <div key={category} className="flex items-center py-1 text-sm">
+                              <div className="flex-1 min-w-0 pl-4 text-gray-700 truncate">{category}</div>
+                              <div className="w-24 sm:w-28 text-right flex-shrink-0 font-medium tabular-nums">{formatCurrency.format(amount)}</div>
+                              {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-500 tabular-nums hidden sm:block">{proPLData.priorCogsByCategory[category] ? formatCurrency.format(proPLData.priorCogsByCategory[category]) : '—'}</div>}
+                              {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
+                              <div className="w-14 sm:w-16 text-right flex-shrink-0 text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((amount / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                            </div>
+                          ))}
                         
+                        {/* Total COGS (if multiple categories) */}
+                        {Object.keys(proPLData.cogsByCategory).length > 1 && (
+                          <div className="flex items-center py-1.5 text-sm font-semibold border-t border-gray-200 mt-1">
+                            <div className="flex-1 min-w-0 pl-2 text-gray-800">Total COGS</div>
+                            <div className="w-24 sm:w-28 text-right flex-shrink-0 tabular-nums">{formatCurrency.format(proPLData.cogs)}</div>
+                            {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-500 tabular-nums hidden sm:block">{proPLData.priorCogs > 0 ? formatCurrency.format(proPLData.priorCogs) : '—'}</div>}
+                            {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
+                            <div className="w-14 sm:w-16 text-right flex-shrink-0 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.cogs / proPLData.netRevenue) * 100).toFixed(1)}%` : '—'}</div>
+                          </div>
+                        )}
+                        
+                        {/* Gross Profit */}
                         <div className="flex items-center py-2 text-sm font-bold border-t border-gray-300 mt-2">
                           <div className="flex-1 min-w-0 text-gray-900">GROSS PROFIT</div>
                           <div className="w-24 sm:w-28 text-right flex-shrink-0 tabular-nums">{formatCurrency.format(proPLData.grossProfit)}</div>
@@ -5514,24 +5575,111 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       </div>
                     )}
 
-                    {/* OPERATING EXPENSES SECTION */}
+                    {/* OPERATING EXPENSES SECTION - Industry Standard Grouped Layout */}
                     <div className="mb-4">
                       <div className="font-bold text-xs text-gray-900 uppercase tracking-wide py-2 border-b border-gray-200">Operating Expenses</div>
                       
-                      {/* Expense line items */}
-                      {Object.entries(proPLData.expensesByCategory)
-                        .sort(([,a], [,b]) => b - a)
-                        .map(([category, amount]) => (
-                          <div key={category} className="flex items-center py-1 text-sm">
-                            <div className="flex-1 min-w-0 pl-4 text-gray-700 truncate">{category}</div>
-                            <div className="w-24 sm:w-28 text-right flex-shrink-0 font-medium tabular-nums">{formatCurrency.format(amount)}</div>
-                            {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-500 tabular-nums hidden sm:block">{proPLData.priorExpensesByCategory[category] ? formatCurrency.format(proPLData.priorExpensesByCategory[category]) : '—'}</div>}
+                      {/* Payroll & Labor */}
+                      {proPLData.payrollTotal > 0 && (
+                        <>
+                          <div className="flex items-center py-1.5 text-sm font-semibold bg-gray-50 -mx-4 px-4 mt-1">
+                            <div className="flex-1 min-w-0 text-gray-800">Payroll & Labor</div>
+                            <div className="w-24 sm:w-28 text-right flex-shrink-0 tabular-nums">{formatCurrency.format(proPLData.payrollTotal)}</div>
+                            {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-500 tabular-nums hidden sm:block">{proPLData.priorPayrollTotal > 0 ? formatCurrency.format(proPLData.priorPayrollTotal) : '—'}</div>}
                             {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
-                            <div className="w-14 sm:w-16 text-right flex-shrink-0 text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((amount / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                            <div className="w-14 sm:w-16 text-right flex-shrink-0 text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.payrollTotal / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
                           </div>
-                        ))}
+                          {proPLData.payrollItems.map(([cat, amt]) => (
+                            <div key={cat} className="flex items-center py-1 text-sm">
+                              <div className="flex-1 min-w-0 pl-6 text-gray-600 truncate">{cat}</div>
+                              <div className="w-24 sm:w-28 text-right flex-shrink-0 tabular-nums text-gray-600">{formatCurrency.format(amt)}</div>
+                              {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-400 tabular-nums hidden sm:block">{proPLData.priorPayrollItems.find(([c]) => c === cat)?.[1] ? formatCurrency.format(proPLData.priorPayrollItems.find(([c]) => c === cat)?.[1] || 0) : '—'}</div>}
+                              {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
+                              <div className="w-14 sm:w-16 text-right flex-shrink-0 text-gray-400 text-xs">{proPLData.netRevenue > 0 ? `${((amt / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                            </div>
+                          ))}
+                        </>
+                      )}
                       
-                      <div className="flex items-center py-2 text-sm font-bold border-t border-gray-300 mt-2">
+                      {/* Occupancy & Facilities */}
+                      {proPLData.occupancyTotal > 0 && (
+                        <>
+                          <div className="flex items-center py-1.5 text-sm font-semibold bg-gray-50 -mx-4 px-4 mt-1">
+                            <div className="flex-1 min-w-0 text-gray-800">Occupancy & Facilities</div>
+                            <div className="w-24 sm:w-28 text-right flex-shrink-0 tabular-nums">{formatCurrency.format(proPLData.occupancyTotal)}</div>
+                            {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-500 tabular-nums hidden sm:block">{proPLData.priorOccupancyTotal > 0 ? formatCurrency.format(proPLData.priorOccupancyTotal) : '—'}</div>}
+                            {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
+                            <div className="w-14 sm:w-16 text-right flex-shrink-0 text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.occupancyTotal / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                          </div>
+                          {proPLData.occupancyItems.map(([cat, amt]) => (
+                            <div key={cat} className="flex items-center py-1 text-sm">
+                              <div className="flex-1 min-w-0 pl-6 text-gray-600 truncate">{cat}</div>
+                              <div className="w-24 sm:w-28 text-right flex-shrink-0 tabular-nums text-gray-600">{formatCurrency.format(amt)}</div>
+                              {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-400 tabular-nums hidden sm:block">{proPLData.priorOccupancyItems.find(([c]) => c === cat)?.[1] ? formatCurrency.format(proPLData.priorOccupancyItems.find(([c]) => c === cat)?.[1] || 0) : '—'}</div>}
+                              {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
+                              <div className="w-14 sm:w-16 text-right flex-shrink-0 text-gray-400 text-xs">{proPLData.netRevenue > 0 ? `${((amt / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                      
+                      {/* Marketing & Advertising */}
+                      {proPLData.marketingTotal > 0 && (
+                        <>
+                          <div className="flex items-center py-1.5 text-sm font-semibold bg-gray-50 -mx-4 px-4 mt-1">
+                            <div className="flex-1 min-w-0 text-gray-800">Marketing & Advertising</div>
+                            <div className="w-24 sm:w-28 text-right flex-shrink-0 tabular-nums">{formatCurrency.format(proPLData.marketingTotal)}</div>
+                            {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-500 tabular-nums hidden sm:block">{proPLData.priorMarketingTotal > 0 ? formatCurrency.format(proPLData.priorMarketingTotal) : '—'}</div>}
+                            {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
+                            <div className="w-14 sm:w-16 text-right flex-shrink-0 text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.marketingTotal / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                          </div>
+                          {proPLData.marketingItems.map(([cat, amt]) => (
+                            <div key={cat} className="flex items-center py-1 text-sm">
+                              <div className="flex-1 min-w-0 pl-6 text-gray-600 truncate">{cat}</div>
+                              <div className="w-24 sm:w-28 text-right flex-shrink-0 tabular-nums text-gray-600">{formatCurrency.format(amt)}</div>
+                              {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-400 tabular-nums hidden sm:block">{proPLData.priorMarketingItems.find(([c]) => c === cat)?.[1] ? formatCurrency.format(proPLData.priorMarketingItems.find(([c]) => c === cat)?.[1] || 0) : '—'}</div>}
+                              {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
+                              <div className="w-14 sm:w-16 text-right flex-shrink-0 text-gray-400 text-xs">{proPLData.netRevenue > 0 ? `${((amt / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                      
+                      {/* General & Administrative */}
+                      {proPLData.gaTotal > 0 && (
+                        <>
+                          <div className="flex items-center py-1.5 text-sm font-semibold bg-gray-50 -mx-4 px-4 mt-1">
+                            <div className="flex-1 min-w-0 text-gray-800">General & Administrative</div>
+                            <div className="w-24 sm:w-28 text-right flex-shrink-0 tabular-nums">{formatCurrency.format(proPLData.gaTotal)}</div>
+                            {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-500 tabular-nums hidden sm:block">{proPLData.priorGaTotal > 0 ? formatCurrency.format(proPLData.priorGaTotal) : '—'}</div>}
+                            {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
+                            <div className="w-14 sm:w-16 text-right flex-shrink-0 text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.gaTotal / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                          </div>
+                          {proPLData.gaItems.map(([cat, amt]) => (
+                            <div key={cat} className="flex items-center py-1 text-sm">
+                              <div className="flex-1 min-w-0 pl-6 text-gray-600 truncate">{cat}</div>
+                              <div className="w-24 sm:w-28 text-right flex-shrink-0 tabular-nums text-gray-600">{formatCurrency.format(amt)}</div>
+                              {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-400 tabular-nums hidden sm:block">{proPLData.priorGaItems.find(([c]) => c === cat)?.[1] ? formatCurrency.format(proPLData.priorGaItems.find(([c]) => c === cat)?.[1] || 0) : '—'}</div>}
+                              {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
+                              <div className="w-14 sm:w-16 text-right flex-shrink-0 text-gray-400 text-xs">{proPLData.netRevenue > 0 ? `${((amt / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                      
+                      {/* Other Expenses (uncategorized) */}
+                      {proPLData.otherExpenses > 0 && (
+                        <div className="flex items-center py-1.5 text-sm font-semibold bg-gray-50 -mx-4 px-4 mt-1">
+                          <div className="flex-1 min-w-0 text-gray-800">Other Expenses</div>
+                          <div className="w-24 sm:w-28 text-right flex-shrink-0 tabular-nums">{formatCurrency.format(proPLData.otherExpenses)}</div>
+                          {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-500 tabular-nums hidden sm:block">{proPLData.priorOtherExpenses > 0 ? formatCurrency.format(proPLData.priorOtherExpenses) : '—'}</div>}
+                          {plShowComparison && <div className="w-16 text-right flex-shrink-0 hidden sm:block"></div>}
+                          <div className="w-14 sm:w-16 text-right flex-shrink-0 text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.otherExpenses / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                        </div>
+                      )}
+                      
+                      {/* Total Operating Expenses */}
+                      <div className="flex items-center py-2 text-sm font-bold border-t-2 border-gray-400 mt-3">
                         <div className="flex-1 min-w-0 text-gray-900">TOTAL OPERATING EXPENSES</div>
                         <div className="w-24 sm:w-28 text-right flex-shrink-0 tabular-nums text-red-700">{formatCurrency.format(proPLData.totalOpex)}</div>
                         {plShowComparison && <div className="w-24 sm:w-28 text-right flex-shrink-0 text-gray-600 tabular-nums hidden sm:block">{proPLData.priorTotalOpex > 0 ? formatCurrency.format(proPLData.priorTotalOpex) : '—'}</div>}
