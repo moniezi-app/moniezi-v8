@@ -935,6 +935,37 @@ export default function App() {
     }
   }, []);
 
+  // Unlock screen orientation for Android PWA
+  useEffect(() => {
+    const unlockOrientation = async () => {
+      try {
+        // Check if we're in standalone PWA mode
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                            (window.navigator as any).standalone === true;
+        
+        if (isStandalone && screen.orientation && typeof screen.orientation.unlock === 'function') {
+          await screen.orientation.unlock();
+          console.log('Screen orientation unlocked');
+        }
+      } catch (err) {
+        // Silently ignore - not all browsers support this
+        console.log('Orientation unlock not supported:', err);
+      }
+    };
+    
+    unlockOrientation();
+    
+    // Also try on visibility change (when app comes to foreground)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        unlockOrientation();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
   // License validation on app load
   useEffect(() => {
     const checkStoredLicense = async () => {
