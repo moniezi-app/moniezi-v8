@@ -6478,22 +6478,33 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                   ? referenceDate.getFullYear().toString()
                                   : 'All-Time';
                             
+                            // Calculate content height for single-page PDF
+                            const contentHeight = element.scrollHeight;
+                            const contentWidth = element.scrollWidth;
+                            const pxPerMm = 3.78; // 96 DPI / 25.4
+                            const pageWidthMm = 210;
+                            const marginMm = 10;
+                            const usableWidthMm = pageWidthMm - (marginMm * 2);
+                            const scale = (usableWidthMm * pxPerMm) / contentWidth;
+                            const pageHeightMm = Math.ceil((contentHeight * scale) / pxPerMm) + (marginMm * 2) + 5;
+                            
                             const opt = {
-                              margin: [10, 10, 15, 10],
+                              margin: [marginMm, marginMm, marginMm, marginMm],
                               filename: `PL-Statement-${periodLabel.replace(/\s+/g, '-')}.pdf`,
                               image: { type: 'jpeg', quality: 0.95 },
                               html2canvas: { 
                                 scale: 2, 
                                 useCORS: true, 
                                 backgroundColor: '#ffffff',
-                                logging: false
+                                logging: false,
+                                height: contentHeight,
+                                windowHeight: contentHeight
                               },
                               jsPDF: { 
                                 unit: 'mm', 
-                                format: 'a4',
+                                format: [pageWidthMm, pageHeightMm],
                                 orientation: 'portrait'
-                              },
-                              pagebreak: { mode: 'avoid-all' }
+                              }
                             };
                             
                             await (window as any).html2pdf().set(opt).from(element).save();
@@ -6582,22 +6593,33 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       const element = document.getElementById('pro-pl-pdf-content');
                       if (!element) throw new Error('Preview content not found');
                       
+                      // Calculate content height for single-page PDF
+                      const contentHeight = element.scrollHeight;
+                      const contentWidth = element.scrollWidth;
+                      const pxPerMm = 3.78; // 96 DPI / 25.4
+                      const pageWidthMm = 210;
+                      const marginMm = 10;
+                      const usableWidthMm = pageWidthMm - (marginMm * 2);
+                      const scale = (usableWidthMm * pxPerMm) / contentWidth;
+                      const pageHeightMm = Math.ceil((contentHeight * scale) / pxPerMm) + (marginMm * 2) + 5;
+                      
                       const opt = {
-                        margin: [10, 10, 15, 10],
+                        margin: [marginMm, marginMm, marginMm, marginMm],
                         filename: `PL_${settings.businessName.replace(/[^a-z0-9]/gi, '_')}_${proPLData.startDate.toISOString().split('T')[0]}.pdf`,
                         image: { type: 'jpeg', quality: 0.95 },
                         html2canvas: { 
                           scale: 2, 
                           useCORS: true, 
                           backgroundColor: '#ffffff',
-                          logging: false
+                          logging: false,
+                          height: contentHeight,
+                          windowHeight: contentHeight
                         },
                         jsPDF: { 
                           unit: 'mm', 
-                          format: 'a4',
+                          format: [pageWidthMm, pageHeightMm],
                           orientation: 'portrait'
-                        },
-                        pagebreak: { mode: 'avoid-all' }
+                        }
                       };
                       await (window as any).html2pdf().set(opt).from(element).save();
                       showToast('PDF exported!', 'success');
