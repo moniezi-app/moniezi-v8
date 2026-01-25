@@ -6478,36 +6478,22 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                   ? referenceDate.getFullYear().toString()
                                   : 'All-Time';
                             
-                            // Pageless PDF like Estimates - calculate exact content height
-                            const contentWidth = element.offsetWidth;
-                            const contentHeight = element.scrollHeight;
-                            const pxToMm = 0.264583;
-                            const marginMm = 10;
-                            const pageWidthMm = 210; // A4 width
-                            const contentWidthMm = pageWidthMm - (marginMm * 2);
-                            const scaleFactor = contentWidthMm / (contentWidth * pxToMm);
-                            const pageHeightMm = Math.ceil((contentHeight * pxToMm * scaleFactor) + (marginMm * 2) + 10);
-                            
                             const opt = {
-                              margin: [marginMm, marginMm, marginMm, marginMm],
+                              margin: [10, 10, 15, 10],
                               filename: `PL-Statement-${periodLabel.replace(/\s+/g, '-')}.pdf`,
-                              image: { type: 'jpeg', quality: 0.98 },
+                              image: { type: 'jpeg', quality: 0.95 },
                               html2canvas: { 
                                 scale: 2, 
                                 useCORS: true, 
-                                backgroundColor: '#ffffff', 
-                                scrollY: 0,
-                                scrollX: 0,
-                                windowWidth: contentWidth,
-                                windowHeight: contentHeight
+                                backgroundColor: '#ffffff',
+                                logging: false
                               },
                               jsPDF: { 
                                 unit: 'mm', 
-                                format: [pageWidthMm, Math.max(297, pageHeightMm)],
-                                orientation: 'portrait',
-                                compress: true
+                                format: 'a4',
+                                orientation: 'portrait'
                               },
-                              pagebreak: { mode: 'avoid-all', avoid: ['tr', 'td', '.page-break-avoid'] }
+                              pagebreak: { mode: 'avoid-all' }
                             };
                             
                             await (window as any).html2pdf().set(opt).from(element).save();
@@ -6596,36 +6582,22 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       const element = document.getElementById('pro-pl-pdf-content');
                       if (!element) throw new Error('Preview content not found');
                       
-                      // Pageless PDF - calculate exact content height
-                      const contentWidth = element.offsetWidth;
-                      const contentHeight = element.scrollHeight;
-                      const pxToMm = 0.264583;
-                      const marginMm = 8;
-                      const pageWidthMm = 210; // A4 width
-                      const contentWidthMm = pageWidthMm - (marginMm * 2);
-                      const scaleFactor = contentWidthMm / (contentWidth * pxToMm);
-                      const pageHeightMm = Math.ceil((contentHeight * pxToMm * scaleFactor) + (marginMm * 2) + 10);
-                      
                       const opt = {
-                        margin: [marginMm, marginMm, marginMm + 4, marginMm],
+                        margin: [10, 10, 15, 10],
                         filename: `PL_${settings.businessName.replace(/[^a-z0-9]/gi, '_')}_${proPLData.startDate.toISOString().split('T')[0]}.pdf`,
-                        image: { type: 'jpeg', quality: 0.98 },
+                        image: { type: 'jpeg', quality: 0.95 },
                         html2canvas: { 
                           scale: 2, 
                           useCORS: true, 
-                          backgroundColor: '#ffffff', 
-                          scrollY: 0,
-                          scrollX: 0,
-                          windowWidth: contentWidth,
-                          windowHeight: contentHeight
+                          backgroundColor: '#ffffff',
+                          logging: false
                         },
                         jsPDF: { 
                           unit: 'mm', 
-                          format: [pageWidthMm, Math.max(297, pageHeightMm)],
-                          orientation: 'portrait',
-                          compress: true
+                          format: 'a4',
+                          orientation: 'portrait'
                         },
-                        pagebreak: { mode: 'avoid-all', avoid: ['tr', 'td', '.page-break-avoid'] }
+                        pagebreak: { mode: 'avoid-all' }
                       };
                       await (window as any).html2pdf().set(opt).from(element).save();
                       showToast('PDF exported!', 'success');
@@ -6645,7 +6617,7 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
               {/* PDF Content */}
               <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-                <div id="pro-pl-pdf-content" className="bg-white text-gray-900 rounded-lg shadow-lg max-w-3xl mx-auto overflow-hidden" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                <div id="pro-pl-pdf-content" className="bg-white text-gray-900 rounded-lg shadow-lg mx-auto overflow-hidden" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', width: '700px', maxWidth: '100%' }}>
                   {/* Report Header - Left Aligned */}
                   <div className="px-5 py-5 border-b-2 border-gray-300 bg-gray-50">
                     <div>
