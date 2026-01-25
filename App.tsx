@@ -6478,15 +6478,13 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                   ? referenceDate.getFullYear().toString()
                                   : 'All-Time';
                             
-                            // Calculate content height for single-page PDF
-                            const contentHeight = element.scrollHeight;
-                            const contentWidth = element.scrollWidth;
-                            const pxPerMm = 3.78; // 96 DPI / 25.4
+                            // Get actual rendered height
+                            const rect = element.getBoundingClientRect();
+                            const contentHeight = rect.height;
                             const pageWidthMm = 210;
-                            const marginMm = 10;
-                            const usableWidthMm = pageWidthMm - (marginMm * 2);
-                            const scale = (usableWidthMm * pxPerMm) / contentWidth;
-                            const pageHeightMm = Math.ceil((contentHeight * scale) / pxPerMm) + (marginMm * 2) + 5;
+                            const marginMm = 8;
+                            // Convert px to mm (assuming 96 DPI)
+                            const heightMm = Math.ceil(contentHeight * 0.2645) + (marginMm * 2);
                             
                             const opt = {
                               margin: [marginMm, marginMm, marginMm, marginMm],
@@ -6496,13 +6494,11 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                 scale: 2, 
                                 useCORS: true, 
                                 backgroundColor: '#ffffff',
-                                logging: false,
-                                height: contentHeight,
-                                windowHeight: contentHeight
+                                logging: false
                               },
                               jsPDF: { 
                                 unit: 'mm', 
-                                format: [pageWidthMm, pageHeightMm],
+                                format: [pageWidthMm, heightMm],
                                 orientation: 'portrait'
                               }
                             };
@@ -6593,15 +6589,13 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       const element = document.getElementById('pro-pl-pdf-content');
                       if (!element) throw new Error('Preview content not found');
                       
-                      // Calculate content height for single-page PDF
-                      const contentHeight = element.scrollHeight;
-                      const contentWidth = element.scrollWidth;
-                      const pxPerMm = 3.78; // 96 DPI / 25.4
+                      // Get actual rendered height
+                      const rect = element.getBoundingClientRect();
+                      const contentHeight = rect.height;
                       const pageWidthMm = 210;
-                      const marginMm = 10;
-                      const usableWidthMm = pageWidthMm - (marginMm * 2);
-                      const scale = (usableWidthMm * pxPerMm) / contentWidth;
-                      const pageHeightMm = Math.ceil((contentHeight * scale) / pxPerMm) + (marginMm * 2) + 5;
+                      const marginMm = 8;
+                      // Convert px to mm (assuming 96 DPI)
+                      const heightMm = Math.ceil(contentHeight * 0.2645) + (marginMm * 2);
                       
                       const opt = {
                         margin: [marginMm, marginMm, marginMm, marginMm],
@@ -6611,13 +6605,11 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                           scale: 2, 
                           useCORS: true, 
                           backgroundColor: '#ffffff',
-                          logging: false,
-                          height: contentHeight,
-                          windowHeight: contentHeight
+                          logging: false
                         },
                         jsPDF: { 
                           unit: 'mm', 
-                          format: [pageWidthMm, pageHeightMm],
+                          format: [pageWidthMm, heightMm],
                           orientation: 'portrait'
                         }
                       };
