@@ -5458,9 +5458,9 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
                 {/* ========== UNIFIED P&L REPORT (Same as PDF) ========== */}
                 <div id="pl-report-content" className="bg-white text-gray-900 rounded-lg overflow-hidden" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                  {/* Report Header */}
+                  {/* Report Header - Left Aligned */}
                   <div className="px-4 py-4 border-b-2 border-gray-300 bg-gray-50">
-                    <div className="text-center">
+                    <div>
                       <h1 className="text-base sm:text-lg font-bold text-gray-900 uppercase tracking-wide">{settings.businessName}</h1>
                       <h2 className="text-sm font-semibold text-gray-700 mt-1">Profit & Loss Statement</h2>
                       <p className="text-xs text-gray-600 mt-1">
@@ -6478,12 +6478,36 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                                   ? referenceDate.getFullYear().toString()
                                   : 'All-Time';
                             
+                            // Pageless PDF like Estimates - calculate exact content height
+                            const contentWidth = element.offsetWidth;
+                            const contentHeight = element.scrollHeight;
+                            const pxToMm = 0.264583;
+                            const marginMm = 10;
+                            const pageWidthMm = 210; // A4 width
+                            const contentWidthMm = pageWidthMm - (marginMm * 2);
+                            const scaleFactor = contentWidthMm / (contentWidth * pxToMm);
+                            const pageHeightMm = Math.ceil((contentHeight * pxToMm * scaleFactor) + (marginMm * 2) + 10);
+                            
                             const opt = {
-                              margin: [10, 10, 10, 10],
+                              margin: [marginMm, marginMm, marginMm, marginMm],
                               filename: `PL-Statement-${periodLabel.replace(/\s+/g, '-')}.pdf`,
                               image: { type: 'jpeg', quality: 0.98 },
-                              html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0 },
-                              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                              html2canvas: { 
+                                scale: 2, 
+                                useCORS: true, 
+                                backgroundColor: '#ffffff', 
+                                scrollY: 0,
+                                scrollX: 0,
+                                windowWidth: contentWidth,
+                                windowHeight: contentHeight
+                              },
+                              jsPDF: { 
+                                unit: 'mm', 
+                                format: [pageWidthMm, Math.max(297, pageHeightMm)],
+                                orientation: 'portrait',
+                                compress: true
+                              },
+                              pagebreak: { mode: 'avoid-all', avoid: ['tr', 'td', '.page-break-avoid'] }
                             };
                             
                             await (window as any).html2pdf().set(opt).from(element).save();
@@ -6571,13 +6595,37 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       await new Promise(resolve => setTimeout(resolve, 300));
                       const element = document.getElementById('pro-pl-pdf-content');
                       if (!element) throw new Error('Preview content not found');
+                      
+                      // Pageless PDF - calculate exact content height
+                      const contentWidth = element.offsetWidth;
+                      const contentHeight = element.scrollHeight;
+                      const pxToMm = 0.264583;
+                      const marginMm = 8;
+                      const pageWidthMm = 210; // A4 width
+                      const contentWidthMm = pageWidthMm - (marginMm * 2);
+                      const scaleFactor = contentWidthMm / (contentWidth * pxToMm);
+                      const pageHeightMm = Math.ceil((contentHeight * pxToMm * scaleFactor) + (marginMm * 2) + 10);
+                      
                       const opt = {
-                        margin: [8, 8, 12, 8],
+                        margin: [marginMm, marginMm, marginMm + 4, marginMm],
                         filename: `PL_${settings.businessName.replace(/[^a-z0-9]/gi, '_')}_${proPLData.startDate.toISOString().split('T')[0]}.pdf`,
                         image: { type: 'jpeg', quality: 0.98 },
-                        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollY: 0 },
-                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                        pagebreak: { mode: 'avoid-all' }
+                        html2canvas: { 
+                          scale: 2, 
+                          useCORS: true, 
+                          backgroundColor: '#ffffff', 
+                          scrollY: 0,
+                          scrollX: 0,
+                          windowWidth: contentWidth,
+                          windowHeight: contentHeight
+                        },
+                        jsPDF: { 
+                          unit: 'mm', 
+                          format: [pageWidthMm, Math.max(297, pageHeightMm)],
+                          orientation: 'portrait',
+                          compress: true
+                        },
+                        pagebreak: { mode: 'avoid-all', avoid: ['tr', 'td', '.page-break-avoid'] }
                       };
                       await (window as any).html2pdf().set(opt).from(element).save();
                       showToast('PDF exported!', 'success');
@@ -6598,9 +6646,9 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
               {/* PDF Content */}
               <div className="flex-1 overflow-y-auto p-4 sm:p-6">
                 <div id="pro-pl-pdf-content" className="bg-white text-gray-900 rounded-lg shadow-lg max-w-3xl mx-auto overflow-hidden" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                  {/* Report Header */}
+                  {/* Report Header - Left Aligned */}
                   <div className="px-5 py-5 border-b-2 border-gray-300 bg-gray-50">
-                    <div className="text-center">
+                    <div>
                       <h1 className="text-xl font-bold text-gray-900 uppercase tracking-wide">{settings.businessName}</h1>
                       <h2 className="text-base font-semibold text-gray-700 mt-1">Profit & Loss Statement</h2>
                       <p className="text-sm text-gray-600 mt-2">
@@ -6621,14 +6669,30 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
 
                   {/* Report Body */}
                   <div className="px-5 py-3">
-                    {/* REVENUE */}
+                    {/* REVENUE - with category breakdown */}
                     <div className="mb-5">
                       <div className="font-bold text-sm text-gray-900 uppercase tracking-wide py-2 border-b border-gray-200">Revenue</div>
-                      <div className="flex items-center py-2">
-                        <div className="flex-1 pl-4 text-gray-700">Gross Sales / Services</div>
-                        <div className="w-28 text-right font-medium tabular-nums">{formatCurrency.format(proPLData.salesServices)}</div>
-                        <div className="w-16 text-right text-gray-500 text-xs">100.0%</div>
-                      </div>
+                      
+                      {/* Income by Category */}
+                      {Object.entries(proPLData.incomeByCategory)
+                        .sort(([,a], [,b]) => b - a)
+                        .map(([category, amount]) => (
+                          <div key={category} className="flex items-center py-1.5">
+                            <div className="flex-1 pl-4 text-gray-700 truncate">{category}</div>
+                            <div className="w-28 text-right font-medium tabular-nums">{formatCurrency.format(amount)}</div>
+                            <div className="w-16 text-right text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((amount / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                          </div>
+                        ))}
+                      
+                      {/* Total Gross Sales (if multiple categories) */}
+                      {Object.keys(proPLData.incomeByCategory).length > 1 && (
+                        <div className="flex items-center py-1.5 font-semibold border-t border-gray-200 mt-1">
+                          <div className="flex-1 pl-2 text-gray-800">Total Gross Sales</div>
+                          <div className="w-28 text-right tabular-nums">{formatCurrency.format(proPLData.salesServices)}</div>
+                          <div className="w-16 text-right text-xs"></div>
+                        </div>
+                      )}
+                      
                       {proPLData.refunds > 0 && (
                         <div className="flex items-center py-2">
                           <div className="flex-1 pl-4 text-gray-700 italic">Less: Returns & Refunds</div>
@@ -6643,15 +6707,31 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       </div>
                     </div>
 
-                    {/* COGS */}
+                    {/* COGS - with category breakdown */}
                     {proPLData.cogs > 0 && (
                       <div className="mb-5">
                         <div className="font-bold text-sm text-gray-900 uppercase tracking-wide py-2 border-b border-gray-200">Cost of Goods Sold</div>
-                        <div className="flex items-center py-2">
-                          <div className="flex-1 pl-4 text-gray-700">Direct Costs / COGS</div>
-                          <div className="w-28 text-right font-medium tabular-nums">{formatCurrency.format(proPLData.cogs)}</div>
-                          <div className="w-16 text-right text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.cogs / proPLData.netRevenue) * 100).toFixed(1)}%` : '—'}</div>
-                        </div>
+                        
+                        {/* COGS by Category */}
+                        {Object.entries(proPLData.cogsByCategory)
+                          .sort(([,a], [,b]) => b - a)
+                          .map(([category, amount]) => (
+                            <div key={category} className="flex items-center py-1.5">
+                              <div className="flex-1 pl-4 text-gray-700 truncate">{category}</div>
+                              <div className="w-28 text-right font-medium tabular-nums">{formatCurrency.format(amount)}</div>
+                              <div className="w-16 text-right text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((amount / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                            </div>
+                          ))}
+                        
+                        {/* Total COGS (if multiple categories) */}
+                        {Object.keys(proPLData.cogsByCategory).length > 1 && (
+                          <div className="flex items-center py-1.5 font-semibold border-t border-gray-200 mt-1">
+                            <div className="flex-1 pl-2 text-gray-800">Total COGS</div>
+                            <div className="w-28 text-right tabular-nums">{formatCurrency.format(proPLData.cogs)}</div>
+                            <div className="w-16 text-right text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.cogs / proPLData.netRevenue) * 100).toFixed(1)}%` : '—'}</div>
+                          </div>
+                        )}
+                        
                         <div className="flex items-center py-2 font-bold border-t border-gray-300 mt-2">
                           <div className="flex-1 text-gray-900">GROSS PROFIT</div>
                           <div className="w-28 text-right tabular-nums">{formatCurrency.format(proPLData.grossProfit)}</div>
@@ -6660,17 +6740,92 @@ html:not(.dark) .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-col
                       </div>
                     )}
 
-                    {/* OPERATING EXPENSES */}
+                    {/* OPERATING EXPENSES - Industry Standard Grouped */}
                     <div className="mb-5">
                       <div className="font-bold text-sm text-gray-900 uppercase tracking-wide py-2 border-b border-gray-200">Operating Expenses</div>
-                      {Object.entries(proPLData.expensesByCategory).sort(([,a], [,b]) => b - a).map(([category, amount]) => (
-                        <div key={category} className="flex items-center py-1.5">
-                          <div className="flex-1 pl-4 text-gray-700 truncate">{category}</div>
-                          <div className="w-28 text-right font-medium tabular-nums">{formatCurrency.format(amount)}</div>
-                          <div className="w-16 text-right text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((amount / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                      
+                      {/* Payroll & Labor */}
+                      {proPLData.payrollTotal > 0 && (
+                        <>
+                          <div className="flex items-center py-1.5 font-semibold bg-gray-50 -mx-5 px-5 mt-1">
+                            <div className="flex-1 text-gray-800">Payroll & Labor</div>
+                            <div className="w-28 text-right tabular-nums">{formatCurrency.format(proPLData.payrollTotal)}</div>
+                            <div className="w-16 text-right text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.payrollTotal / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                          </div>
+                          {proPLData.payrollItems.map(([cat, amt]) => (
+                            <div key={cat} className="flex items-center py-1">
+                              <div className="flex-1 pl-6 text-gray-600 truncate">{cat}</div>
+                              <div className="w-28 text-right tabular-nums text-gray-600">{formatCurrency.format(amt)}</div>
+                              <div className="w-16 text-right text-gray-400 text-xs">{proPLData.netRevenue > 0 ? `${((amt / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                      
+                      {/* Occupancy & Facilities */}
+                      {proPLData.occupancyTotal > 0 && (
+                        <>
+                          <div className="flex items-center py-1.5 font-semibold bg-gray-50 -mx-5 px-5 mt-1">
+                            <div className="flex-1 text-gray-800">Occupancy & Facilities</div>
+                            <div className="w-28 text-right tabular-nums">{formatCurrency.format(proPLData.occupancyTotal)}</div>
+                            <div className="w-16 text-right text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.occupancyTotal / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                          </div>
+                          {proPLData.occupancyItems.map(([cat, amt]) => (
+                            <div key={cat} className="flex items-center py-1">
+                              <div className="flex-1 pl-6 text-gray-600 truncate">{cat}</div>
+                              <div className="w-28 text-right tabular-nums text-gray-600">{formatCurrency.format(amt)}</div>
+                              <div className="w-16 text-right text-gray-400 text-xs">{proPLData.netRevenue > 0 ? `${((amt / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                      
+                      {/* Marketing & Advertising */}
+                      {proPLData.marketingTotal > 0 && (
+                        <>
+                          <div className="flex items-center py-1.5 font-semibold bg-gray-50 -mx-5 px-5 mt-1">
+                            <div className="flex-1 text-gray-800">Marketing & Advertising</div>
+                            <div className="w-28 text-right tabular-nums">{formatCurrency.format(proPLData.marketingTotal)}</div>
+                            <div className="w-16 text-right text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.marketingTotal / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                          </div>
+                          {proPLData.marketingItems.map(([cat, amt]) => (
+                            <div key={cat} className="flex items-center py-1">
+                              <div className="flex-1 pl-6 text-gray-600 truncate">{cat}</div>
+                              <div className="w-28 text-right tabular-nums text-gray-600">{formatCurrency.format(amt)}</div>
+                              <div className="w-16 text-right text-gray-400 text-xs">{proPLData.netRevenue > 0 ? `${((amt / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                      
+                      {/* General & Administrative */}
+                      {proPLData.gaTotal > 0 && (
+                        <>
+                          <div className="flex items-center py-1.5 font-semibold bg-gray-50 -mx-5 px-5 mt-1">
+                            <div className="flex-1 text-gray-800">General & Administrative</div>
+                            <div className="w-28 text-right tabular-nums">{formatCurrency.format(proPLData.gaTotal)}</div>
+                            <div className="w-16 text-right text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.gaTotal / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                          </div>
+                          {proPLData.gaItems.map(([cat, amt]) => (
+                            <div key={cat} className="flex items-center py-1">
+                              <div className="flex-1 pl-6 text-gray-600 truncate">{cat}</div>
+                              <div className="w-28 text-right tabular-nums text-gray-600">{formatCurrency.format(amt)}</div>
+                              <div className="w-16 text-right text-gray-400 text-xs">{proPLData.netRevenue > 0 ? `${((amt / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                      
+                      {/* Other Expenses */}
+                      {proPLData.otherExpenses > 0 && (
+                        <div className="flex items-center py-1.5 font-semibold bg-gray-50 -mx-5 px-5 mt-1">
+                          <div className="flex-1 text-gray-800">Other Expenses</div>
+                          <div className="w-28 text-right tabular-nums">{formatCurrency.format(proPLData.otherExpenses)}</div>
+                          <div className="w-16 text-right text-gray-500 text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.otherExpenses / proPLData.netRevenue) * 100).toFixed(1)}%` : ''}</div>
                         </div>
-                      ))}
-                      <div className="flex items-center py-2 font-bold border-t border-gray-300 mt-2">
+                      )}
+                      
+                      <div className="flex items-center py-2 font-bold border-t-2 border-gray-400 mt-3">
                         <div className="flex-1 text-gray-900">TOTAL OPERATING EXPENSES</div>
                         <div className="w-28 text-right tabular-nums text-red-700">{formatCurrency.format(proPLData.totalOpex)}</div>
                         <div className="w-16 text-right text-xs">{proPLData.netRevenue > 0 ? `${((proPLData.totalOpex / proPLData.netRevenue) * 100).toFixed(1)}%` : '—'}</div>
